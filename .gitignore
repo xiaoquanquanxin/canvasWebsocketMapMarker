@@ -1,1 +1,4 @@
 /node_modules
+.idea/
+src/server/node_modules/
+src/server/package-lock.json

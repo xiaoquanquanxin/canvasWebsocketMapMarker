@@ -1,0 +1,17 @@
+{
+  "name": "websocket.server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "no",
+    "dev": "node app.js",
+    "canvas:server": "node canvasServer.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.2.0"
+  }
+}

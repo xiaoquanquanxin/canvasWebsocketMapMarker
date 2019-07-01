@@ -49,21 +49,17 @@ http.listen(4000, function () {
 //  地图数据
 let rangeData = {
     topLeft: {
-        latitude: "116%B022'51.20\"", longitude: "39%B055'24.86\"",
         longitude: "39%B055'25.72\"", latitude: "116%B022'25.29\""
     },
     topRight: {
-        latitude: "116%B024'03.30\"", longitude: "39%B055'24.86\"",
         longitude: "39%B055'25.45\"", latitude: "116%B024'41.22\""
 
     },
     bottomLeft: {
-        latitude: "116%B022'51.20\"", longitude: "39%B054'13.00\"",
         longitude: "39%B054'3.78\"", latitude: "116%B022'24.77\""
 
     },
     bottomRight: {
-        latitude: "116%B024'03.30\"", longitude: "39%B054'13.00\"",
         longitude: "39%B054'4.64\"", latitude: "116%B024'41.39\""
 
     }
@@ -73,11 +69,11 @@ let rangeData = {
 //  点位数据
 let pointsData = [
     {
-        longitude: "39%B054'19.97\"",
-        latitude: "116%B023'29.34\"",
+        longitude: "39%B054'19.61\"",
+        latitude: "116%B023'29.06\"",
     }, {
-        longitude: "39%B054'26.37\"",
-        latitude: "116%B023'29.22\"",
+        longitude: "39%B054'26.49\"",
+        latitude: "116%B023'28.79\"",
     },
 ];
 
@@ -87,4 +83,5 @@ function outputPointsData(socket, index) {
     var _data = JSON.stringify(pointsData[index]);
     socket.emit('my-custom-socket', _data);
     socket.broadcast.emit('my-custom-socket', _data);
+    console.log('推送数据', _data);
 }

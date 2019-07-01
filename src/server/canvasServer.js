@@ -80,7 +80,10 @@ let pointsData = [
 //  输出点位数据
 
 function outputPointsData(socket, index) {
-    var _data = JSON.stringify(pointsData[index]);
+    let _data = JSON.stringify(pointsData[index]);
+    if (_data === undefined) {
+        return
+    }
     socket.emit('my-custom-socket', _data);
     socket.broadcast.emit('my-custom-socket', _data);
     console.log('推送数据', _data);

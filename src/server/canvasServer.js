@@ -49,16 +49,23 @@ http.listen(4000, function () {
 //  地图数据
 let rangeData = {
     topLeft: {
-        latitude: "116%B022'51.20\"", longitude: "39%B055'24.86\""
+        latitude: "116%B022'51.20\"", longitude: "39%B055'24.86\"",
+        longitude: "39%B055'25.72\"", latitude: "116%B022'25.29\""
     },
     topRight: {
-        latitude: "116%B024'03.30\"", longitude: "39%B055'24.86\""
+        latitude: "116%B024'03.30\"", longitude: "39%B055'24.86\"",
+        longitude: "39%B055'25.45\"", latitude: "116%B024'41.22\""
+
     },
     bottomLeft: {
-        latitude: "116%B022'51.20\"", longitude: "39%B054'13.00\""
+        latitude: "116%B022'51.20\"", longitude: "39%B054'13.00\"",
+        longitude: "39%B054'3.78\"", latitude: "116%B022'24.77\""
+
     },
     bottomRight: {
-        latitude: "116%B024'03.30\"", longitude: "39%B054'13.00\""
+        latitude: "116%B024'03.30\"", longitude: "39%B054'13.00\"",
+        longitude: "39%B054'4.64\"", latitude: "116%B024'41.39\""
+
     }
 };
 

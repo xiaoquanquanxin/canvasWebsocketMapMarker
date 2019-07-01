@@ -13,7 +13,7 @@ window.onload = function () {
 
     //  地图图片
     let image = new Image();
-    image.src = '/public/img/map.png';
+    image.src = '/public/img/map1.jpg';
     image.onload = function () {
         //  canvas的宽度
         canvas.width = window.innerWidth;

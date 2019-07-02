@@ -8,6 +8,7 @@ window.onload = function () {
     marker.src = '/public/img/marker.png';
     //  只有图片加载出来才能进行绘制
     marker.onload = function () {
+        console.log('marker load🍌🍌🍌🍌🍌')
         marker.isLoaded = true;
     };
 
@@ -15,10 +16,47 @@ window.onload = function () {
     let image = new Image();
     image.src = '/public/img/map1.jpg';
     image.onload = function () {
+        console.log('image load🍌🍌🍌🍌🍌');
+
+
         //  canvas的宽度
         canvas.width = window.innerWidth;
         canvas.height = window.innerWidth * image.height / image.width;
         ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+        return;
+
+        let _tempList = [
+            {
+                longitude: unescape("39%B054'11.70\""),
+                latitude: unescape("116%B023'29.06\""),
+            },
+            {
+                longitude: unescape("39%B054'11.70\""),
+                latitude: unescape("116%B023'59.06\""),
+            },
+            {
+                longitude: unescape("39%B054'24.70\""),
+                latitude: unescape("116%B024'23.06\""),
+            },
+            {
+                longitude: unescape("39%B055'03.00\""),
+                latitude: unescape("116%B024'27.00\""),
+            },
+            {
+                longitude: unescape("39%B055'17.00\""),
+                latitude: unescape("116%B023'59.06\""),
+            },
+            {
+                longitude: unescape("39%B055'17.00\""),
+                latitude: unescape("116%B023'23.06\""),
+            }
+        ];
+        _tempList.forEach(function (item, index) {
+            console.log(item)
+            console.log(getCanvasPos(item))
+            drawMarker(getCanvasPos(item));
+        })
     };
 
 
@@ -142,7 +180,9 @@ window.onload = function () {
     function drawMarker(point) {
         ctx.beginPath();
         if (marker.isLoaded === true) {
-            ctx.drawImage(marker, point.x - marker.width / 2, point.y - marker.height / 2, marker.width, marker.height);
+            let markerWidth = Math.min(20, marker.width);
+            let markerHeight = Math.min(40, marker.height);
+            ctx.drawImage(marker, point.x - markerWidth / 2, point.y - markerHeight / 2, markerWidth, markerHeight);
             return;
         }
         ctx.stroke();
@@ -176,6 +216,7 @@ window.onload = function () {
             };
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+            drawLine(prev, current);
             drawMarker(data);
             if (index >= _drawCount) {
                 clearInterval(timer);
@@ -185,8 +226,21 @@ window.onload = function () {
             index++;
         }
     }
-};
 
+    //  绘制路线
+    function drawLine(begin, end) {
+        ctx.beginPath();
+        ctx.moveTo(begin.x, begin.y);
+        ctx.lineTo(end.x, end.y);
+        ctx.strokeStyle = 'blue';
+        ctx.lineWidth = 5;
+        ctx.stroke();
+        ctx.closePath();
+    }
+};
+setTimeout(function () {
+    autoButton.click();
+}, 111);
 
 
 /**
@@ -203,3 +257,7 @@ window.onload = function () {
 //  返回前端的数据格式？？ 度分秒？？ 小数点的度数？？  坐标？？？
 //  图片倾斜情况
 
+
+
+//  1.先画线,线的坐标要确定，拐点的位置，坐标要确定，越细越好      ？？？弧形应该是公式么？？？？
+//  2.

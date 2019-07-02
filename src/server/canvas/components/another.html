@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>坐标</title>
+	<style>
+		body {
+			margin: 0;
+		}
+
+		canvas {
+			display: block;
+			outline: 1px solid red;
+		}
+	</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+latitude-x;
+longitude-y;
+<script title="数据">
+    //  四个角落的坐标
+    const corner = (function () {
+        return {
+            topLeft: {
+                longitude: unescape("40%B005'11.39\""),
+                latitude: unescape("116%B021'21.31\""),
+            },
+            topRight: {
+                longitude: unescape("39%B058'32.81\""),
+                latitude: unescape("116%B034'59.30\""),
+            },
+            bottomLeft: {
+                longitude: unescape("39%B056'17.72\""),
+                latitude: unescape("116%B014'38.61\""),
+            },
+            bottomRight: {
+                longitude: unescape("39%B050'04.76\""),
+                latitude: unescape("116%B028'12.93\""),
+            }
+        }
+    }());
+    const northernLatitude = Math.cos(Math.PI * (35 / 180));
+    console.log('当前纬度下,每个经度相当于  ' + northernLatitude + '  个纬度');
+
+    //  天安门附近
+    const tianAnMen = {
+        longitude: unescape("40%B00'13.09\""),
+        latitude: unescape("116%B021'3.44\""),
+    }
+</script>
+<script title="工具类">
+    //  将绝对坐标转为小数点的度数    --- 转换细节           👌👌
+    function transformRadioToFloat(radio) {
+        let degreesArr = radio.split('°');
+        let degrees = Number(degreesArr[0]);
+        let minuteArr = degreesArr[1].split('\'');
+        let minutes = Number(minuteArr[0]);
+        let secondArr = minuteArr[1].split('.');
+        let seconds = Number(secondArr[0]);
+        let dotS = Number(secondArr[1].slice(0, -1));
+        return degrees + minutes / 60 + seconds / 60 / 60 + dotS / 60 / 60 / 100;
+    }
+
+
+    //  转换全部数据                                  👌👌          !!!!!!!         x northernLatitude
+    function transformOriginData(originData) {
+        const _data = {};
+        for (let key in originData) {
+            if (originData.hasOwnProperty(key)) {
+                _data[key] = {
+                    longitude: transformRadioToFloat(originData[key].longitude),
+                    latitude: transformRadioToFloat(originData[key].latitude) * northernLatitude
+                }
+            }
+        }
+        return _data;
+    }
+
+    //  获取笛卡尔坐标系的绝对差值                           👌👌
+    function getDiffer(diff, origin) {
+        return Math.sqrt(Math.pow(diff.longitude - origin.longitude, 2) + Math.pow(diff.latitude - origin.latitude, 2))
+    }
+
+    //  求两点连线的方程
+    function getK_B(x1, y1, x2, y2) {
+        let k = (y2 - y1) / (x2 - x1);
+        let b = y1 - k * x1;
+        return {
+            k: k,
+            b: b
+        }
+    }
+</script>
+<script>
+
+    let canvas = document.getElementById('canvas');
+    let ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    let image = new Image();
+    image.onload = function () {
+        canvas.height = window.innerWidth * this.height / this.width;
+        drawMap();
+        //  corner转为经纬度数值的结果
+        const cornerAbs = transformOriginData(corner);
+        console.log(JSON.stringify(cornerAbs), cornerAbs);
+
+        let bl = cornerAbs.bottomLeft;
+        let br = cornerAbs.bottomRight;
+        //  获得底边斜率k, 和b
+        let bottomLineParams = getK_B(br.latitude, br.longitude, bl.latitude, bl.longitude);
+        console.log(bottomLineParams);
+        let tl = cornerAbs.topLeft;
+        //  获得左边斜率k,和b
+        let leftLineParams = getK_B(tl.latitude, tl.longitude, bl.latitude, bl.longitude);
+        console.log(leftLineParams);
+
+
+    };
+    image.src = '../libs/img/map2.jpg';
+
+
+    //  绘制地图
+    function drawMap() {
+        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    }
+
+
+    //  绘制marker
+    function drawMarker(point) {
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 30, 0, 2 * Math.PI);
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+        ctx.fillStyle = ' ';
+        ctx.fill();
+        ctx.closePath();
+    }
+
+
+</script>
+</body>
+</html>

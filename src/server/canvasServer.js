@@ -69,12 +69,29 @@ let rangeData = {
 //  点位数据
 let pointsData = [
     {
-        longitude: "39%B054'19.61\"",
-        latitude: "116%B023'29.06\"",
-    }, {
-        longitude: "39%B054'26.49\"",
-        latitude: "116%B023'28.79\"",
+        longitude: unescape("39%B054'11.70\""),
+        latitude: unescape("116%B023'29.06\""),
     },
+    {
+        longitude: unescape("39%B054'11.70\""),
+        latitude: unescape("116%B023'59.06\""),
+    },
+    {
+        longitude: unescape("39%B054'24.70\""),
+        latitude: unescape("116%B024'23.06\""),
+    },
+    {
+        longitude: unescape("39%B055'03.00\""),
+        latitude: unescape("116%B024'27.00\""),
+    },
+    {
+        longitude: unescape("39%B055'17.94\""),
+        latitude: unescape("116%B023'59.06\""),
+    },
+    {
+        longitude: unescape("39%B055'17.00\""),
+        latitude: unescape("116%B023'23.06\""),
+    }
 ];
 
 //  输出点位数据

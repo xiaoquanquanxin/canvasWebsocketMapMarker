@@ -73,25 +73,25 @@ let pointsData = [
         latitude: unescape("116%B023'29.06\""),
     },
     {
-        longitude: unescape("39%B054'11.70\""),
-        latitude: unescape("116%B023'59.06\""),
+        longitude: unescape("39%B054'11.50\""),
+        latitude: unescape("116%B024'17.01\""),
     },
     {
-        longitude: unescape("39%B054'24.70\""),
-        latitude: unescape("116%B024'23.06\""),
+        longitude: unescape("39%B054'15.76\""),
+        latitude: unescape("116%B024'22.19\""),
     },
     {
-        longitude: unescape("39%B055'03.00\""),
-        latitude: unescape("116%B024'27.00\""),
+        longitude: unescape("39%B055'14.02\""),
+        latitude: unescape("116%B024'28.26\""),
     },
     {
-        longitude: unescape("39%B055'17.94\""),
-        latitude: unescape("116%B023'59.06\""),
+        longitude: unescape("39%B055'18.42\""),
+        latitude: unescape("116%B024'24.26\""),
     },
     {
-        longitude: unescape("39%B055'17.00\""),
-        latitude: unescape("116%B023'23.06\""),
-    }
+        longitude: unescape("39%B055'17.76\""),
+        latitude: unescape("116%B023'22.66\""),
+    },
 ];
 
 //  输出点位数据

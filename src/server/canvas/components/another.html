@@ -19,34 +19,57 @@
 latitude-x;
 longitude-y;
 <script title="数据">
+
     //  四个角落的坐标
     const corner = (function () {
         return {
             topLeft: {
-                longitude: unescape("40%B005'11.39\""),
-                latitude: unescape("116%B021'21.31\""),
+                longitude: unescape("40%B005'5.48\""),
+                latitude: unescape("116%B021'21.00\""),
             },
             topRight: {
-                longitude: unescape("39%B058'32.81\""),
-                latitude: unescape("116%B034'59.30\""),
+                longitude: unescape("39%B058'36.60\""),
+                latitude: unescape("116%B034'49.41\""),
             },
             bottomLeft: {
-                longitude: unescape("39%B056'17.72\""),
-                latitude: unescape("116%B014'38.61\""),
+                longitude: unescape("39%B056'29.09\""),
+                latitude: unescape("116%B014'33.66\""),
             },
             bottomRight: {
-                longitude: unescape("39%B050'04.76\""),
-                latitude: unescape("116%B028'12.93\""),
+                longitude: unescape("39%B050'12.36\""),
+                latitude: unescape("116%B028'11.69\""),
             }
         }
     }());
-    const northernLatitude = Math.cos(Math.PI * (35 / 180));
+    let northernLatitude = Math.cos(Math.PI * (39.9012361111111  / 180));
+    // northernLatitude = 1;
     console.log('当前纬度下,每个经度相当于  ' + northernLatitude + '  个纬度');
 
-    //  天安门附近
-    const tianAnMen = {
-        longitude: unescape("40%B00'13.09\""),
-        latitude: unescape("116%B021'3.44\""),
+    //  中国农大
+    // const ChinaAgriculturalUniversityPoints = {
+    //     longitude: unescape("40%B00'16.96\""),
+    //     latitude: unescape("116%B021'7.49\""),
+    // }
+    //  天安门
+    // const ChinaAgriculturalUniversityPoints = {
+    //     longitude: unescape("39%B054'9.32\""),
+    //     latitude: unescape("116%B023'30.84\""),
+    // }
+    //  北京站
+    // const ChinaAgriculturalUniversityPoints = {
+    //     longitude: unescape("39%B054'5.44\""),
+    //     latitude: unescape("116%B025'15.82\""),
+    // };
+    // //  北京东站
+    // const ChinaAgriculturalUniversityPoints = {
+    //     longitude: unescape("39%B054'5.79\""),
+    //     latitude: unescape("116%B028'45.16\""),
+    // }
+
+    //  北师大
+    const ChinaAgriculturalUniversityPoints = {
+        longitude: unescape("39%B057'33.09\""),
+        latitude: unescape("116%B021'37.14\""),
     }
 </script>
 <script title="工具类">
@@ -78,8 +101,8 @@ longitude-y;
     }
 
     //  获取笛卡尔坐标系的绝对差值                           👌👌
-    function getDiffer(diff, origin) {
-        return Math.sqrt(Math.pow(diff.longitude - origin.longitude, 2) + Math.pow(diff.latitude - origin.latitude, 2))
+    function getDiffer(x1, y1, x2, y2) {
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 
     //  求两点连线的方程
@@ -91,12 +114,32 @@ longitude-y;
             b: b
         }
     }
+
+    //  已知,x,y,k,求一元一次方程的b
+    function get_B(x, y, k) {
+        return y - k * x;
+    }
+
+    //  联立方程,求焦点坐标
+    function getFocalCoordinates(a1, b1, a2, b2) {
+        let x = (b2 - b1) / (a1 - a2);
+        let y = a1 * x + b1;
+        return {x: x, y: y};
+    }
+
+    //  将经纬度坐标系单位长度转为canvas坐标系的单位长度
+    function transformLongitudeAndLatitudeToCartesianCoordinateSystem(x) {
+        return x * getRatio;
+    }
+
 </script>
 <script>
 
     let canvas = document.getElementById('canvas');
     let ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
+    //  单位经纬度坐标系长度相当于n个像素的比例,是一个很大的数
+    let getRatio = 0;
     let image = new Image();
     image.onload = function () {
         canvas.height = window.innerWidth * this.height / this.width;
@@ -109,13 +152,88 @@ longitude-y;
         let br = cornerAbs.bottomRight;
         //  获得底边斜率k, 和b
         let bottomLineParams = getK_B(br.latitude, br.longitude, bl.latitude, bl.longitude);
-        console.log(bottomLineParams);
+        console.log('底边', bottomLineParams);
         let tl = cornerAbs.topLeft;
         //  获得左边斜率k,和b
         let leftLineParams = getK_B(tl.latitude, tl.longitude, bl.latitude, bl.longitude);
-        console.log(leftLineParams);
+        console.log('左边', leftLineParams);
+        // console.log(bl, br);
+
+        // 证明坐标系准确性
+        (function () {
+            //  根据左下角和右下角求底边在canvas坐标系下的长度
+            let bottom_differ = getDiffer(bl.latitude, bl.longitude, br.latitude, br.longitude);
+            console.log('bottom_differ  :   底边在经纬度坐标下的长度', bottom_differ);
+            // let width_rate_bottom    = canvas.width / bottom_differ;
+            getRatio = canvas.width / bottom_differ;
+            // console.log('width_rate :      每个单位相当于  ** 个像素', width_rate_bottom);
+            let left_differ = getDiffer(bl.latitude, bl.longitude, tl.latitude, tl.longitude);
+            console.log('left_differ  :   底边在经纬度坐标下的长度', left_differ);
+            // let width_rate_left = canvas.height / left_differ;
+            // console.log('width_rate_left : 每个单位相当于  ** 个像素', width_rate_left);
+            console.log('两边斜率乘积', bottomLineParams.k * leftLineParams.k)
+
+            //  测试
+            // testDraw(bottom_differ, left_differ);
+        }());
+
+        //  中国农大坐标
+        (function () {
+            let _cAUP = {
+                longitude: transformRadioToFloat(ChinaAgriculturalUniversityPoints.longitude),
+                latitude: transformRadioToFloat(ChinaAgriculturalUniversityPoints.latitude) * northernLatitude,
+            };
+            // console.clear();
+            console.log('中国农大坐标', _cAUP);
 
 
+            //  求x坐标
+            const _x = (function () {
+                //  中国农大一元一次方程的 b
+                let _k = -1 / bottomLineParams.k;
+                let b = get_B(_cAUP.latitude, _cAUP.longitude, _k);
+                //  中国农大在经纬度坐标系下与底边的焦点坐标
+                let focalCoordinates = getFocalCoordinates(_k, b, bottomLineParams.k, bottomLineParams.b);
+                focalCoordinates.latitude = focalCoordinates.x;
+                focalCoordinates.longitude = focalCoordinates.y;
+                delete focalCoordinates.x;
+                delete focalCoordinates.y;
+
+                //  获得中国农大关于canvas坐标系底边焦点  的经纬度坐标
+                console.log('获得中国农大关于canvas坐标系底边焦点 的 经纬度坐标', focalCoordinates);
+
+                //  求得这个a点与左下角点的绝对长度差,这个点是中国农大的在canvas坐标系下 的 实际的 x
+                let bottom_diff = getDiffer(bl.latitude, bl.longitude, focalCoordinates.latitude, focalCoordinates.longitude);
+                console.log('实际的 x', bottom_diff);
+                return bottom_diff;
+            }());
+
+            //  求y坐标
+            const _y = (function () {
+                //  中国农大一元一次方程的 b
+                let _k = -1 / leftLineParams.k;
+                let b = get_B(_cAUP.latitude, _cAUP.longitude, _k);
+                //  中国农大在经纬度坐标系下与左的焦点坐标
+                let focalCoordinates = getFocalCoordinates(_k, b, leftLineParams.k, leftLineParams.b);
+                focalCoordinates.latitude = focalCoordinates.x;
+                focalCoordinates.longitude = focalCoordinates.y;
+                delete focalCoordinates.x;
+                delete focalCoordinates.y;
+                //  获得中国农大关于canvas坐标系底边焦点  的经纬度坐标
+                console.log('获得中国农大关于canvas坐标系底边焦点 的 经纬度坐标', focalCoordinates);
+
+                //  求得这个a点与左下角点的绝对长度差,这个点是中国农大的在canvas坐标系下 的 实际的 x
+                let bottom_diff = getDiffer(bl.latitude, bl.longitude, focalCoordinates.latitude, focalCoordinates.longitude);
+                console.log('实际的 x', bottom_diff);
+                return bottom_diff;
+            }());
+
+            //  中国农大x坐标点
+            drawMarker({
+                x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(_x),
+                y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(_y)
+            });
+        }());
     };
     image.src = '../libs/img/map2.jpg';
 
@@ -129,16 +247,47 @@ longitude-y;
     //  绘制marker
     function drawMarker(point) {
         ctx.beginPath();
-        ctx.arc(point.x, point.y, 30, 0, 2 * Math.PI);
+        ctx.arc(point.x, canvas.height - point.y, 5, 0, 2 * Math.PI);
         ctx.strokeStyle = 'red';
         ctx.lineWidth = 4;
         ctx.stroke();
         ctx.fillStyle = ' ';
         ctx.fill();
         ctx.closePath();
+
+    }
+
+    //  文字
+    function drawText(point) {
+        ctx.fillStyle = 'red';
+        ctx.font = 'bold 34px Arial';
+        ctx.fillText('还!有!谁!', point.x, canvas.height - point.y, 360, 10);
     }
 
 
+    //  测试
+    function testDraw(bottom_differ, left_differ) {
+        //  test右下角
+        drawMarker({
+            x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(bottom_differ),
+            y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(0)
+        });
+        //  test右上角
+        drawMarker({
+            x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(bottom_differ),
+            y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(left_differ)
+        });
+        //  test左上角
+        drawMarker({
+            x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(0),
+            y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(left_differ)
+        });
+        //  test左下角
+        drawMarker({
+            x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(0),
+            y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(0)
+        });
+    }
 </script>
 </body>
 </html>

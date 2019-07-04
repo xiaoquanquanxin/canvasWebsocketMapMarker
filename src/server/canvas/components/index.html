@@ -1,18 +1,21 @@
 <!doctype html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>坐标</title>
-	<style>
-		body {
-			margin: 0;
-		}
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>坐标</title>
+    <style>
+        body {
+            margin: 0;
+        }
 
-		canvas {
-			display: block;
-			/*outline: 1px solid red;*/
-		}
-	</style>
+        canvas {
+            display: block;
+            /*outline: 1px solid red;*/
+        }
+    </style>
 </head>
 <body>
 <canvas id="canvas"></canvas>
@@ -42,36 +45,41 @@ longitude-y;
     }());
     let northernLatitude = Math.cos(Math.PI * (39.9012361111111 / 180));
     // northernLatitude = 1;
-    console.log('当前纬度下,每个经度相当于  ' + northernLatitude + '  个纬度');
+    // console.log('当前纬度下,每个经度相当于  ' + northernLatitude + '  个纬度');
 
     //  中国农大
-    // const ChinaAgriculturalUniversityPoints = {
-    //     longitude: unescape("40%B00'16.96\""),
-    //     latitude: unescape("116%B021'7.49\""),
-    // }
+    const ChinaAgriculturalUniversityPoints1 = {
+        longitude: unescape("40%B00'16.96\""),
+        latitude: unescape("116%B021'7.49\""),
+    };
     //  天安门
-    // const ChinaAgriculturalUniversityPoints = {
-    //     longitude: unescape("39%B054'9.32\""),
-    //     latitude: unescape("116%B023'30.84\""),
-    // }
+    const ChinaAgriculturalUniversityPoints2 = {
+        longitude: unescape("39%B054'9.32\""),
+        latitude: unescape("116%B023'30.84\""),
+    };
     //  北京站
-    // const ChinaAgriculturalUniversityPoints = {
-    //     longitude: unescape("39%B054'5.44\""),
-    //     latitude: unescape("116%B025'15.82\""),
-    // }
-
-
+    const ChinaAgriculturalUniversityPoints3 = {
+        longitude: unescape("39%B054'5.44\""),
+        latitude: unescape("116%B025'15.82\""),
+    };
     //  北京东站
-    const _ChinaAgriculturalUniversityPoints = {
+    const ChinaAgriculturalUniversityPoints4 = {
         longitude: unescape("39%B054'5.79\""),
         latitude: unescape("116%B028'45.16\""),
-    }
-
-    // //  北师大
-    const ChinaAgriculturalUniversityPoints = {
+    };
+    //  起始点 北师大
+    const StartPoint = {
         longitude: unescape("39%B057'33.09\""),
         latitude: unescape("116%B021'37.14\""),
-    }
+    };
+
+    //  数据的list
+    const pointsList = [StartPoint,
+        ChinaAgriculturalUniversityPoints1,
+        ChinaAgriculturalUniversityPoints2,
+        ChinaAgriculturalUniversityPoints3,
+        ChinaAgriculturalUniversityPoints4];
+
 </script>
 <script title="工具类">
     //  将绝对坐标转为小数点的度数    --- 转换细节           👌👌纯函数
@@ -153,11 +161,11 @@ longitude-y;
     let br = cornerAbs.bottomRight;
     //  获得底边斜率k, 和b
     let bottomLineParams = getK_B(br.latitude, br.longitude, bl.latitude, bl.longitude);
-    console.log('底边', bottomLineParams);
+    // console.log('底边', bottomLineParams);
     let tl = cornerAbs.topLeft;
     //  获得左边斜率k,和b
     let leftLineParams = getK_B(tl.latitude, tl.longitude, bl.latitude, bl.longitude);
-    console.log('左边', leftLineParams);
+    // console.log('左边', leftLineParams);
 
     //  根据左下角和右下角求底边在canvas坐标系下的长度
     let bottom_differ = getDiffer(bl.latitude, bl.longitude, br.latitude, br.longitude);
@@ -172,16 +180,32 @@ longitude-y;
         drawMap();
 
         (function () {
-            // return;
+            return;
             //  测试四角--证明坐标系准确性
             __testCorner(bottom_differ, left_differ, bottomLineParams.k * leftLineParams.k)
         }());
-        console.clear();
+        // console.clear();
 
-        //  h绘制某个实际的点位
-        pointRender(ChinaAgriculturalUniversityPoints);
-        pointRender(_ChinaAgriculturalUniversityPoints);
 
+        //  绘制某个实际的点位
+        let __point = calculatePoint(StartPoint);
+        //  绘制某个点
+        drawMarker(__point);
+
+
+        //  使用setInterval来仿真获取数据        这只是个仿真      🍌🍌🍌🍌🍌
+        (function () {
+            let index = 1;
+            let timer = setInterval(function () {
+                if (pointsList[index] === undefined) {
+                    clearInterval(timer);
+                    return
+                }
+                console.log(index);
+                mainFn(pointsList[index - 1], pointsList[index]);
+                index++;
+            }, dataDelay + 100)
+        }());
     };
     image.src = '../libs/img/map3.jpg';
 
@@ -197,10 +221,10 @@ longitude-y;
         //  该点在经纬度坐标系下与底边的焦点坐标
         let focalCoordinates = getFocalCoordinates(_k, b, params.k, params.b);
         //  获得该点关于canvas坐标系底边焦点  的经纬度坐标
-        console.log('获得该点关于canvas坐标系底边焦点 的 经纬度坐标', focalCoordinates);
+        // console.log('获得该点关于canvas坐标系底边焦点 的 经纬度坐标', focalCoordinates);
         //  求得这个a点与左下角点的绝对长度差,这个点是该点的在canvas坐标系下 的 实际的 x
         let bottom_diff = getDiffer(bl.latitude, bl.longitude, focalCoordinates.latitude, focalCoordinates.longitude);
-        console.log('实际的 x', bottom_diff);
+        // console.log('实际的 x', bottom_diff);
         return bottom_diff;
     }
 
@@ -209,46 +233,68 @@ longitude-y;
         ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
     }
 
-    //  是否需要模拟运动轨迹?
-    (function () {
-        return
-        function mainRender(prev, current) {
-            //  绘制的时间间隔
-            let _delay = 10;
-            //  1000ms内绘制的次数
-            let _drawCount = 1000 / _delay;
-            //  绘制的起始次数
-            let index = 0;
-            let timer = setInterval(render, _delay, prev, current);
 
+    //  模拟运动轨迹?
+    function mainFn(prev, current) {
+        prev = calculatePoint(prev);
+        current = calculatePoint(current);
+
+        // console.clear();
+        // console.log(_delay)
+        // console.log(prev, current);
+
+        count = 0;
+        mainTimer = setInterval(render, _delay, prev, current);
+
+    }
+
+    const dataDelay = 1000;
+    //  绘制的时间间隔
+    const _delay = 32;
+    //  1000ms内绘制的次数
+    const _drawCount = dataDelay / _delay;
+    //  绘制的起始次数
+    let count = 0;
+    //  运动动画定时器
+    let mainTimer = null;
+
+    function render(prev, current) {
+        let data = {
+            x: (current.x - prev.x) / _drawCount * count + prev.x,
+            y: (current.y - prev.y) / _drawCount * count + prev.y,
+        };
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+        drawMarker(data);
+        if (count >= _drawCount) {
+            console.log('执行', count, _drawCount);
+            clearInterval(mainTimer);
+            mainTimer = null;
+            return;
         }
+        count++;
+    }
 
-        function render(prev, current) {
 
-        }
-    }());
-
-    //  绘制点位
+    //  计算点位，从经纬度坐标 计算 为 canvas坐标系坐标
     /**
      * @point : [ChinaAgriculturalUniversityPoints]
      * */
-    function pointRender(point) {
+    function calculatePoint(point) {
         //  某个点的数据
         const _point = {
             longitude: transformRadioToFloat(point.longitude),
             latitude: transformRadioToFloat(point.latitude) * northernLatitude,
         };
-        // console.log(__points);
         //  换算为canvas坐标系后的坐标
         const __point = {
             x: calculateCoordinate(_point, bottomLineParams),
             y: calculateCoordinate(_point, leftLineParams)
         };
-        //  绘制某个点
-        drawMarker({
+        return {
             x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.x),
             y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.y)
-        });
+        };
     }
 
     //  绘制marker
@@ -316,3 +362,5 @@ longitude-y;
 </script>
 </body>
 </html>
+
+每五秒获取一次数据，获取数据之后渲染点

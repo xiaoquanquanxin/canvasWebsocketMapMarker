@@ -106,9 +106,7 @@ longitude-y;
     //  求两点连线的方程                                👌👌纯函数
     function getK_B(x1, y1, x2, y2) {
         let k = (y2 - y1) / (x2 - x1);
-        if (x2 - x1 === 0) {
-            k = 1000000000000000000000000000000
-        }
+		console.log(k);
         let b = y1 - k * x1;
         return {
             k: k,
@@ -123,6 +121,7 @@ longitude-y;
 
     //  联立方程,求焦点坐标  纯函数
     function getFocalCoordinates(a1, b1, a2, b2) {
+    	debugger
         let x = (b2 - b1) / (a1 - a2);
         let y = a1 * x + b1;
         return {latitude: x, longitude: y};
@@ -148,11 +147,11 @@ longitude-y;
     let br = _corner.bottomRight;
     //  获得底边斜率k, 和b
     let bottomLineParams = getK_B(br.latitude, br.longitude, bl.latitude, bl.longitude);
-    // console.log('底边', bottomLineParams);
+    console.log('底边k,b对象', bottomLineParams);
     let tl = _corner.topLeft;
     //  获得左边斜率k,和b
     let leftLineParams = getK_B(tl.latitude, tl.longitude, bl.latitude, bl.longitude);
-    // console.log('左边', leftLineParams);
+    console.log('左边k,b对象', leftLineParams);
 
 
     //  根据左下角和右下角求底边在canvas坐标系下的长度
@@ -168,11 +167,11 @@ longitude-y;
         drawMap();
 
         (function () {
-            // return;
              // 测试四角--证明坐标系准确性
             __testCorner(bottom_differ, left_differ, bottomLineParams.k * leftLineParams.k)
         }());
         console.clear();
+
         debugger
 
         //  绘制某个实际的点位
@@ -189,6 +188,7 @@ longitude-y;
      * @params  canvas的边
      * */
     function calculateCoordinate(_cAUP, params) {
+    	debugger
         //  该点一元一次方程的 b
         let _k = -1 / params.k;
         let b = get_B(_cAUP.latitude, _cAUP.longitude, _k);
@@ -214,15 +214,15 @@ longitude-y;
      * */
     function calculatePoint(point) {
         //  某个点的数据
-        const _point = {
+        const __point = {
             longitude: point.longitude,
             latitude: point.latitude * northernLatitude,
         };
         //  换算为canvas坐标系后的坐标
-        const __point = {
-            x: calculateCoordinate(_point, bottomLineParams),
-            y: calculateCoordinate(_point, leftLineParams)
-        };
+        // const __point = {
+        //     x: calculateCoordinate(_point, bottomLineParams),
+        //     y: calculateCoordinate(_point, leftLineParams)
+        // };
         return {
             x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.x),
             y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.y)

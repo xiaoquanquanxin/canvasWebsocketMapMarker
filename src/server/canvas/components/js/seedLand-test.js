@@ -28,27 +28,53 @@ let bottom_differ = getDiffer(bl.latitude, bl.longitude, br.latitude, br.longitu
 let getRatio = canvas.width / bottom_differ;
 let left_differ = getDiffer(bl.latitude, bl.longitude, tl.latitude, tl.longitude);
 
-
-let image = new Image();
-image.onload = function () {
+//  主背景图
+const imageMap = new Image();
+imageMap.onload = function () {
     canvas.height = window.innerWidth * this.height / this.width * ratio;
     canvas.style.height = canvas.height / ratio + 'px';
-    drawMap();
+    //  绘制地图
+    drawImage(this, {x: 0, y: 0}, canvas.width, canvas.height);
     (function () {
-        return
         // 测试四角--证明坐标系准确性
         __testCorner(bottom_differ, left_differ, bottomLineParams.k * leftLineParams.k)
     }());
-    // console.clear();
+    console.clear();
 
+    //  绘制路径
+    pointsList.reduce(function (prev, current) {
+        drawLine(calculatePoint(prev), calculatePoint(current), 'blue', 15);
+        return current;
+    });
 
+    //  绘制拐弯
     pointsList.forEach(function (item, index) {
-        //  绘制某个实际的点位
         let __point = calculatePoint(item);
         //  绘制某个点
-        drawMarker(__point);
-    })
+        drawRound(__point, 7.5, 'blue');
+    });
+
+    //  绘制某个实际的点位
+    let __point = calculatePoint(StartPoint);
+    //  绘制某个点
+    drawRound(__point, 4.5, 'yellow');
+
 };
-image.src = '../libs/img/map4.jpg';
+imageMap.src = imageMapSrc;
+
+//  小车图片
+const imageCar = new Image();
+imageCar.onload = function () {
+    console.log(this);
+    const width = this.width / 10;
+    const height = this.height / 10;
+    drawImage(this, {x: 0, y: 0}, width, height);
+};
+imageCar.src = imageCarSrc;
+
+
+
+
+
 
 

@@ -1,6 +1,6 @@
 let timer = null;
-
-let point = {
+const delay = 100;
+const point = {
     x: 0,
     y: 0,
 };
@@ -12,12 +12,11 @@ function renderCar() {
     point.x = index * 10;
     point.y = index * 10;
 
-    const width = imageCar.width / 10;
-    const height = imageCar.height / 10;
+    mainRender();
 
-    drawImage(imageCar, point, width, height);
+    drawImage(imageCar, point, imageCar.width, imageCar.height);
     index++;
-    timer = setTimeout(renderCar, 1000);
+    timer = setTimeout(renderCar, delay);
 }
 
-timer = setTimeout(renderCar, 1000);
+timer = setTimeout(renderCar, delay);

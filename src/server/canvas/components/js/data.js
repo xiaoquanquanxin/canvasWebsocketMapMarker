@@ -41,5 +41,12 @@ const pointsList = [
 ];
 
 //  图片配置
-const imageMapSrc = './img/map4.jpg';
-const imageCarSrc = './img/car.jpeg';
+//  地图
+const imageMap = new Image();
+imageMap._src = './img/map4.jpg';
+//  小车
+const imageCar = new Image();
+imageCar._src = './img/car.jpeg';
+//  站点
+const imageStation = new Image();
+imageStation._src = './img/jenkins.svg';

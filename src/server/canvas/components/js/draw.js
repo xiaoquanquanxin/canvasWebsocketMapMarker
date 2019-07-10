@@ -42,6 +42,52 @@ function drawImage(img, point, width, height) {
     ctx.drawImage(img, point.x, point.y, width, height);
 }
 
+//  绘制用户
+function drawUser() {
+
+}
 
 //  主绘制
 //  封装了绘制路线和地图
+function mainRender() {
+    //  任何时候都要先晴空
+    drawClear();
+    //  绘制地图
+    drawImage(imageMap, {x: 0, y: 0}, canvas.width, canvas.height);
+    (function () {
+        // 测试四角--证明坐标系准确性
+        __testCorner(bottom_differ, left_differ, bottomLineParams.k * leftLineParams.k)
+    }());
+    console.clear();
+
+    //  绘制路径
+    pointsList.reduce(function (prev, current) {
+        drawLine(calculatePoint(prev), calculatePoint(current), 'blue', 15);
+        return current;
+    });
+
+    //  绘制拐弯
+    pointsList.forEach(function (item, index) {
+        let __point = calculatePoint(item);
+        //  绘制某个点
+        drawRound(__point, 7.5, 'blue');
+        // console.log(imageCar, __point, 26, 36);
+        drawImage(imageStation, {x: __point.x - 26 / 2, y: __point.y - 36 / 2}, 26, 36);
+    });
+
+    //  绘制某个实际的点位
+    let __point = calculatePoint(StartPoint);
+    //  绘制某个点
+    drawRound(__point, 4.5, 'yellow');
+
+    //  绘制小车
+    drawImage(imageCar, {x: 0, y: 0}, imageCar.width, imageCar.height);
+
+}
+
+//  清除全部画布
+function drawClear() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+//  

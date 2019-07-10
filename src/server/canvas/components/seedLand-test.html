@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>实地常春藤3期</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<p style="position:absolute;bottom:0;left:0;">latitude-x; longitude-y;</p>
+<script title="数据">
+    let northernLatitude = Math.cos(Math.PI * (23.209017141700002 / 180));
+    // console.log('当前纬度下,每个经度相当于  ' + northernLatitude + '  个纬度');
+
+    //  半径
+    const Radio = 80;
+    const FillStyle = 'rgba(0,0,255,.4)';
+    //  四个角落的坐标
+    const corner = (function () {
+        return {
+            topLeft: {
+                latitude: 113.5501320000,
+                longitude: 23.2102160000,
+            },
+            topRight: {
+                latitude: 113.5528900000,
+                longitude: 23.2102160000,
+            },
+            bottomLeft: {
+                latitude: 113.5501320000,
+                longitude: 23.2060250000,
+            },
+            bottomRight: {
+                latitude: 113.5528900000,
+                longitude: 23.2060250000,
+            },
+        };
+    }());
+
+    //  中国农大
+    const ChinaAgriculturalUniversityPoints1 = {
+        longitude: unescape("40%B00'16.96\""),
+        latitude: unescape("116%B021'7.49\""),
+    };
+    //  天安门
+    const ChinaAgriculturalUniversityPoints2 = {
+        longitude: unescape("39%B054'9.32\""),
+        latitude: unescape("116%B023'30.84\""),
+    };
+    //  北京站
+    const ChinaAgriculturalUniversityPoints3 = {
+        longitude: unescape("39%B054'5.44\""),
+        latitude: unescape("116%B025'15.82\""),
+    };
+    //  北京东站
+    const ChinaAgriculturalUniversityPoints4 = {
+        longitude: unescape("39%B054'5.79\""),
+        latitude: unescape("116%B028'45.16\""),
+    };
+    //  起始点 实地青藤花园
+    // const StartPoint = {
+    //     latitude: 113.5520100000,
+    //     longitude: 23.2074700000,
+    // };
+    //  起始点 实地青藤花园
+    const StartPoint = {
+        latitude: 113.5520630000,
+        longitude: 23.2089140000,
+    };
+
+    //  数据的list
+    const pointsList = [StartPoint,
+        ChinaAgriculturalUniversityPoints1,
+        ChinaAgriculturalUniversityPoints2,
+        ChinaAgriculturalUniversityPoints3,
+        ChinaAgriculturalUniversityPoints4];
+
+</script>
+<script title="工具类">
+    //  转换全部数据
+    /**
+     * @originData : 要被从字符串转为小数点的对象 , 经过 x northernLatitude 处理  [data:[string]]
+     * */
+    function transformOriginData(originData) {
+        let data = {};
+        for (let key in originData) {
+            if (originData.hasOwnProperty(key)) {
+                data[key] = {};
+                data[key].latitude = originData[key].latitude * northernLatitude;
+                data[key].longitude = originData[key].longitude;
+            }
+        }
+        return data;
+    }
+
+    //  获取笛卡尔坐标系的绝对差值                       👌👌纯函数
+    function getDiffer(x1, y1, x2, y2) {
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    }
+
+    //  求两点连线的方程                                👌👌纯函数
+    function getK_B(x1, y1, x2, y2) {
+        let k = (y2 - y1) / (x2 - x1);
+        let b = y1 - k * x1;
+        if (x2 === x1) {
+            return {
+                x: x1,              //  说明是垂直的线，x=c
+            }
+        }
+        if (y1 === y2) {
+            return {
+                y: y1,              //  说明是水平的线，y=c
+            }
+        }
+        return {
+            k: k,
+            b: b
+        }
+    }
+
+    //  已知,x,y,k,求一元一次方程的b                      👌👌纯函数
+    function get_B(x, y, k) {
+        return y - k * x;
+    }
+
+    //  联立方程,求焦点坐标  纯函数
+    function getFocalCoordinates(a1, b1, a2, b2) {
+        let x = (b2 - b1) / (a1 - a2);
+        let y = a1 * x + b1;
+        return {latitude: x, longitude: y};
+    }
+
+    //  将经纬度坐标系单位长度转为canvas坐标系的单位长度
+    /**
+     * @x : 被转换的长度  [被换算成小数点的经纬度坐标系][northernLatitude]
+     * */
+    function transformLongitudeAndLatitudeToCartesianCoordinateSystem(x) {
+        return x * getRatio;
+    }
+
+
+    // polyfill 提供了这个方法用来获取设备的 pixel ratio
+    var getPixelRatio = function (context) {
+        var backingStore = context.backingStorePixelRatio ||
+            context.webkitBackingStorePixelRatio ||
+            context.mozBackingStorePixelRatio ||
+            context.msBackingStorePixelRatio ||
+            context.oBackingStorePixelRatio ||
+            context.backingStorePixelRatio || 1;
+
+        return (window.devicePixelRatio || 1) / backingStore;
+    };
+
+</script>
+<script>
+    let canvas = document.getElementById('canvas');
+    let ctx = canvas.getContext('2d');
+
+    //  分辨率
+    var ratio = getPixelRatio(ctx);
+    console.log(ratio);
+    canvas.width = window.innerWidth * ratio;
+    canvas.style.width = canvas.width / ratio + 'px';
+    // canvas.style.transformOrigin = '0 0 0';
+    // canvas.style.transform = 'scale(' + 1 / ratio + ')';
+
+
+    const _corner = transformOriginData(corner);
+    //  点的简写
+    let bl = _corner.bottomLeft;
+    let br = _corner.bottomRight;
+    //  获得底边斜率k, 和b
+    let bottomLineParams = getK_B(br.latitude, br.longitude, bl.latitude, bl.longitude);
+    console.log('底边k,b对象', bottomLineParams);
+    let tl = _corner.topLeft;
+
+    //  获得左边斜率k,和b
+    let leftLineParams = getK_B(tl.latitude, tl.longitude, bl.latitude, bl.longitude);
+    console.log('左边k,b对象', leftLineParams);
+
+
+    //  根据左下角和右下角求底边在canvas坐标系下的长度
+    let bottom_differ = getDiffer(bl.latitude, bl.longitude, br.latitude, br.longitude);
+    //  单位经纬度坐标系长度相当于n个像素的比例,是一个很大的数
+    let getRatio = canvas.width / bottom_differ;
+    let left_differ = getDiffer(bl.latitude, bl.longitude, tl.latitude, tl.longitude);
+
+
+    let image = new Image();
+    image.onload = function () {
+        canvas.height = window.innerWidth * this.height / this.width * ratio;
+        canvas.style.height = canvas.height / ratio + 'px';
+        drawMap();
+        (function () {
+            // 测试四角--证明坐标系准确性
+            __testCorner(bottom_differ, left_differ, bottomLineParams.k * leftLineParams.k)
+        }());
+        console.clear();
+
+
+        //  绘制某个实际的点位
+        let __point = calculatePoint(StartPoint);
+        //  绘制某个点
+        drawMarker(__point);
+
+    };
+    image.src = '../libs/img/map5.png';
+
+    //  计算该点在canvas坐标系下的坐标
+    /**
+     * @_cAUP   用于计算坐标的坐标点  [被换算成小数点的经纬度坐标系][northernLatitude]
+     * @params  canvas的边
+     * */
+    function calculateCoordinate(_cAUP, params) {
+        //  该点一元一次方程的 b
+        let _k = -1 / params.k;
+        let b = get_B(_cAUP.latitude, _cAUP.longitude, _k);
+        //  该点在经纬度坐标系下与底边的焦点坐标
+        let focalCoordinates = getFocalCoordinates(_k, b, params.k, params.b);
+        //  获得该点关于canvas坐标系底边焦点  的经纬度坐标
+        // console.log('获得该点关于canvas坐标系底边焦点 的 经纬度坐标', focalCoordinates);
+        //  求得这个a点与左下角点的绝对长度差,这个点是该点的在canvas坐标系下 的 实际的 x
+        let bottom_diff = getDiffer(bl.latitude, bl.longitude, focalCoordinates.latitude, focalCoordinates.longitude);
+        // console.log('实际的 x', bottom_diff);
+        return bottom_diff;
+    }
+
+    //  绘制地图
+    function drawMap() {
+        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    }
+
+
+    //  计算点位，从经纬度坐标 计算 为 canvas坐标系坐标
+    /**
+     * @point : [ChinaAgriculturalUniversityPoints]
+     * */
+    function calculatePoint(point) {
+        //  某个点的数据
+        const _point = {
+            latitude: point.latitude * northernLatitude,
+            longitude: point.longitude,
+        };
+        //  换算为canvas坐标系后的坐标,   如果不是直角，需要调用 calculateCoordinate 方法，联立方程求坐标
+        const __point = {
+            latitude: _point.latitude - leftLineParams.x,
+            longitude: _point.longitude - bottomLineParams.y
+        };
+        return {
+            x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.latitude),
+            y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.longitude)
+        };
+    }
+
+    //  绘制marker
+    /**
+     * @point : 点 [canvas坐标系]
+     * */
+    function drawMarker(point) {
+        ctx.beginPath();
+        ctx.arc(point.x, canvas.height - point.y, Radio, 0, 2 * Math.PI);
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+        ctx.fillStyle = FillStyle;
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    //  测试  四角定位
+    /**
+     * @bottom_differ
+     * @left_differ
+     * @productOfSlope
+     * */
+    function __testCorner(bottom_differ, left_differ, productOfSlope) {
+        console.log('*******************************四角定位测试*******************************');
+        console.log('bottom_differ  :   底边在经纬度坐标下的长度', bottom_differ);
+        let width_rate_bottom = canvas.width / bottom_differ;
+        console.log('width_rate :      每个单位相当于  ** 个像素', width_rate_bottom);
+
+        console.log('left_differ  :     左边在经纬度坐标下的长度', left_differ);
+        let width_rate_left = canvas.height / left_differ;
+        console.log('width_rate_left : 每个单位相当于  ** 个像素', width_rate_left);
+        console.log('width_rate_bottom 应该等于 width_rate', Math.floor(width_rate_bottom), Math.floor(width_rate_left));
+
+        console.log('\n', '四角坐标', _corner, '\n\t');
+        console.log('两边斜率乘积 , 越接近 -1 越精确', productOfSlope);
+
+        console.log('*******************************四角定位测试*******************************');
+        //  绘制四角定位点
+        testDraw(bottom_differ, left_differ);
+    }
+
+    //  测试
+    function testDraw(bottom_differ, left_differ) {
+        //  test右下角
+        drawMarker({
+            x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(Number(bottom_differ)),
+            y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(0)
+        });
+        //  test右上角
+        drawMarker({
+            x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(Number(bottom_differ)),
+            y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(left_differ)
+        });
+        //  test左上角
+        drawMarker({
+            x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(0),
+            y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(left_differ)
+        });
+        //  test左下角
+        drawMarker({
+            x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(0),
+            y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(0)
+        });
+    }
+</script>
+</body>
+</html>

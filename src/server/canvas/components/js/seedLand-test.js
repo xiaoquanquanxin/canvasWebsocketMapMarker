@@ -29,50 +29,33 @@ let getRatio = canvas.width / bottom_differ;
 let left_differ = getDiffer(bl.latitude, bl.longitude, tl.latitude, tl.longitude);
 
 //  主背景图
-const imageMap = new Image();
 imageMap.onload = function () {
     canvas.height = window.innerWidth * this.height / this.width * ratio;
     canvas.style.height = canvas.height / ratio + 'px';
-    //  绘制地图
-    drawImage(this, {x: 0, y: 0}, canvas.width, canvas.height);
-    (function () {
-        // 测试四角--证明坐标系准确性
-        __testCorner(bottom_differ, left_differ, bottomLineParams.k * leftLineParams.k)
-    }());
-    console.clear();
-
-    //  绘制路径
-    pointsList.reduce(function (prev, current) {
-        drawLine(calculatePoint(prev), calculatePoint(current), 'blue', 15);
-        return current;
-    });
-
-    //  绘制拐弯
-    pointsList.forEach(function (item, index) {
-        let __point = calculatePoint(item);
-        //  绘制某个点
-        drawRound(__point, 7.5, 'blue');
-    });
-
-    //  绘制某个实际的点位
-    let __point = calculatePoint(StartPoint);
-    //  绘制某个点
-    drawRound(__point, 4.5, 'yellow');
+    setTimeout(function () {
+        mainRender();
+    }, 100)
 
 };
-imageMap.src = imageMapSrc;
+//  设置地图src
+imageMap.src = imageMap._src;
 
 //  小车图片
-const imageCar = new Image();
 imageCar.onload = function () {
-    console.log(this);
-    const width = this.width / 10;
-    const height = this.height / 10;
-    drawImage(this, {x: 0, y: 0}, width, height);
+    // console.log(this);
+    this.width = this.width / 10;
+    this.height = this.height / 10;
 };
-imageCar.src = imageCarSrc;
+//  设置小车src
+imageCar.src = imageCar._src;
 
-
+//  站点图片
+imageStation.onload = function () {
+    this.width = this.width / 10;
+    this.height = this.height / 10;
+};
+//  设置站点图片src
+imageStation.src = imageStation._src;
 
 
 

@@ -18,32 +18,33 @@
 </head>
 <body>
 <canvas id="canvas"></canvas>
+<!--<img src="../libs/img/map4.jpg" alt="" style="width: 100%;">-->
 <p style="position:absolute;bottom:0;left:0;">latitude-x; longitude-y;</p>
 <script title="数据">
     let northernLatitude = Math.cos(Math.PI * (23.209017141700002 / 180));
     // console.log('当前纬度下,每个经度相当于  ' + northernLatitude + '  个纬度');
 
     //  半径
-    const Radio = 80;
+    const Radio = 15;
     const FillStyle = 'rgba(0,0,255,.4)';
     //  四个角落的坐标
     const corner = (function () {
         return {
             topLeft: {
-                latitude: 113.5501320000,
-                longitude: 23.2102160000,
+                latitude: 113.5491138697,
+                longitude: 23.2105553933,
             },
             topRight: {
-                latitude: 113.5528900000,
-                longitude: 23.2102160000,
+                latitude: 113.5530728102,
+                longitude: 23.2105553933,
             },
             bottomLeft: {
-                latitude: 113.5501320000,
-                longitude: 23.2060250000,
+                latitude: 113.5491138697,
+                longitude: 23.2074838205,
             },
             bottomRight: {
-                latitude: 113.5528900000,
-                longitude: 23.2060250000,
+                latitude: 113.5530728102,
+                longitude: 23.2074838205,
             },
         };
     }());
@@ -75,8 +76,8 @@
     // };
     //  起始点 实地青藤花园
     const StartPoint = {
-        latitude: 113.5520630000,
-        longitude: 23.2089140000,
+        latitude: 113.5519990000,
+        longitude: 23.2074450000,
     };
 
     //  数据的list
@@ -215,7 +216,7 @@
         drawMarker(__point);
 
     };
-    image.src = '../libs/img/map5.png';
+    image.src = '../libs/img/map4.jpg';
 
     //  计算该点在canvas坐标系下的坐标
     /**

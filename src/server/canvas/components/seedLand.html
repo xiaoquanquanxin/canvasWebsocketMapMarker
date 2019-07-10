@@ -13,15 +13,12 @@
 
         canvas {
             display: block;
-            /*width:200%;*/
-            /* transform: scale(0.5);*/
-            /*outline: 1px solid red;*/
         }
     </style>
 </head>
 <body>
 <canvas id="canvas"></canvas>
-<img src="../libs/img/map4.jpg" alt="" width="100%">
+<!--<img src="../libs/img/map4.jpg" alt="" width="100%">-->
 latitude-x;
 longitude-y;
 <script title="数据">
@@ -145,11 +142,32 @@ longitude-y;
     function transformLongitudeAndLatitudeToCartesianCoordinateSystem(x) {
         return x * getRatio;
     }
+
+
+    // polyfill 提供了这个方法用来获取设备的 pixel ratio
+    var getPixelRatio = function (context) {
+        var backingStore = context.backingStorePixelRatio ||
+            context.webkitBackingStorePixelRatio ||
+            context.mozBackingStorePixelRatio ||
+            context.msBackingStorePixelRatio ||
+            context.oBackingStorePixelRatio ||
+            context.backingStorePixelRatio || 1;
+
+        return (window.devicePixelRatio || 1) / backingStore;
+    };
+
 </script>
 <script>
     let canvas = document.getElementById('canvas');
     let ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
+
+    //  分辨率
+    var ratio = getPixelRatio(ctx);
+    console.log(ratio);
+    canvas.width = window.innerWidth * ratio;
+    canvas.style.width =  canvas.width / ratio + 'px';
+    // canvas.style.transformOrigin = '0 0 0';
+    // canvas.style.transform = 'scale(' + 1 / ratio + ')';
 
 
     const _corner = transformOriginData(corner);
@@ -175,15 +193,15 @@ longitude-y;
 
     let image = new Image();
     image.onload = function () {
-        canvas.height = window.innerWidth * this.height / this.width;
+        canvas.height = window.innerWidth * this.height / this.width * ratio;
+        canvas.style.height = canvas.height / ratio + 'px';
         drawMap();
-
+        return;
         (function () {
             // 测试四角--证明坐标系准确性
             __testCorner(bottom_differ, left_differ, bottomLineParams.k * leftLineParams.k)
         }());
         console.clear();
-
 
 
         //  绘制某个实际的点位
@@ -215,7 +233,7 @@ longitude-y;
 
     //  绘制地图
     function drawMap() {
-        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+        ctx.drawImage(image, 0, 0, canvas.width  , canvas.height );
     }
 
 

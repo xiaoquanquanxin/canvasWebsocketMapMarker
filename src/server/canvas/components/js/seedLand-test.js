@@ -42,22 +42,22 @@ ImageMap.src = ImageMap._src;
 
 //  小车图片
 ImageCar.onload = function () {
-    // console.log(this);
-    this.width = this.width / 10;
-    this.height = this.height / 10;
+    console.log(this.src, this.width, this.height)
+
 };
 //  设置小车src
 ImageCar.src = ImageCar._src;
 
 //  站点图片
 ImageStation.onload = function () {
-    this.width = this.width / 10;
-    this.height = this.height / 10;
+    console.log(this.src, this.width, this.height)
 };
 //  设置站点图片src
 ImageStation.src = ImageStation._src;
 
-
-
+ImageUser.onload = function () {
+    console.log(this.src, this.width, this.height)
+}
+ImageUser.src = ImageUser._src;
 
 

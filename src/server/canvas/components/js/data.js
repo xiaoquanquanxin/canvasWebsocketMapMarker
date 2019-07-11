@@ -49,12 +49,13 @@ const pointsList = [
 //  图片配置
 //  地图
 const ImageMap = new Image();
-ImageMap._src = './img/map4.jpg';
+ImageMap._src = './img/map5.png';
 //  小车
 const ImageCar = new Image();
-ImageCar._src = './img/car.jpeg';
+ImageCar._src = './img/car.png';
 //  站点
 const ImageStation = new Image();
-ImageStation._src = './img/jenkins.svg';
+ImageStation._src = './img/station_basic.png';
 //  用户
 const ImageUser = new Image();
+ImageUser._src = './img/user.png';

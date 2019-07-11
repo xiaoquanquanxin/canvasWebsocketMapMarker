@@ -83,6 +83,17 @@ function calculatePoint(point) {
 }
 
 
+//  计算连个点位之间都距离，返回距离？哪一个点位？
+/**
+ * @referenceSpot:参考点位
+ * @point1:第一个点
+ * @point2:第二个点
+ * */
+function getClosest(referenceSpot, point1, point2) {
+
+}
+
+
 //  测试  四角定位
 /**
  * @bottom_differ

@@ -91,7 +91,7 @@ function mainRender() {
 
     //  绘制用户
     let __userPoint = calculatePoint(UserPoint);
-    drawUser(__userPoint, 10, 'red');
+    drawImage(ImageUser, __userPoint, ImageUser.width, ImageUser.height);
 
 }
 

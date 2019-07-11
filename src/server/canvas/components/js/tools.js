@@ -78,7 +78,7 @@ function calculatePoint(point) {
     };
     return {
         x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.latitude),
-        y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.longitude)
+        y: canvas.height - transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.longitude)
     };
 }
 
@@ -111,23 +111,23 @@ function __testCorner(bottom_differ, left_differ, productOfSlope) {
 //  测试
 function testDraw(bottom_differ, left_differ) {
     //  test右下角
-    drawMarker({
+    drawRound({
         x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(Number(bottom_differ)),
-        y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(0)
-    });
+        y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(0),
+    }, 20, 'red');
     //  test右上角
-    drawMarker({
+    drawRound({
         x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(Number(bottom_differ)),
         y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(left_differ)
-    });
+    }, 20, 'red');
     //  test左上角
-    drawMarker({
+    drawRound({
         x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(0),
         y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(left_differ)
-    });
+    }, 20, 'red');
     //  test左下角
-    drawMarker({
+    drawRound({
         x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(0),
         y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(0)
-    });
+    }, 20, 'red');
 }

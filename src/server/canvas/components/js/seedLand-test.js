@@ -28,27 +28,36 @@ let bottom_differ = getDiffer(bl.latitude, bl.longitude, br.latitude, br.longitu
 let getRatio = canvas.width / bottom_differ;
 let left_differ = getDiffer(bl.latitude, bl.longitude, tl.latitude, tl.longitude);
 
-
-let image = new Image();
-image.onload = function () {
+//  主背景图
+ImageMap.onload = function () {
     canvas.height = window.innerWidth * this.height / this.width * ratio;
     canvas.style.height = canvas.height / ratio + 'px';
-    drawMap();
-    (function () {
-        return
-        // 测试四角--证明坐标系准确性
-        __testCorner(bottom_differ, left_differ, bottomLineParams.k * leftLineParams.k)
-    }());
-    // console.clear();
+    setTimeout(function () {
+        mainRender();
+    }, 100)
 
-
-    pointsList.forEach(function (item, index) {
-        //  绘制某个实际的点位
-        let __point = calculatePoint(item);
-        //  绘制某个点
-        drawMarker(__point);
-    })
 };
-image.src = '../libs/img/map4.jpg';
+//  设置地图src
+ImageMap.src = ImageMap._src;
+
+//  小车图片
+ImageCar.onload = function () {
+    // console.log(this);
+    this.width = this.width / 10;
+    this.height = this.height / 10;
+};
+//  设置小车src
+ImageCar.src = ImageCar._src;
+
+//  站点图片
+ImageStation.onload = function () {
+    this.width = this.width / 10;
+    this.height = this.height / 10;
+};
+//  设置站点图片src
+ImageStation.src = ImageStation._src;
+
+
+
 
 

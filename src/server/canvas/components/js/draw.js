@@ -43,8 +43,14 @@ function drawImage(img, point, width, height) {
 }
 
 //  绘制用户
-function drawUser() {
-
+function drawUser(point, radio, fillStyle) {
+    ctx.beginPath();
+    ctx.arc(point.x, point.y, radio, 0, 2 * Math.PI);
+    ctx.strokeStyle = 'red';
+    ctx.lineWidth = 0.5;
+    ctx.fillStyle = fillStyle;
+    ctx.fill();
+    ctx.closePath();
 }
 
 //  主绘制
@@ -53,7 +59,7 @@ function mainRender() {
     //  任何时候都要先晴空
     drawClear();
     //  绘制地图
-    drawImage(imageMap, {x: 0, y: 0}, canvas.width, canvas.height);
+    drawImage(ImageMap, {x: 0, y: 0}, canvas.width, canvas.height);
     (function () {
         // 测试四角--证明坐标系准确性
         __testCorner(bottom_differ, left_differ, bottomLineParams.k * leftLineParams.k)
@@ -71,8 +77,8 @@ function mainRender() {
         let __point = calculatePoint(item);
         //  绘制某个点
         drawRound(__point, 7.5, 'blue');
-        // console.log(imageCar, __point, 26, 36);
-        drawImage(imageStation, {x: __point.x - 26 / 2, y: __point.y - 36 / 2}, 26, 36);
+        // console.log(ImageCar, __point, 26, 36);
+        drawImage(ImageStation, {x: __point.x - 26 / 2, y: __point.y - 36 / 2}, 26, 36);
     });
 
     //  绘制某个实际的点位
@@ -81,7 +87,11 @@ function mainRender() {
     drawRound(__point, 4.5, 'yellow');
 
     //  绘制小车
-    drawImage(imageCar, {x: 0, y: 0}, imageCar.width, imageCar.height);
+    drawImage(ImageCar, {x: 0, y: 0}, ImageCar.width, ImageCar.height);
+
+    //  绘制用户
+    let __userPoint = calculatePoint(UserPoint);
+    drawUser(__userPoint, 10, 'red');
 
 }
 

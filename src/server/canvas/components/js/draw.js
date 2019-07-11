@@ -68,13 +68,13 @@ function drawStations() {
 //  绘制路径
 function drawRoad() {
     //  绘制路径
-    PointsList.reduce(function (prev, current) {
+    RoadList.reduce(function (prev, current) {
         drawLine(calculatePoint(prev), calculatePoint(current), 'rgba(0,199,0,0.4)', 15);
         return current;
     });
 
     //  绘制拐弯
-    PointsList.forEach(function (item, index) {
+    RoadList.forEach(function (item, index) {
         let __point = calculatePoint(item);
         //  绘制某个点
         drawRound(__point, 7.5, 'rgba(0,199,0,0.4)',);
@@ -105,22 +105,9 @@ function drawUser(point) {
 
 }
 
-//  对外暴露方法
 
-//  绘制起点终点
-function drawStartAndEnd(startPoint, endPoint) {
-    //  绘制起点需要全部擦除
-    drawClear();
-    //  绘制地图
-    drawMap();
-    //  绘制道路
-    drawRoad();
-    //  绘制全部站点
-    drawStations();
-    //  绘制起点和终点
-    startPoint && drawStation(startPoint, ImageStationStart);
-    endPoint && drawStation(endPoint, ImageStationEnd);
-}
+
+//  对外暴露方法  export
 
 //  绘制未定位状态
 function drawUnLocation() {
@@ -141,21 +128,41 @@ function drawLocation(userPoint) {
     //  用户定位
     drawUser(userPoint);
     console.clear();
-    getClosest(userPoint, PointsList);
+    const MinPoint = getClosest(userPoint, StationList);
+    console.log('离我最近的点', MinPoint);
+    return MinPoint;
+}
+
+//  绘制起点终点
+function drawStartAndEnd(startPoint, endPoint) {
+    //  绘制起点需要全部擦除
+    drawClear();
+    //  绘制地图
+    drawMap();
+    //  绘制道路
+    drawRoad();
+    //  绘制全部站点
+    drawStations();
+    //  绘制起点和终点
+    startPoint && drawStation(startPoint, ImageStationStart);
+    endPoint && drawStation(endPoint, ImageStationEnd);
+    //  绘制用户的点位 只要用户曾经定位过，就永远在这里了
+    UserPoint && drawUser(UserPoint);
 }
 
 //  主绘制
 //  封装了绘制路线和地图
 function mainRender() {
     //  绘制用户开启定位状态
-    drawLocation(UserPoint);
+    drawUnLocation();
+
+    return
     //  绘制小车
     drawImage(ImageCar, {x: 0, y: 0}, ImageCar.width, ImageCar.height);
 }
 
 
 //  todo    考虑这些小图点载入顺序，考虑小图的大小比例
-
 
 //  测试
 

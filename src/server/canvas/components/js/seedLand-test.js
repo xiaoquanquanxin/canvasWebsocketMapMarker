@@ -30,6 +30,11 @@ let left_differ = getDiffer(bl.latitude, bl.longitude, tl.latitude, tl.longitude
 
 //  主背景图
 ImageMap.onload = function () {
+    imgRatio = this.width / window.innerWidth / ratio;
+    console.log(imgRatio);
+
+    //  载入图标图片
+    loadIconImage();
     canvas.height = window.innerWidth * this.height / this.width * ratio;
     canvas.style.height = canvas.height / ratio + 'px';
     setTimeout(function () {
@@ -39,37 +44,46 @@ ImageMap.onload = function () {
 //  设置地图src
 ImageMap.src = ImageMap._src;
 
-//  小车图片
-ImageCar.onload = function () {
-    console.log('ImageCar', this.width, this.height);
-};
+
+//  载入图标图片
+function loadIconImage() {
+
 //  设置小车src
-ImageCar.src = ImageCar._src;
+    ImageCar.src = ImageCar._src;
 
-//  站点图片
-ImageStationBasic.onload = function () {
-    console.log('ImageStationBasic', this.width, this.height);
-};
 //  设置站点图片src
-ImageStationBasic.src = ImageStationBasic._src;
+    ImageStationBasic.src = ImageStationBasic._src;
 
-//  站点图片
-ImageStationStart.onload = function () {
-    console.log('ImageStationStart', this.width, this.height);
-};
+
 //  设置站点图片src
-ImageStationStart.src = ImageStationStart._src;
+    ImageStationStart.src = ImageStationStart._src;
 
-//  站点图片
-ImageStationEnd.onload = function () {
-    console.log('ImageStationEnd', this.width, this.height);
-};
+
 //  设置站点图片src
-ImageStationEnd.src = ImageStationEnd._src;
+    ImageStationEnd.src = ImageStationEnd._src;
 
-ImageUser.onload = function () {
-    console.log('ImageUser', this.width, this.height);
-};
-ImageUser.src = ImageUser._src;
 
+//  用户图片
+    ImageUser.src = ImageUser._src;
+
+}
+
+
+//  小车图片
+ImageCar.onload = iconImageLoad;
+//  站点图片
+ImageStationBasic.onload = iconImageLoad;
+//  站点图片
+ImageStationStart.onload = iconImageLoad;
+//  站点图片
+ImageStationEnd.onload = iconImageLoad;
+//  用户图片
+ImageUser.onload = iconImageLoad;
+
+//  载入图标图片的时候
+function iconImageLoad() {
+    this.width /= imgRatio;
+    this.height /= imgRatio;
+    // console.log(this.src.substr(-20), this.width, this.height);
+}
 

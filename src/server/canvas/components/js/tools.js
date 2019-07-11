@@ -88,22 +88,24 @@ function calculatePoint(point) {
  * @referenceSpot:参考点位
  * @pointList:一系列点
  *
- * @return:从pointList中,返回最近的那个点
+ * @return:number 从pointList中,返回最近的那个点
  * */
 function getClosest(referenceSpot, pointList) {
-    console.log(referenceSpot, pointList);
     //  转为canvas坐标系
     const __referenceSpot = calculatePoint(referenceSpot);
     //  转为canvas坐标系
     const __pointList = pointList.map(function (item, index) {
         return calculatePoint(item);
     });
-    console.log(__referenceSpot, __pointList);
     //  作出距离的list
     const __differList = __pointList.map(function (item) {
         return getDiffer(item.x, item.y, __referenceSpot.x, __referenceSpot.y);
     });
-    console.log(__differList);
+    const Min = Math.min.apply(null, __differList);
+    const MinIndex = __differList.findIndex(function (item) {
+        return item === Min;
+    });
+    return pointList[MinIndex];
 }
 
 

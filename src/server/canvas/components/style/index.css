@@ -5,3 +5,8 @@ body {
 canvas {
     display: block;
 }
+
+
+li {
+    line-height: 1.3em;
+}

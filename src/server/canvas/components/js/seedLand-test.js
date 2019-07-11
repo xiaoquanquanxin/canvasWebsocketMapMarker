@@ -34,30 +34,42 @@ ImageMap.onload = function () {
     canvas.style.height = canvas.height / ratio + 'px';
     setTimeout(function () {
         mainRender();
-    }, 100)
-
+    }, 100);
 };
 //  设置地图src
 ImageMap.src = ImageMap._src;
 
 //  小车图片
 ImageCar.onload = function () {
-    console.log(this.src, this.width, this.height)
-
+    console.log('ImageCar', this.width, this.height);
 };
 //  设置小车src
 ImageCar.src = ImageCar._src;
 
 //  站点图片
-ImageStation.onload = function () {
-    console.log(this.src, this.width, this.height)
+ImageStationBasic.onload = function () {
+    console.log('ImageStationBasic', this.width, this.height);
 };
 //  设置站点图片src
-ImageStation.src = ImageStation._src;
+ImageStationBasic.src = ImageStationBasic._src;
+
+//  站点图片
+ImageStationStart.onload = function () {
+    console.log('ImageStationStart', this.width, this.height);
+};
+//  设置站点图片src
+ImageStationStart.src = ImageStationStart._src;
+
+//  站点图片
+ImageStationEnd.onload = function () {
+    console.log('ImageStationEnd', this.width, this.height);
+};
+//  设置站点图片src
+ImageStationEnd.src = ImageStationEnd._src;
 
 ImageUser.onload = function () {
-    console.log(this.src, this.width, this.height)
-}
+    console.log('ImageUser', this.width, this.height);
+};
 ImageUser.src = ImageUser._src;
 
 

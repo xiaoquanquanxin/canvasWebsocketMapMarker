@@ -1,49 +1,50 @@
-let northernLatitude = Math.cos(Math.PI * (23.209017141700002 / 180));
-// console.log('当前纬度下,每个经度相当于  ' + northernLatitude + '  个纬度');
-
+//  经度在当前纬度下的比例
+let northernLatitude = 0;
 //  四个角落的坐标
 const corner = (function () {
+    const Left = 113.5502100000;
+    const Top = 23.2102910000;
+    const Right = 113.5528060000;
+    const Bottom = 23.2060700000;
+    northernLatitude = Math.cos(Math.PI * ((Top + Bottom) / 2 / 180));
+    console.log('当前纬度下,每个经度相当于  ' + northernLatitude + '  个纬度');
     return {
         topLeft: {
-            latitude: 113.5491138697,
-            longitude: 23.2105553933,
+            latitude: Left,
+            longitude: Top,
         },
         topRight: {
-            latitude: 113.5530728102,
-            longitude: 23.2105553933,
+            latitude: Right,
+            longitude: Top,
         },
         bottomLeft: {
-            latitude: 113.5491138697,
-            longitude: 23.2074838205,
+            latitude: Left,
+            longitude: Bottom,
         },
         bottomRight: {
-            latitude: 113.5530728102,
-            longitude: 23.2074838205,
+            latitude: Right,
+            longitude: Bottom,
         },
     };
 }());
 
-//  起始点 实地青藤花园
-const StartPoint = {
-    latitude: 113.5499078035,
-    longitude: 23.2100130661,
-};
+//  车站点list
+const StationList = [
+    {"longitude": 23.2096000000, "latitude": 113.5511030000},
+    {"longitude": 23.2093780000, "latitude": 113.5517330000},
+    {"longitude": 23.2091780000, "latitude": 113.5523630000},
+    {"longitude": 23.2085350000, "latitude": 113.5522950000},
+    {"longitude": 23.2081220000, "latitude": 113.5508160000},
+];
 
-//  用户位置
-const UserPoint = {
-    latitude: 113.5510879755,
-    longitude: 23.2096087845,
-};
-
-
-//  数据的list
-const pointsList = [
-    {"longitude": 23.2095115735, "latitude": 113.5511688492},
-    {"longitude": 23.2092587347, "latitude": 113.5522627831},
-    {"longitude": 23.2092143621, "latitude": 113.5523486137},
-    {"longitude": 23.2080656005, "latitude": 113.5518175364},
-    {"longitude": 23.2081050431, "latitude": 113.5515171289},
-    {"longitude": 23.2083219774, "latitude": 113.5508251190},
+//  路径点list
+const PointsList = [
+    {"longitude": 23.2096380000, "latitude": 113.5509730000},
+    {"longitude": 23.2090900000, "latitude": 113.5526080000},
+    {"longitude": 23.2077930000, "latitude": 113.5519400000},
+    {"longitude": 23.2077530000, "latitude": 113.5519100000},
+    {"longitude": 23.2077490000, "latitude": 113.5517770000},
+    {"longitude": 23.2081220000, "latitude": 113.5508160000},
 ];
 
 //  图片配置
@@ -54,8 +55,36 @@ ImageMap._src = './img/map5.png';
 const ImageCar = new Image();
 ImageCar._src = './img/car.png';
 //  站点
-const ImageStation = new Image();
-ImageStation._src = './img/station_basic.png';
+//  普通站点
+const ImageStationBasic = new Image();
+ImageStationBasic._src = './img/station_basic.png';
+//  起点
+const ImageStationStart = new Image();
+ImageStationStart._src = './img/station_start.png';
+//  终点
+const ImageStationEnd = new Image();
+ImageStationEnd._src = './img/station_end.png';
 //  用户
 const ImageUser = new Image();
 ImageUser._src = './img/user.png';
+
+
+//  活动数据
+
+
+//  用户位置
+let userPoint = {
+    latitude: 113.5512400000,
+    longitude: 23.2091570000,
+};
+
+//  测试点
+let TestPoint = {
+    latitude: 113.5520550000,
+    longitude: 23.2089110000,
+};
+
+//  用户选择的起点
+let StartPoint = StationList[0];
+//  终点
+let EndPoint = StationList[4];

@@ -47,6 +47,11 @@ function drawImage(img, point, width, height) {
 
 //  实例方法
 
+//  清除全部画布
+function drawClear() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
 //  绘制地图
 function drawMap() {
     drawImage(ImageMap, {x: 0, y: 0}, canvas.width, canvas.height);
@@ -82,13 +87,22 @@ function drawRoad() {
 //  绘制某个站点
 /**
  * @point：点位
- * @type：点位类型
+ * @img:    不同类型的图片
  * */
 function drawStation(point, img) {
     let __point = calculatePoint(point);
     __point.x = __point.x - img.width / 2;
     __point.y = __point.y - img.height;
     drawImage(img, __point, img.width, img.height);
+}
+
+//  绘制用户
+function drawUser(point) {
+    let __point = calculatePoint(point);
+    __point.x = __point.x - ImageUser.width / 2;
+    __point.y = __point.y - ImageUser.height * 0.9;
+    drawImage(ImageUser, __point, ImageUser.width, ImageUser.height);
+
 }
 
 //  对外暴露方法
@@ -121,64 +135,35 @@ function drawUnLocation() {
 }
 
 //  绘制用户开启定位状态
-function drawLocation() {
+function drawLocation(userPoint) {
     //  先画未定位
     drawUnLocation();
     //  用户定位
-    let __userPoint = calculatePoint(userPoint);
-    drawImage(ImageUser, __userPoint, ImageUser.width, ImageUser.height);
-}
-
-//  绘制用户
-function drawUser(point, radio, fillStyle) {
-    ctx.beginPath();
-    ctx.arc(point.x, point.y, radio, 0, 2 * Math.PI);
-    ctx.strokeStyle = 'red';
-    ctx.lineWidth = 0.5;
-    ctx.fillStyle = fillStyle;
-    ctx.fill();
-    ctx.closePath();
+    drawUser(userPoint);
+    console.clear();
+    getClosest(userPoint, PointsList);
 }
 
 //  主绘制
 //  封装了绘制路线和地图
 function mainRender() {
-    return;
-    //  任何时候都要先晴空
-    drawClear();
-    //  绘制地图
-    drawImage(ImageMap, {x: 0, y: 0}, canvas.width, canvas.height);
-
-    //  测试
-    (function () {
-        return;
-        // 测试四角--证明坐标系准确性
-        __testCorner(bottom_differ, left_differ, bottomLineParams.k * leftLineParams.k);
-        console.clear();
-        //  测试点位
-        drawRound(calculatePoint(TestPoint), 10, 'red');
-    }());
-
-
-    //  绘制道路
-    drawRoad();
-    //  绘制全部站点
-    drawStations();
-
-    return;
-
+    //  绘制用户开启定位状态
+    drawLocation(UserPoint);
     //  绘制小车
     drawImage(ImageCar, {x: 0, y: 0}, ImageCar.width, ImageCar.height);
-
-    //  绘制用户
-    let __userPoint = calculatePoint(UserPoint);
-    drawImage(ImageUser, __userPoint, ImageUser.width, ImageUser.height);
-
 }
 
-//  清除全部画布
-function drawClear() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
 
 //  todo    考虑这些小图点载入顺序，考虑小图的大小比例
+
+
+//  测试
+
+//  测试坐标精准度
+function testCoordinatePrecision(testPoint) {
+    // 测试四角--证明坐标系准确性
+    __testCorner(bottom_differ, left_differ, bottomLineParams.k * leftLineParams.k);
+    //  测试点位
+    testPoint && drawRound(calculatePoint(testPoint), 10, 'red');
+}
+

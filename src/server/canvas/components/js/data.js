@@ -1,5 +1,7 @@
 //  经度在当前纬度下的比例
-let northernLatitude = 0;
+let northernLatitude = 1;
+//  图片绘制的比例，根据地图与window.innerWidth的比例
+let imgRatio = 1;
 //  四个角落的坐标
 const corner = (function () {
     const Left = 113.5502100000;
@@ -38,7 +40,7 @@ const StationList = [
 ];
 
 //  路径点list
-const PointsList = [
+const RoadList = [
     {"longitude": 23.2096380000, "latitude": 113.5509730000},
     {"longitude": 23.2090900000, "latitude": 113.5526080000},
     {"longitude": 23.2077930000, "latitude": 113.5519400000},
@@ -73,9 +75,10 @@ ImageUser._src = './img/user.png';
 
 
 //  用户位置
-let UserPoint = {
-    latitude: 113.5512400000,
-    longitude: 23.2091570000,
+let UserPoint = null;
+UserPoint = {
+    latitude: 113.5516910000,
+    longitude: 23.2090780000,
 };
 
 //  测试点

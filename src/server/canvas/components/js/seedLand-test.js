@@ -29,7 +29,7 @@ let getRatio = canvas.width / bottom_differ;
 let left_differ = getDiffer(bl.latitude, bl.longitude, tl.latitude, tl.longitude);
 
 //  主背景图
-imageMap.onload = function () {
+ImageMap.onload = function () {
     canvas.height = window.innerWidth * this.height / this.width * ratio;
     canvas.style.height = canvas.height / ratio + 'px';
     setTimeout(function () {
@@ -38,24 +38,24 @@ imageMap.onload = function () {
 
 };
 //  设置地图src
-imageMap.src = imageMap._src;
+ImageMap.src = ImageMap._src;
 
 //  小车图片
-imageCar.onload = function () {
+ImageCar.onload = function () {
     // console.log(this);
     this.width = this.width / 10;
     this.height = this.height / 10;
 };
 //  设置小车src
-imageCar.src = imageCar._src;
+ImageCar.src = ImageCar._src;
 
 //  站点图片
-imageStation.onload = function () {
+ImageStation.onload = function () {
     this.width = this.width / 10;
     this.height = this.height / 10;
 };
 //  设置站点图片src
-imageStation.src = imageStation._src;
+ImageStation.src = ImageStation._src;
 
 
 

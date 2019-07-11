@@ -29,6 +29,12 @@ const StartPoint = {
     longitude: 23.2100130661,
 };
 
+//  用户位置
+const UserPoint = {
+    latitude: 113.5510879755,
+    longitude: 23.2096087845,
+};
+
 
 //  数据的list
 const pointsList = [
@@ -42,11 +48,13 @@ const pointsList = [
 
 //  图片配置
 //  地图
-const imageMap = new Image();
-imageMap._src = './img/map4.jpg';
+const ImageMap = new Image();
+ImageMap._src = './img/map4.jpg';
 //  小车
-const imageCar = new Image();
-imageCar._src = './img/car.jpeg';
+const ImageCar = new Image();
+ImageCar._src = './img/car.jpeg';
 //  站点
-const imageStation = new Image();
-imageStation._src = './img/jenkins.svg';
+const ImageStation = new Image();
+ImageStation._src = './img/jenkins.svg';
+//  用户
+const ImageUser = new Image();

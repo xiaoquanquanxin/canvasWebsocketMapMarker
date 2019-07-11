@@ -83,14 +83,27 @@ function calculatePoint(point) {
 }
 
 
-//  计算连个点位之间都距离，返回距离？哪一个点位？
+//  返回最近的点
 /**
  * @referenceSpot:参考点位
- * @point1:第一个点
- * @point2:第二个点
+ * @pointList:一系列点
+ *
+ * @return:从pointList中,返回最近的那个点
  * */
-function getClosest(referenceSpot, point1, point2) {
-
+function getClosest(referenceSpot, pointList) {
+    console.log(referenceSpot, pointList);
+    //  转为canvas坐标系
+    const __referenceSpot = calculatePoint(referenceSpot);
+    //  转为canvas坐标系
+    const __pointList = pointList.map(function (item, index) {
+        return calculatePoint(item);
+    });
+    console.log(__referenceSpot, __pointList);
+    //  作出距离的list
+    const __differList = __pointList.map(function (item) {
+        return getDiffer(item.x, item.y, __referenceSpot.x, __referenceSpot.y);
+    });
+    console.log(__differList);
 }
 
 

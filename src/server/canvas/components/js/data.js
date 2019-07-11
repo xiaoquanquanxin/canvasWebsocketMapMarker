@@ -73,7 +73,7 @@ ImageUser._src = './img/user.png';
 
 
 //  用户位置
-let userPoint = {
+let UserPoint = {
     latitude: 113.5512400000,
     longitude: 23.2091570000,
 };

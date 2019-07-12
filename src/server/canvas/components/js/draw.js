@@ -26,7 +26,8 @@ function drawLine(startPoint, endPoint, strokeStyle, lineWidth) {
 function drawRound(point, radio, fillStyle) {
     ctx.beginPath();
     ctx.arc(point.x, point.y, radio, 0, 2 * Math.PI);
-    ctx.strokeStyle = 'red';
+    ctx.strokeStyle = fillStyle;
+    // ctx.strokeStyle = 'red';
     ctx.lineWidth = 0.5;
     ctx.fillStyle = fillStyle;
     ctx.fill();
@@ -42,6 +43,28 @@ function drawRound(point, radio, fillStyle) {
  * */
 function drawImage(img, point, width, height) {
     ctx.drawImage(img, point.x, point.y, width, height);
+}
+
+//  绘制圆角矩形
+function drawRoundRect(x, y, width, height, radius, fillStyle) {
+    ctx.beginPath();
+    ctx.fillStyle = fillStyle;
+    ctx.arc(x + radius, y + radius, radius, Math.PI, Math.PI * 3 / 2);
+    ctx.lineTo(width - radius + x, y);
+    ctx.arc(width - radius + x, radius + y, radius, Math.PI * 3 / 2, Math.PI * 2);
+    ctx.lineTo(width + x, height + y - radius);
+    ctx.arc(width - radius + x, height - radius + y, radius, 0, Math.PI * 1 / 2);
+    ctx.lineTo(radius + x, height + y);
+    ctx.arc(radius + x, height - radius + y, radius, Math.PI * 1 / 2, Math.PI);
+    ctx.fill();
+    ctx.closePath();
+}
+
+//  绘制文字
+function drawText(message, x, y, fontSize, color) {
+    ctx.font = fontSize + "px Arial";
+    ctx.fillStyle = color;
+    ctx.fillText(message, x, y);
 }
 
 
@@ -77,12 +100,34 @@ function drawRoad() {
     RoadList.forEach(function (item, index) {
         let __point = calculatePoint(item);
         //  绘制某个点
-        drawRound(__point, 7.5, 'rgba(0,199,0,0.4)',);
-        // console.log(ImageCar, __point, 26, 36);
-        // drawImage(ImageStation, {x: __point.x - 26 / 2, y: __point.y - 36 / 2}, 26, 36);
+        drawRound(__point, 13, 'purple',);
     });
 }
 
+//  绘制小车
+function drawCar(point) {
+    //  todo    拿到原始数据之后，应该计算出距离最近的点位，将小车扔过去，
+    //  todo    缺少，线性方向 , 我要知道当前点的所属直线
+    //  获取汽车应该在的点
+    let MinIndex = getClosest(point, RoadList);
+    console.log(MinIndex, RoadList);
+    //  找到可以用来求解的两个点    这两个点应该是前三和后三
+    const CarAngle = getCarAngle(MinIndex, RoadList);
+    let __point = calculatePoint(RoadList[MinIndex]);
+    console.log(__point, CarAngle);
+    //  位移
+    ctx.translate(__point.x, __point.y);
+    //  旋转
+    ctx.rotate(CarAngle / 180 * Math.PI);
+    drawImage(ImageCar, {x: -ImageCar.width / 2, y: -ImageCar.height / 2}, ImageCar.width, ImageCar.height);
+    //  返回旋转
+    ctx.rotate(-CarAngle / 180 * Math.PI);
+    //  返回位移
+    ctx.translate(-__point.x, -__point.y);
+
+    //  测试
+    // drawStation(RoadList[0], ImageCar);
+}
 
 //  绘制某个站点
 /**
@@ -91,8 +136,8 @@ function drawRoad() {
  * */
 function drawStation(point, img) {
     let __point = calculatePoint(point);
-    __point.x = __point.x - img.width / 2;
-    __point.y = __point.y - img.height;
+    __point.x -= img.width / 2;
+    __point.y -= img.height;
     drawImage(img, __point, img.width, img.height);
 }
 
@@ -105,9 +150,37 @@ function drawUser(point) {
 
 }
 
+//  绘制小标记
+function drawTips(message, point, width, height) {
+    let __point = calculatePoint(point);
+    // width = message.length * 17 + 16 / imgRatio;
+    width = width / imgRatio;
+    height = height / imgRatio;
+
+
+    __point.x += ImageStationBasic.width * 0.5;
+    __point.y -= ImageStationBasic.height / 2 + height * 0.7;
+
+    //  绘制圆角矩形的阴影
+    drawRoundRect(__point.x + 2, __point.y + 3, width, height, 5, 'rgba(0,0,0,0.05)');
+    //  绘制圆角矩形
+    drawRoundRect(__point.x, __point.y, width, height, 5, 'white');
+    //  写入文字
+    drawText(message, __point.x + 8 / imgRatio, __point.y + height * 0.7, 16 / imgRatio, 'black');
+}
 
 
 //  对外暴露方法  export
+
+//  绘制无车可约
+function drawNoCar() {
+    //  任何时候都要先晴空
+    drawClear();
+    //  绘制地图
+    drawImage(ImageMap, {x: 0, y: 0}, canvas.width, canvas.height);
+    //  绘制道路
+    drawRoad();
+}
 
 //  绘制未定位状态
 function drawUnLocation() {
@@ -129,11 +202,12 @@ function drawLocation(userPoint) {
     drawUser(userPoint);
     console.clear();
     const MinPoint = getClosest(userPoint, StationList);
-    console.log('离我最近的点', MinPoint);
-    return MinPoint;
+    console.log('离我最近的点', StationList[MinPoint]);
+    return StationList[MinPoint];
 }
 
 //  绘制起点终点
+//  todo    缺少【在这里上车】和【目的地】两个tips
 function drawStartAndEnd(startPoint, endPoint) {
     //  绘制起点需要全部擦除
     drawClear();
@@ -144,25 +218,29 @@ function drawStartAndEnd(startPoint, endPoint) {
     //  绘制全部站点
     drawStations();
     //  绘制起点和终点
-    startPoint && drawStation(startPoint, ImageStationStart);
-    endPoint && drawStation(endPoint, ImageStationEnd);
+    if (startPoint) {
+        drawStation(startPoint, ImageStationStart);
+        drawTips('在这里上车', startPoint, 100, 30);
+    }
+    if (endPoint) {
+        drawStation(endPoint, ImageStationEnd);
+        drawTips('目的地', endPoint, 66, 30);
+        // drawTips('排队2人，预计5分钟', endPoint, 60, 30);
+    }
     //  绘制用户的点位 只要用户曾经定位过，就永远在这里了
     UserPoint && drawUser(UserPoint);
 }
 
+
 //  主绘制
 //  封装了绘制路线和地图
 function mainRender() {
-    //  绘制用户开启定位状态
-    drawUnLocation();
-
+    drawStartAndEnd(StationList[1], StationList[4]);
     return
     //  绘制小车
-    drawImage(ImageCar, {x: 0, y: 0}, ImageCar.width, ImageCar.height);
+    drawCar(CarPoint);
 }
 
-
-//  todo    考虑这些小图点载入顺序，考虑小图的大小比例
 
 //  测试
 
@@ -174,3 +252,8 @@ function testCoordinatePrecision(testPoint) {
     testPoint && drawRound(calculatePoint(testPoint), 10, 'red');
 }
 
+
+//  绘制待接驾
+function draw() {
+
+}

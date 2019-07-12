@@ -31,7 +31,7 @@ let left_differ = getDiffer(bl.latitude, bl.longitude, tl.latitude, tl.longitude
 //  主背景图
 ImageMap.onload = function () {
     imgRatio = this.width / window.innerWidth / ratio;
-    console.log(imgRatio);
+    console.log('imgRatio', imgRatio);
 
     //  载入图标图片
     loadIconImage();

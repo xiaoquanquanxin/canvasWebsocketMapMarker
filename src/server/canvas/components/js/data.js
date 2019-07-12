@@ -42,10 +42,21 @@ const StationList = [
 //  路径点list
 const RoadList = [
     {"longitude": 23.2096380000, "latitude": 113.5509730000},
+    {"longitude": 23.2095080000, "latitude": 113.5513900000},
+    {"longitude": 23.2093680000, "latitude": 113.5517830000},
+    {"longitude": 23.2092180000, "latitude": 113.5522130000},
+
+
     {"longitude": 23.2090900000, "latitude": 113.5526080000},
+    {"longitude": 23.2085350000, "latitude": 113.5523200000},
+    {"longitude": 23.2081350000, "latitude": 113.5521200000},
     {"longitude": 23.2077930000, "latitude": 113.5519400000},
+
+
     {"longitude": 23.2077530000, "latitude": 113.5519100000},
     {"longitude": 23.2077490000, "latitude": 113.5517770000},
+    {"longitude": 23.2078490000, "latitude": 113.5515170000},
+    {"longitude": 23.2079490000, "latitude": 113.5512570000},
     {"longitude": 23.2081220000, "latitude": 113.5508160000},
 ];
 
@@ -91,3 +102,8 @@ let TestPoint = {
 let StartPoint = StationList[0];
 //  终点
 let EndPoint = StationList[4];
+
+//  小车位置
+let CarPoint = null;
+CarPoint = {longitude: 23.208435, latitude: 113.55239};
+CarPoint = RoadList[2]

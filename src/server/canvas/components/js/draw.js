@@ -101,9 +101,35 @@ function drawTriangle(turn, point, width, height, fillStyle) {
 
 //  绘制文字
 function drawText(message, x, y, fontSize, color) {
-    ctx.font = fontSize + "px Arial";
-    ctx.fillStyle = color;
-    ctx.fillText(message, x, y);
+    if (typeof message === 'string') {
+        requestAnimationFrame(function () {
+            ctx.font = fontSize + "px Arial";
+            ctx.fillStyle = color;
+            ctx.fillText(message, x, y);
+        });
+        return message.length * fontSize;
+    }
+    const NumberTextRatio = 0.55;
+    switch (message.type) {
+        case 1:                 //  等待排队
+            const NumberOfPeople = message.numberOfPeople.toString();
+            const RemainingTime = message.remainingTime.toString();
+            requestAnimationFrame(function () {
+                drawText('排队', x, y, fontSize, 'black');
+                drawText(NumberOfPeople, x + 2 * fontSize, y, fontSize, 'red');
+                drawText('人，预计', x + (2 + NumberOfPeople.length * NumberTextRatio) * fontSize, y, fontSize, 'black');
+                drawText(RemainingTime, x + (6 + NumberOfPeople.length * NumberTextRatio) * fontSize, y, fontSize, 'red');
+                drawText('分钟', x + (6 + (NumberOfPeople.length + RemainingTime.length) * NumberTextRatio) * fontSize, y, fontSize, 'black');
+            });
+            return (8 + (NumberOfPeople.length + RemainingTime.length) * NumberTextRatio) * fontSize;
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        default:
+            return;
+    }
 }
 
 //  阴影设置
@@ -195,11 +221,14 @@ function drawUser(point) {
 }
 
 //  绘制小标记
+//  fixme   可能需要重构
+//  todo    根据传入的message的字数，去计算出来宽度
+/**
+ * @message:any 范型
+ * */
 function drawTips(message, point, width, height) {
     let __point = calculatePoint(point);
 
-
-    // width = message.length * 17 + 16 / imgRatio;
     width = width / imgRatio;
     height = height / imgRatio;
     // console.log(__point.x + width + 10 * ratio + ImageStationBasic.width * 0.5, canvas.width);
@@ -210,12 +239,10 @@ function drawTips(message, point, width, height) {
     // console.log(triangleObject.width);
 
     //  限界，主要是考虑右侧
-    //  如果实际tips的右边  与  canvas右边距离少于10px，则让他放到上面
     if (__point.x + width + 10 * ratio + ImageStationBasic.width * 0.5 >= canvas.width) {
-
+        //  如果实际tips的右边  与  canvas右边距离少于10px，则让他放到上面
         __point.x -= width / 2;
         __point.y -= ImageStationBasic.height + height;
-
         triangleObject.x = __point.x + width / 2;
         triangleObject.y = __point.y + height + triangleObject.height;
         triangleObject.turn = 180;
@@ -227,20 +254,20 @@ function drawTips(message, point, width, height) {
         triangleObject.turn = 270;
     }
 
-    //  绘制圆角矩形
-    drawRoundRect(__point.x, __point.y, width, height, 5, 'white');
-
     //  tips的小三角
     drawTriangle(triangleObject.turn, triangleObject, triangleObject.width, triangleObject.height, 'white');
 
     //  写入文字
-    drawText(message, __point.x + 8 / imgRatio, __point.y + height * 0.7, 16 / imgRatio, 'black');
+    const len = drawText(message, __point.x + 8 / imgRatio, __point.y + height * 0.7, 16 / imgRatio, 'black');
+    console.log(len, width);
+    //  绘制圆角矩形
+    drawRoundRect(__point.x, __point.y, len + 16 / imgRatio, height, 5, 'white');
 }
 
 
-//  对外暴露方法  export  🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉
+//  对外暴露方法  export
 
-//  绘制无车可约          🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊
+//  绘制无可用车辆         🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉无可用车辆
 function drawNoCar() {
     //  任何时候都要先晴空
     drawClear();
@@ -250,14 +277,10 @@ function drawNoCar() {
     drawRoad();
 }
 
-//  绘制未定位状态
+//  绘制未定位状态         🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊可约车状态
 function drawUnLocation() {
-    //  任何时候都要先晴空
-    drawClear();
-    //  绘制地图
-    drawImage(ImageMap, {x: 0, y: 0}, canvas.width, canvas.height);
-    //  绘制道路
-    drawRoad();
+    //  任何图都基于无可用车辆
+    drawNoCar();
     //  绘制全部站点
     drawStations();
 }
@@ -274,7 +297,7 @@ function drawLocation(userPoint) {
     return StationList[MinPoint];
 }
 
-//  绘制起点终点          🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊
+//  绘制起点终点
 function drawStartAndEnd(startPoint, endPoint) {
     //  绘制起点需要全部擦除
     drawClear();
@@ -299,13 +322,29 @@ function drawStartAndEnd(startPoint, endPoint) {
 }
 
 
-//  主绘制
-//  封装了绘制路线和地图
-function mainRender() {
-    drawStartAndEnd(StationList[2], StationList[4]);
-    return
-    //  绘制小车
-    drawCar(CarPoint);
+//  等待排队            🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎有未完成订单
+/**
+ * @waitingObject:object    排队对对象
+ *
+ * */
+function drawQueueUp(waitingObject) {
+    drawNoCar();
+    //  绘制起点与终点，这来个点我控制
+    drawStation(StartPoint, ImageStationStart);
+    // drawTips('排队2人，预计3分钟', StartPoint, 160, 30);
+    drawTips(waitingObject, StartPoint, 160, 30);
+    drawStation(EndPoint, ImageStationEnd);
+    drawTips('终点', EndPoint, 48, 30);
+}
+
+//  开始接驾
+function drawCatchStarting() {
+    drawNoCar();
+    //  绘制起点与终点，这来个点我控制
+    drawStation(StartPoint, ImageStationStart);
+    drawTips('排队2人，预计3分钟', StartPoint, 160, 30);
+    drawStation(EndPoint, ImageStationEnd);
+    drawTips('终点', EndPoint, 48, 30);
 }
 
 
@@ -324,3 +363,5 @@ function testCoordinatePrecision(testPoint) {
 function draw() {
 
 }
+
+

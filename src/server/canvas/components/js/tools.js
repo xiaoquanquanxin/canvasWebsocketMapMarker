@@ -129,6 +129,40 @@ function getCarAngle(index, list) {
 }
 
 
+
+/**
+ * requestAnimationFrame兼容性扩展，两方面工作：
+ * 1、把各浏览器前缀进行统一
+ * 2、在浏览器没有requestAnimationFrame方法时将其指向setTimeout方法
+ * */
+(function() {
+    let lastTime = 0;
+    let vendors = ["webkit", "moz"];
+    for (let x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x] + "RequestAnimationFrame"];
+        // Webkit中此取消方法的名字变了
+        window.cancelAnimationFrame = window[vendors[x] + "CancelAnimationFrame"] || window[vendors[x] + "CancelRequestAnimationFrame"];
+    }
+    if (!window.requestAnimationFrame) {
+        window.requestAnimationFrame = function(callback, element) {
+            let currTime = new Date().getTime();
+            let timeToCall = Math.max(0, 16.7 - (currTime - lastTime));
+            let id = window.setTimeout(function() {
+                callback(currTime + timeToCall);
+            }, timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+    }
+    if (!window.cancelAnimationFrame) {
+        window.cancelAnimationFrame = function(id) {
+            clearTimeout(id);
+        };
+    }
+}());
+
+
+
 //  测试  四角定位
 /**
  * @bottom_differ

@@ -87,3 +87,17 @@ function iconImageLoad() {
     // console.log(this.src.substr(-20), this.width, this.height);
 }
 
+
+//  主绘制
+//  封装了绘制路线和地图
+function mainRender() {
+
+    //  排队的对象
+    const waitingObject = {
+        type: 1,
+        remainingTime: 5,           //  剩余时间
+        numberOfPeople: 2,          //  排队人数
+    };
+    //  开始接驾
+    drawQueueUp(waitingObject);
+}

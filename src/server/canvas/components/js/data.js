@@ -100,7 +100,7 @@ let TestPoint = {
 };
 
 //  用户选择的起点
-let StartPoint = StationList[0];
+let StartPoint = StationList[1];
 //  终点
 let EndPoint = StationList[4];
 

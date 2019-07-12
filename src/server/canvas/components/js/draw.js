@@ -47,6 +47,9 @@ function drawImage(img, point, width, height) {
 
 //  绘制圆角矩形
 function drawRoundRect(x, y, width, height, radius, fillStyle) {
+    //  设置阴影
+    setShadow(10, "rgba(0,0,0,0.2)", 3, 4);
+
     ctx.beginPath();
     ctx.fillStyle = fillStyle;
     ctx.arc(x + radius, y + radius, radius, Math.PI, Math.PI * 3 / 2);
@@ -58,6 +61,42 @@ function drawRoundRect(x, y, width, height, radius, fillStyle) {
     ctx.arc(radius + x, height - radius + y, radius, Math.PI * 1 / 2, Math.PI);
     ctx.fill();
     ctx.closePath();
+
+    //  恢复阴影设置
+    setShadow(0, "rgba(0,0,0,0)", 0, 0);
+
+
+}
+
+//  绘制三角形
+/**
+ * @turn:number,    角度
+ * @point:object,   位置
+ * @width:number,   三角形宽度
+ * @height:number,  三角形高度
+ * */
+function drawTriangle(turn, point, width, height, fillStyle) {
+    ctx.beginPath();
+    ctx.fillStyle = fillStyle;
+    ctx.moveTo(point.x, point.y);
+    console.log(turn % 180);
+    if (turn % 180 !== 0) {
+        //  左右
+        //  设置阴影
+        setShadow(4, "rgba(0,0,0,0.2)", -2, 4);
+        ctx.lineTo(point.x + width, point.y - height);
+        ctx.lineTo(point.x + width, point.y + height);
+    } else {
+        //  设置阴影
+        setShadow(4, "rgba(0,0,0,0.2)", 3, 4);
+        ctx.lineTo(point.x + width, point.y - height);
+        ctx.lineTo(point.x - width, point.y - height);
+    }
+    ctx.lineTo(point.x, point.y);
+    ctx.fill();
+    ctx.closePath();
+    //  恢复阴影设置
+    setShadow(0, "rgba(0,0,0,0)", 0, 0);
 }
 
 //  绘制文字
@@ -67,6 +106,13 @@ function drawText(message, x, y, fontSize, color) {
     ctx.fillText(message, x, y);
 }
 
+//  阴影设置
+function setShadow(shadowBlur, shadowColor, shadowOffsetX, shadowOffsetY) {
+    ctx.shadowBlur = shadowBlur;
+    ctx.shadowColor = shadowColor;
+    ctx.shadowOffsetX = shadowOffsetX;
+    ctx.shadowOffsetY = shadowOffsetY;
+}
 
 //  实例方法
 
@@ -153,26 +199,44 @@ function drawUser(point) {
 //  绘制小标记
 function drawTips(message, point, width, height) {
     let __point = calculatePoint(point);
+
+
     // width = message.length * 17 + 16 / imgRatio;
     width = width / imgRatio;
     height = height / imgRatio;
     // console.log(__point.x + width + 10 * ratio + ImageStationBasic.width * 0.5, canvas.width);
+
+    let triangleObject = {};
+    triangleObject.width = 6 / imgRatio;
+    triangleObject.height = 6 / imgRatio;
+    console.log(triangleObject.width);
+
     //  限界，主要是考虑右侧
     //  如果实际tips的右边  与  canvas右边距离少于10px，则让他放到上面
     if (__point.x + width + 10 * ratio + ImageStationBasic.width * 0.5 >= canvas.width) {
+
         __point.x -= width / 2;
         __point.y -= ImageStationBasic.height + height;
+
+        triangleObject.x = __point.x + width / 2;
+        triangleObject.y = __point.y + height + triangleObject.height;
+        triangleObject.turn = 180;
     } else {
         __point.x += ImageStationBasic.width * 0.5;
         __point.y -= ImageStationBasic.height / 2 + height * 0.7;
+        triangleObject.x = __point.x - triangleObject.width;
+        triangleObject.y = __point.y + height * 0.5;
+        triangleObject.turn = 270;
     }
-    //  绘制圆角矩形的阴影
-    drawRoundRect(__point.x + 2, __point.y + 3, width, height, 5, 'rgba(0,0,0,0.05)');
+
     //  绘制圆角矩形
     drawRoundRect(__point.x, __point.y, width, height, 5, 'white');
+
+    //  tips的小三角
+    drawTriangle(triangleObject.turn, triangleObject, triangleObject.width, triangleObject.height, 'white');
+
     //  写入文字
     drawText(message, __point.x + 8 / imgRatio, __point.y + height * 0.7, 16 / imgRatio, 'black');
-
 }
 
 

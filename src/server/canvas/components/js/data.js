@@ -48,6 +48,7 @@ const RoadList = [
 
 
     {"longitude": 23.2090900000, "latitude": 113.5526080000},
+    {"longitude": 23.2090000000, "latitude": 113.55256500000},
     {"longitude": 23.2085350000, "latitude": 113.5523200000},
     {"longitude": 23.2081350000, "latitude": 113.5521200000},
     {"longitude": 23.2077930000, "latitude": 113.5519400000},

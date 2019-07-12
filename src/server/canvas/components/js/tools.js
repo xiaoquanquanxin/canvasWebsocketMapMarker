@@ -88,7 +88,7 @@ function calculatePoint(point) {
  * @referenceSpot:参考点位
  * @pointList:一系列点
  *
- * @return:number 从pointList中,返回最近的那个点
+ * @return:number 从pointList中,返回最近的那个点的下标
  * */
 function getClosest(referenceSpot, pointList) {
     //  转为canvas坐标系
@@ -105,7 +105,27 @@ function getClosest(referenceSpot, pointList) {
     const MinIndex = __differList.findIndex(function (item) {
         return item === Min;
     });
-    return pointList[MinIndex];
+    return MinIndex;
+}
+
+
+//  获取前后三个点【差值为5的点】的斜率               👌👌纯函数
+/**
+ * @index:number,当前车辆点位所在道路数组的下标
+ * @list:array,道路数组
+ *
+ * @return:number,小车需要转动的角度
+ * */
+function getCarAngle(index, list) {
+    const FirstIndex = Math.max(0, index - 3);
+    const LastIndex = FirstIndex + 5;
+    const FirstPoint = calculatePoint(list[FirstIndex]);
+    const LastPoint = calculatePoint(list[LastIndex]);
+    const CarObject = getK_B(FirstPoint.x, FirstPoint.y, LastPoint.x, LastPoint.y);
+    // console.log(CarObject);
+    const Angle = Math.atan(CarObject.k) * 180 / Math.PI;
+    console.log(Angle);
+    return Angle;
 }
 
 

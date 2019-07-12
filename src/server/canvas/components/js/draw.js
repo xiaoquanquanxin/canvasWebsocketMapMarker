@@ -156,21 +156,27 @@ function drawTips(message, point, width, height) {
     // width = message.length * 17 + 16 / imgRatio;
     width = width / imgRatio;
     height = height / imgRatio;
-
-
-    __point.x += ImageStationBasic.width * 0.5;
-    __point.y -= ImageStationBasic.height / 2 + height * 0.7;
-
+    // console.log(__point.x + width + 10 * ratio + ImageStationBasic.width * 0.5, canvas.width);
+    //  限界，主要是考虑右侧
+    //  如果实际tips的右边  与  canvas右边距离少于10px，则让他放到上面
+    if (__point.x + width + 10 * ratio + ImageStationBasic.width * 0.5 >= canvas.width) {
+        __point.x -= width / 2;
+        __point.y -= ImageStationBasic.height + height;
+    } else {
+        __point.x += ImageStationBasic.width * 0.5;
+        __point.y -= ImageStationBasic.height / 2 + height * 0.7;
+    }
     //  绘制圆角矩形的阴影
     drawRoundRect(__point.x + 2, __point.y + 3, width, height, 5, 'rgba(0,0,0,0.05)');
     //  绘制圆角矩形
     drawRoundRect(__point.x, __point.y, width, height, 5, 'white');
     //  写入文字
     drawText(message, __point.x + 8 / imgRatio, __point.y + height * 0.7, 16 / imgRatio, 'black');
+
 }
 
 
-//  对外暴露方法  export
+//  对外暴露方法  export  🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉
 
 //  绘制无车可约
 function drawNoCar() {
@@ -235,7 +241,7 @@ function drawStartAndEnd(startPoint, endPoint) {
 //  主绘制
 //  封装了绘制路线和地图
 function mainRender() {
-    drawStartAndEnd(StationList[1], StationList[4]);
+    drawStartAndEnd(StationList[2], StationList[4]);
     return
     //  绘制小车
     drawCar(CarPoint);

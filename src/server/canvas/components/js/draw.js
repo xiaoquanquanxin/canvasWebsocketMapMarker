@@ -79,7 +79,7 @@ function drawTriangle(turn, point, width, height, fillStyle) {
     ctx.beginPath();
     ctx.fillStyle = fillStyle;
     ctx.moveTo(point.x, point.y);
-    console.log(turn % 180);
+    // console.log(turn % 180);
     if (turn % 180 !== 0) {
         //  左右
         //  设置阴影
@@ -152,8 +152,6 @@ function drawRoad() {
 
 //  绘制小车
 function drawCar(point) {
-    //  todo    拿到原始数据之后，应该计算出距离最近的点位，将小车扔过去，
-    //  todo    缺少，线性方向 , 我要知道当前点的所属直线
     //  获取汽车应该在的点
     let MinIndex = getClosest(point, RoadList);
     console.log(MinIndex, RoadList);
@@ -209,7 +207,7 @@ function drawTips(message, point, width, height) {
     let triangleObject = {};
     triangleObject.width = 6 / imgRatio;
     triangleObject.height = 6 / imgRatio;
-    console.log(triangleObject.width);
+    // console.log(triangleObject.width);
 
     //  限界，主要是考虑右侧
     //  如果实际tips的右边  与  canvas右边距离少于10px，则让他放到上面
@@ -242,7 +240,7 @@ function drawTips(message, point, width, height) {
 
 //  对外暴露方法  export  🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉
 
-//  绘制无车可约
+//  绘制无车可约          🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊
 function drawNoCar() {
     //  任何时候都要先晴空
     drawClear();
@@ -276,8 +274,7 @@ function drawLocation(userPoint) {
     return StationList[MinPoint];
 }
 
-//  绘制起点终点
-//  todo    缺少【在这里上车】和【目的地】两个tips
+//  绘制起点终点          🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊
 function drawStartAndEnd(startPoint, endPoint) {
     //  绘制起点需要全部擦除
     drawClear();

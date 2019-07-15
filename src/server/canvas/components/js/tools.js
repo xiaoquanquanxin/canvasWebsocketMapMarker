@@ -3,8 +3,8 @@
  * @originData : 要被从字符串转为小数点的对象 , 经过 x northernLatitude 处理  [data:[string]]
  * */
 function transformOriginData(originData) {
-    let data = {};
-    for (let key in originData) {
+    var data = {};
+    for (var key in originData) {
         if (originData.hasOwnProperty(key)) {
             data[key] = {};
             data[key].latitude = originData[key].latitude * northernLatitude;
@@ -21,8 +21,8 @@ function getDiffer(x1, y1, x2, y2) {
 
 //  求两点连线的方程                                👌👌纯函数
 function getK_B(x1, y1, x2, y2) {
-    let k = (y2 - y1) / (x2 - x1);
-    let b = y1 - k * x1;
+    var k = (y2 - y1) / (x2 - x1);
+    var b = y1 - k * x1;
     if (x2 === x1) {
         return {
             x: x1,              //  说明是垂直的线，x=c
@@ -49,8 +49,8 @@ function transformLongitudeAndLatitudeToCartesianCoordinateSystem(x) {
 
 
 // polyfill 提供了这个方法用来获取设备的 pixel ratio
-const getPixelRatio = function (context) {
-    const backingStore = context.backingStorePixelRatio ||
+var getPixelRatio = function (context) {
+    var backingStore = context.backingStorePixelRatio ||
         context.webkitBackingStorePixelRatio ||
         context.mozBackingStorePixelRatio ||
         context.msBackingStorePixelRatio ||
@@ -67,12 +67,12 @@ const getPixelRatio = function (context) {
  * */
 function calculatePoint(point) {
     //  某个点的数据
-    const _point = {
+    var _point = {
         latitude: point.latitude * northernLatitude,
         longitude: point.longitude,
     };
     //  换算为canvas坐标系后的坐标
-    const __point = {
+    var __point = {
         latitude: _point.latitude - leftLineParams.x,
         longitude: _point.longitude - bottomLineParams.y
     };
@@ -92,17 +92,17 @@ function calculatePoint(point) {
  * */
 function getClosest(referenceSpot, pointList) {
     //  转为canvas坐标系
-    const __referenceSpot = calculatePoint(referenceSpot);
+    var __referenceSpot = calculatePoint(referenceSpot);
     //  转为canvas坐标系
-    const __pointList = pointList.map(function (item, index) {
+    var __pointList = pointList.map(function (item, index) {
         return calculatePoint(item);
     });
     //  作出距离的list
-    const __differList = __pointList.map(function (item) {
+    var __differList = __pointList.map(function (item) {
         return getDiffer(item.x, item.y, __referenceSpot.x, __referenceSpot.y);
     });
-    const Min = Math.min.apply(null, __differList);
-    const MinIndex = __differList.findIndex(function (item) {
+    var Min = Math.min.apply(null, __differList);
+    var MinIndex = __differList.findIndex(function (item) {
         return item === Min;
     });
     return MinIndex;
@@ -117,13 +117,13 @@ function getClosest(referenceSpot, pointList) {
  * @return:number,小车需要转动的角度
  * */
 function getCarAngle(index, list) {
-    const FirstIndex = Math.max(0, index - 3);
-    const LastIndex = FirstIndex + 5;
-    const FirstPoint = calculatePoint(list[FirstIndex]);
-    const LastPoint = calculatePoint(list[LastIndex]);
-    const CarObject = getK_B(FirstPoint.x, FirstPoint.y, LastPoint.x, LastPoint.y);
+    var FirstIndex = Math.max(0, index - 3);
+    var LastIndex = FirstIndex + 5;
+    var FirstPoint = calculatePoint(list[FirstIndex]);
+    var LastPoint = calculatePoint(list[LastIndex]);
+    var CarObject = getK_B(FirstPoint.x, FirstPoint.y, LastPoint.x, LastPoint.y);
     // console.log(CarObject);
-    const Angle = Math.atan(CarObject.k) * 180 / Math.PI;
+    var Angle = Math.atan(CarObject.k) * 180 / Math.PI;
     console.log(Angle);
     return Angle;
 }
@@ -136,8 +136,8 @@ function getCarAngle(index, list) {
  * @return:object   数值和单位
  * */
 function getTimeData(timeStr) {
-    const timeArr = timeStr.split(':');
-    let data = {};
+    var timeArr = timeStr.split(':');
+    var data = {};
     if (timeArr[0] !== '00') {
         data.unit = '小时';
         data.value = timeArr[0];
@@ -158,7 +158,7 @@ function getTimeData(timeStr) {
  * @return:Object   返回数值和单位
  * */
 function getDistanceData(distanceStr) {
-    const _distance = Number(distanceStr);
+    var _distance = Number(distanceStr);
     if (_distance - 1000 >= 0) {
         return {unit: 'km', value: (_distance / 1000).toFixed(1)}
     } else {
@@ -181,18 +181,18 @@ function getCountDown(countDown) {
  * 2、在浏览器没有requestAnimationFrame方法时将其指向setTimeout方法
  * */
 (function () {
-    let lastTime = 0;
-    let vendors = ["webkit", "moz"];
-    for (let x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+    var lastTime = 0;
+    var vendors = ["webkit", "moz"];
+    for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
         window.requestAnimationFrame = window[vendors[x] + "RequestAnimationFrame"];
         // Webkit中此取消方法的名字变了
         window.cancelAnimationFrame = window[vendors[x] + "CancelAnimationFrame"] || window[vendors[x] + "CancelRequestAnimationFrame"];
     }
     if (!window.requestAnimationFrame) {
         window.requestAnimationFrame = function (callback, element) {
-            let currTime = new Date().getTime();
-            let timeToCall = Math.max(0, 16.7 - (currTime - lastTime));
-            let id = window.setTimeout(function () {
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, 16.7 - (currTime - lastTime));
+            var id = window.setTimeout(function () {
                 callback(currTime + timeToCall);
             }, timeToCall);
             lastTime = currTime + timeToCall;
@@ -216,11 +216,11 @@ function getCountDown(countDown) {
 function __testCorner(bottom_differ, left_differ, productOfSlope) {
     console.log('*******************************四角定位测试*******************************');
     console.log('bottom_differ  :   底边在经纬度坐标下的长度', bottom_differ);
-    let width_rate_bottom = canvas.width / bottom_differ;
+    var width_rate_bottom = canvas.width / bottom_differ;
     console.log('width_rate :      每个单位相当于  ** 个像素', width_rate_bottom);
 
     console.log('left_differ  :     左边在经纬度坐标下的长度', left_differ);
-    let width_rate_left = canvas.height / left_differ;
+    var width_rate_left = canvas.height / left_differ;
     console.log('width_rate_left : 每个单位相当于  ** 个像素', width_rate_left);
     console.log('width_rate_bottom 应该等于 width_rate', Math.floor(width_rate_bottom), Math.floor(width_rate_left));
 

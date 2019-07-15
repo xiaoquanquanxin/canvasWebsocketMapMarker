@@ -1,22 +1,11 @@
-let timer = null;
-const delay = 100;
-const point = {
-    x: 0,
-    y: 0,
-};
 
-let index = 0;
+//  测试
 
-function renderCar() {
-    return
-    point.x = index * 10;
-    point.y = index * 10;
-
-    mainRender();
-
-    drawImage(imageCar, point, imageCar.width, imageCar.height);
-    index++;
-    timer = setTimeout(renderCar, delay);
+//  测试坐标精准度
+function testCoordinatePrecision(testPoint) {
+    // 测试四角--证明坐标系准确性
+    __testCorner(bottom_differ, left_differ, bottomLineParams.k * leftLineParams.k);
+    //  测试点位
+    testPoint && drawRound(calculatePoint(testPoint), 10, 'red');
 }
 
-timer = setTimeout(renderCar, delay);

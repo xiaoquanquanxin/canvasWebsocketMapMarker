@@ -136,7 +136,7 @@ function getCarAngle(index, list) {
  * @return:object   数值和单位
  * */
 function getTimeData(timeStr) {
-    const timeArr = timeStr.split('-');
+    const timeArr = timeStr.split(':');
     let data = {};
     if (timeArr[0] !== '00') {
         data.unit = '小时';
@@ -148,12 +148,14 @@ function getTimeData(timeStr) {
         data.unit = '秒';
         data.value = timeArr[2];
     }
+    data.value = Number(data.value).toString();
     return data;
 }
 
 //  处理距离字符串，返回数值和单位
 /**
- *
+ *  @distanceStr:string 距离的值
+ * @return:Object   返回数值和单位
  * */
 function getDistanceData(distanceStr) {
     const _distance = Number(distanceStr);
@@ -162,6 +164,15 @@ function getDistanceData(distanceStr) {
     } else {
         return {unit: 'm', value: _distance.toFixed(0)}
     }
+}
+
+//  返回倒计时对象
+/**
+ * @countDown:string    输入时间字符串
+ * @return:string       返回时间字符串
+ * */
+function getCountDown(countDown) {
+    return countDown.substring(3).replace(':', '\'');
 }
 
 /**

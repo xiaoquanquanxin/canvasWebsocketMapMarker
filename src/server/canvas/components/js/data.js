@@ -82,6 +82,12 @@ ImageStationEnd._src = './img/station_end.png';
 const ImageUser = new Image();
 ImageUser._src = './img/user.png';
 
+//  小标签tips的配置
+const tipData = {
+    fontSize: 16,
+    height: 30,
+};
+
 
 //  活动数据
 
@@ -107,4 +113,6 @@ let EndPoint = StationList[4];
 //  小车位置
 let CarPoint = null;
 CarPoint = {longitude: 23.208435, latitude: 113.55239};
-CarPoint = RoadList[2]
+CarPoint = RoadList[2];
+
+

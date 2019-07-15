@@ -101,35 +101,9 @@ function drawTriangle(turn, point, width, height, fillStyle) {
 
 //  绘制文字
 function drawText(message, x, y, fontSize, color) {
-    if (typeof message === 'string') {
-        requestAnimationFrame(function () {
-            ctx.font = fontSize + "px Arial";
-            ctx.fillStyle = color;
-            ctx.fillText(message, x, y);
-        });
-        return message.length * fontSize;
-    }
-    const NumberTextRatio = 0.55;
-    switch (message.type) {
-        case 1:                 //  等待排队
-            const NumberOfPeople = message.numberOfPeople.toString();
-            const RemainingTime = message.remainingTime.toString();
-            requestAnimationFrame(function () {
-                drawText('排队', x, y, fontSize, 'black');
-                drawText(NumberOfPeople, x + 2 * fontSize, y, fontSize, 'red');
-                drawText('人，预计', x + (2 + NumberOfPeople.length * NumberTextRatio) * fontSize, y, fontSize, 'black');
-                drawText(RemainingTime, x + (6 + NumberOfPeople.length * NumberTextRatio) * fontSize, y, fontSize, 'red');
-                drawText('分钟', x + (6 + (NumberOfPeople.length + RemainingTime.length) * NumberTextRatio) * fontSize, y, fontSize, 'black');
-            });
-            return (8 + (NumberOfPeople.length + RemainingTime.length) * NumberTextRatio) * fontSize;
-            break;
-        case 2:
-            break;
-        case 3:
-            break;
-        default:
-            return;
-    }
+    ctx.font = fontSize + "px Arial";
+    ctx.fillStyle = color || 'black';
+    ctx.fillText(message, x, y);
 }
 
 //  阴影设置
@@ -172,7 +146,7 @@ function drawRoad() {
     RoadList.forEach(function (item, index) {
         let __point = calculatePoint(item);
         //  绘制某个点
-        drawRound(__point, 13, 'purple',);
+        drawRound(__point, 13, 'purple');
     });
 }
 
@@ -224,44 +198,95 @@ function drawUser(point) {
 //  fixme   可能需要重构
 //  todo    根据传入的message的字数，去计算出来宽度
 /**
- * @message:any 范型
+ * @message:any 范型,字符串或对象
+ * @point:object    位置
+ * @height:number   tips的高度
+ * @fontSize:number 字体大小
  * */
-function drawTips(message, point, width, height) {
+function drawTips(message, point, height, fontSize) {
     let __point = calculatePoint(point);
+    let _height = height / imgRatio;
+    let _fontSize = fontSize / imgRatio;
+    console.log(message, __point, _height, _fontSize);
 
-    width = width / imgRatio;
-    height = height / imgRatio;
-    // console.log(__point.x + width + 10 * ratio + ImageStationBasic.width * 0.5, canvas.width);
+    //  用于输入文字的对象
+    let TextArr = [];
+    //  文字长度
+    let wordWidth = 0;
 
+    if (typeof message === 'string') {
+        wordWidth = message.length * _fontSize;
+        TextArr = [{word: message}];
+    } else {
+        //  数字的宽度对于普通文字的宽度的比
+        const NumberTextRatio = 0.55;
+        switch (message.type) {
+            case 1:                 //  type ===1 : 等待排队
+                const NumberOfPeople = message.numberOfPeople.toString();
+                const RemainingTime = message.remainingTime.toString();
+                TextArr = [{word: '排队', color: 'black', textLength: '排队'.length * _fontSize},
+                    {
+                        word: NumberOfPeople,
+                        color: 'red',
+                        textLength: NumberOfPeople.length * NumberTextRatio * _fontSize
+                    },
+                    {word: '人，预计', color: 'black', textLength: '人，预计'.length * _fontSize},
+                    {word: RemainingTime, color: 'red', textLength: RemainingTime.length * NumberTextRatio * _fontSize},
+                    {word: '分钟', color: 'black', textLength: '分钟'.length * _fontSize}
+                ];
+                wordWidth = TextArr.reduce(function (prev, current) {
+                    return prev + current.textLength
+                }, 0);
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            default:
+                return;
+        }
+    }
+    //  tips长度
+    let _width = wordWidth + _fontSize;
+    console.log(wordWidth, _width);
+
+
+    //  三角形对象
     let triangleObject = {};
     triangleObject.width = 6 / imgRatio;
     triangleObject.height = 6 / imgRatio;
-    // console.log(triangleObject.width);
 
     //  限界，主要是考虑右侧
-    if (__point.x + width + 10 * ratio + ImageStationBasic.width * 0.5 >= canvas.width) {
+    if (__point.x + _width + 10 * ratio + ImageStationBasic.width * 0.5 >= canvas.width) {
         //  如果实际tips的右边  与  canvas右边距离少于10px，则让他放到上面
-        __point.x -= width / 2;
-        __point.y -= ImageStationBasic.height + height;
-        triangleObject.x = __point.x + width / 2;
-        triangleObject.y = __point.y + height + triangleObject.height;
+        __point.x -= _width / 2;
+        __point.y -= ImageStationBasic.height + _height;
+        triangleObject.x = __point.x + _width / 2;
+        triangleObject.y = __point.y + _height + triangleObject.height;
         triangleObject.turn = 180;
     } else {
         __point.x += ImageStationBasic.width * 0.5;
-        __point.y -= ImageStationBasic.height / 2 + height * 0.7;
+        __point.y -= ImageStationBasic.height / 2 + _height * 0.7;
         triangleObject.x = __point.x - triangleObject.width;
-        triangleObject.y = __point.y + height * 0.5;
+        triangleObject.y = __point.y + _height * 0.5;
         triangleObject.turn = 270;
     }
+
+    //  绘制圆角矩形
+    drawRoundRect(__point.x, __point.y, _width, _height, 5, 'white');
 
     //  tips的小三角
     drawTriangle(triangleObject.turn, triangleObject, triangleObject.width, triangleObject.height, 'white');
 
+
+    //  文字对象
+    let textLeft = __point.x + _fontSize / 2;
+    let textTop = __point.y + _height * 0.7;
     //  写入文字
-    const len = drawText(message, __point.x + 8 / imgRatio, __point.y + height * 0.7, 16 / imgRatio, 'black');
-    console.log(len, width);
-    //  绘制圆角矩形
-    drawRoundRect(__point.x, __point.y, len + 16 / imgRatio, height, 5, 'white');
+    TextArr.forEach(function (item, index, arr) {
+        textLeft += arr[index - 1] && arr[index - 1].textLength || 0;
+        drawText(item.word, textLeft, textTop, _fontSize, item.color);
+    });
 }
 
 
@@ -322,7 +347,7 @@ function drawStartAndEnd(startPoint, endPoint) {
 }
 
 
-//  等待排队            🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎有未完成订单
+//  等待排队            🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎有未完成订单       以后就没有UserPoint了
 /**
  * @waitingObject:object    排队对对象
  *
@@ -331,10 +356,9 @@ function drawQueueUp(waitingObject) {
     drawNoCar();
     //  绘制起点与终点，这来个点我控制
     drawStation(StartPoint, ImageStationStart);
-    // drawTips('排队2人，预计3分钟', StartPoint, 160, 30);
-    drawTips(waitingObject, StartPoint, 160, 30);
+    drawTips(waitingObject, StartPoint, 30, 16);
     drawStation(EndPoint, ImageStationEnd);
-    drawTips('终点', EndPoint, 48, 30);
+    drawTips('终点', EndPoint, 30, 16);
 }
 
 //  开始接驾

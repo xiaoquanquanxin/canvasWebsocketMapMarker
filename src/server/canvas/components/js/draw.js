@@ -207,7 +207,7 @@ function drawTips(message, point, height, fontSize) {
     let __point = calculatePoint(point);
     let _height = height / imgRatio;
     let _fontSize = fontSize / imgRatio;
-    console.log(message, __point, _height, _fontSize);
+    // console.log(message, __point, _height, _fontSize);
 
     //  用于输入文字的对象
     let TextArr = [];
@@ -223,32 +223,40 @@ function drawTips(message, point, height, fontSize) {
         switch (message.type) {
             case 1:                 //  type ===1 : 等待排队
                 const NumberOfPeople = message.numberOfPeople.toString();
-                const RemainingTime = message.remainingTime.toString();
+                const RemainingTimeData = getTimeData(message.remainingTime.toString());
+                console.log(RemainingTimeData);
                 TextArr = [{word: '排队', color: 'black', textLength: '排队'.length * _fontSize},
-                    {
-                        word: NumberOfPeople,
-                        color: 'red',
-                        textLength: NumberOfPeople.length * NumberTextRatio * _fontSize
-                    },
+                    {word: NumberOfPeople, color: 'red', textLength: NumberOfPeople.length * NumberTextRatio * _fontSize},
                     {word: '人，预计', color: 'black', textLength: '人，预计'.length * _fontSize},
-                    {word: RemainingTime, color: 'red', textLength: RemainingTime.length * NumberTextRatio * _fontSize},
-                    {word: '分钟', color: 'black', textLength: '分钟'.length * _fontSize}
+                    {word: RemainingTimeData.value , color: 'red', textLength: RemainingTimeData.value.length * NumberTextRatio * _fontSize},
+                    {word: RemainingTimeData.unit, color: 'black', textLength: RemainingTimeData.unit.length * _fontSize}
                 ];
-                wordWidth = TextArr.reduce(function (prev, current) {
-                    return prev + current.textLength
-                }, 0);
                 break;
             case 2:
+                const StartPointDistanceData = getDistanceData(message.startPointDistance.toString());
+                console.log(StartPointDistanceData);
+                const StartPointTimeData =  getTimeData(message.startPointTime.toString());
+                console.log(StartPointTimeData);
+                TextArr = [
+                    {word: '距离', color: 'black', textLength: '距离'.length * _fontSize},
+                    {word: StartPointDistanceData.value, color: 'red', textLength: StartPointDistanceData.value.length * NumberTextRatio * _fontSize},
+                    {word: StartPointDistanceData.unit+'，', color: 'black', textLength: (StartPointDistanceData.unit+'，').length * _fontSize},
+                    {word: StartPointTimeData.value, color: 'red', textLength: StartPointTimeData.value.length * NumberTextRatio * _fontSize},
+                    {word: StartPointTimeData.unit, color: 'black', textLength: StartPointTimeData.unit.length * _fontSize},
+                ];
                 break;
             case 3:
                 break;
             default:
                 return;
         }
+        wordWidth = TextArr.reduce(function (prev, current) {
+            return prev + current.textLength
+        }, 0);
     }
     //  tips长度
     let _width = wordWidth + _fontSize;
-    console.log(wordWidth, _width);
+    // console.log(wordWidth, _width);
 
 
     //  三角形对象
@@ -362,13 +370,13 @@ function drawQueueUp(waitingObject) {
 }
 
 //  开始接驾
-function drawCatchStarting() {
+function drawCatchStarting(waitingObject) {
     drawNoCar();
     //  绘制起点与终点，这来个点我控制
     drawStation(StartPoint, ImageStationStart);
-    drawTips('排队2人，预计3分钟', StartPoint, 160, 30);
+    drawTips(waitingObject, StartPoint, 30, 16);
     drawStation(EndPoint, ImageStationEnd);
-    drawTips('终点', EndPoint, 48, 30);
+    drawTips('终点', EndPoint, 30, 16);
 }
 
 

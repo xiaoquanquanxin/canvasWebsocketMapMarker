@@ -91,13 +91,21 @@ function iconImageLoad() {
 //  主绘制
 //  封装了绘制路线和地图
 function mainRender() {
-
     //  排队的对象
-    const waitingObject = {
+    const WaitingObject = {
         type: 1,
-        remainingTime: 5,           //  剩余时间
+        remainingTime: '00-10-32',           //  剩余时间
         numberOfPeople: 2,          //  排队人数
     };
+    //  等待排队
+    // drawQueueUp(WaitingObject);
+
+    //  开始接驾的对象
+    const CatchObject = {
+        type: 2,
+        startPointDistance: 311,            //  剩余距离，米
+        startPointTime: '00-40-32',         //  剩余时间
+    };
     //  开始接驾
-    drawQueueUp(waitingObject);
+    drawCatchStarting(CatchObject)
 }

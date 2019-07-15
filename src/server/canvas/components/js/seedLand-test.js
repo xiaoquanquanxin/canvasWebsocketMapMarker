@@ -91,21 +91,41 @@ function iconImageLoad() {
 //  主绘制
 //  封装了绘制路线和地图
 function mainRender() {
+
     //  排队的对象
-    const WaitingObject = {
+    const WaitingData = {
         type: 1,
-        remainingTime: '00-10-32',           //  剩余时间
+        remainingTime: '00:00:32',           //  剩余时间
         numberOfPeople: 2,          //  排队人数
     };
     //  等待排队
-    // drawQueueUp(WaitingObject);
-
+    drawQueueUp(WaitingData);
+    return
     //  开始接驾的对象
-    const CatchObject = {
+    const CatchData = {
         type: 2,
-        startPointDistance: 311,            //  剩余距离，米
-        startPointTime: '00-40-32',         //  剩余时间
+        startPointDistance: 13,            //  剩余距离，米
+        startPointTime: '00:10:02',         //  剩余时间
     };
-    //  开始接驾
-    drawCatchStarting(CatchObject)
+    // drawCatchStarting(CatchData);
+    // return
+
+    //  等待乘车
+    const CarArrivedData = {
+        type: 3,
+        countDown: '00:00:03',              //  倒计时
+    };
+    // drawCarArrived(CarArrivedData);
+    // return;
+
+
+    //  乘车中
+    const drivingData = {
+        type: 4,
+        fromTheEnd: 1221,                   //  距离终点
+        estimatedTime: '00:00:13',          //  预计时间
+    };
+    drawInTheBus(drivingData);
+
+
 }

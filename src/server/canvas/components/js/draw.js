@@ -202,8 +202,9 @@ function drawUser(point) {
  * @point:object    位置
  * @height:number   tips的高度
  * @fontSize:number 字体大小
+ * @hasTriangle:boolean 是否需要
  * */
-function drawTips(message, point, height, fontSize) {
+function drawTips(message, point, height, fontSize, hasTriangle) {
     let __point = calculatePoint(point);
     let _height = height / imgRatio;
     let _fontSize = fontSize / imgRatio;
@@ -221,31 +222,97 @@ function drawTips(message, point, height, fontSize) {
         //  数字的宽度对于普通文字的宽度的比
         const NumberTextRatio = 0.55;
         switch (message.type) {
-            case 1:                 //  type ===1 : 等待排队
+            case 1:                 //  type === 1 : 等待排队
                 const NumberOfPeople = message.numberOfPeople.toString();
                 const RemainingTimeData = getTimeData(message.remainingTime.toString());
                 console.log(RemainingTimeData);
-                TextArr = [{word: '排队', color: 'black', textLength: '排队'.length * _fontSize},
-                    {word: NumberOfPeople, color: 'red', textLength: NumberOfPeople.length * NumberTextRatio * _fontSize},
+                TextArr = [
+                    {word: '排队', color: 'black', textLength: '排队'.length * _fontSize},
+                    {
+                        word: NumberOfPeople,
+                        color: 'red',
+                        textLength: NumberOfPeople.length * NumberTextRatio * _fontSize
+                    },
                     {word: '人，预计', color: 'black', textLength: '人，预计'.length * _fontSize},
-                    {word: RemainingTimeData.value , color: 'red', textLength: RemainingTimeData.value.length * NumberTextRatio * _fontSize},
-                    {word: RemainingTimeData.unit, color: 'black', textLength: RemainingTimeData.unit.length * _fontSize}
+                    {
+                        word: RemainingTimeData.value,
+                        color: 'red',
+                        textLength: RemainingTimeData.value.length * NumberTextRatio * _fontSize
+                    },
+                    {
+                        word: RemainingTimeData.unit,
+                        color: 'black',
+                        textLength: RemainingTimeData.unit.length * _fontSize
+                    }
                 ];
                 break;
-            case 2:
+            case 2:                 //  type === 2  :等待接驾
                 const StartPointDistanceData = getDistanceData(message.startPointDistance.toString());
                 console.log(StartPointDistanceData);
-                const StartPointTimeData =  getTimeData(message.startPointTime.toString());
+                const StartPointTimeData = getTimeData(message.startPointTime.toString());
                 console.log(StartPointTimeData);
                 TextArr = [
                     {word: '距离', color: 'black', textLength: '距离'.length * _fontSize},
-                    {word: StartPointDistanceData.value, color: 'red', textLength: StartPointDistanceData.value.length * NumberTextRatio * _fontSize},
-                    {word: StartPointDistanceData.unit+'，', color: 'black', textLength: (StartPointDistanceData.unit+'，').length * _fontSize},
-                    {word: StartPointTimeData.value, color: 'red', textLength: StartPointTimeData.value.length * NumberTextRatio * _fontSize},
-                    {word: StartPointTimeData.unit, color: 'black', textLength: StartPointTimeData.unit.length * _fontSize},
+                    {
+                        word: StartPointDistanceData.value,
+                        color: 'red',
+                        textLength: StartPointDistanceData.value.length * NumberTextRatio * _fontSize
+                    },
+                    {
+                        word: StartPointDistanceData.unit + ' ，',
+                        color: 'black',
+                        textLength: (StartPointDistanceData.unit + ' ，').length * NumberTextRatio * _fontSize
+                    },
+                    {
+                        word: StartPointTimeData.value,
+                        color: 'red',
+                        textLength: StartPointTimeData.value.length * NumberTextRatio * _fontSize
+                    },
+                    {
+                        word: StartPointTimeData.unit,
+                        color: 'black',
+                        textLength: StartPointTimeData.unit.length * _fontSize
+                    },
+                ];
+                console.log(TextArr);
+                break;
+            case 3:             //  type === 3 ：等待乘车
+                console.log(message);
+                const countDownData = getCountDown(message.countDown.toString());
+                console.log(countDownData);
+                TextArr = [
+                    {word: '车已到达，倒计时', color: 'black', textLength: '车已到达，倒计时'.length * _fontSize},
+                    {word: countDownData, color: 'red', textLength: countDownData.length * NumberTextRatio * _fontSize}
                 ];
                 break;
-            case 3:
+            case 4:
+                console.log(message);
+                const fromTheEndData = getDistanceData(message.fromTheEnd.toString());
+                const estimatedTimeData = getTimeData(message.estimatedTime.toString());
+                console.log(fromTheEndData, estimatedTimeData);
+                TextArr = [
+                    {word: '距离终点', color: 'black', textLength: '距离终点'.length * _fontSize},
+                    {
+                        word: fromTheEndData.value,
+                        color: 'red',
+                        textLength: fromTheEndData.value.length * NumberTextRatio * _fontSize
+                    },
+                    {
+                        word: fromTheEndData.unit + ' ，预计',
+                        color: 'black',
+                        textLength: ((fromTheEndData.unit + ' ').length * NumberTextRatio + '，预计'.length) * _fontSize
+                    },
+                    {
+                        word: estimatedTimeData.value,
+                        color: 'red',
+                        textLength: estimatedTimeData.value.length * NumberTextRatio * _fontSize
+                    },
+                    {
+                        word: estimatedTimeData.unit,
+                        color: 'black',
+                        textLength: estimatedTimeData.unit.length * _fontSize
+                    }
+                ];
                 break;
             default:
                 return;
@@ -256,8 +323,6 @@ function drawTips(message, point, height, fontSize) {
     }
     //  tips长度
     let _width = wordWidth + _fontSize;
-    // console.log(wordWidth, _width);
-
 
     //  三角形对象
     let triangleObject = {};
@@ -283,9 +348,10 @@ function drawTips(message, point, height, fontSize) {
     //  绘制圆角矩形
     drawRoundRect(__point.x, __point.y, _width, _height, 5, 'white');
 
-    //  tips的小三角
-    drawTriangle(triangleObject.turn, triangleObject, triangleObject.width, triangleObject.height, 'white');
-
+    if (hasTriangle) {
+        //  tips的小三角
+        drawTriangle(triangleObject.turn, triangleObject, triangleObject.width, triangleObject.height, 'white');
+    }
 
     //  文字对象
     let textLeft = __point.x + _fontSize / 2;
@@ -319,12 +385,15 @@ function drawUnLocation() {
 }
 
 //  绘制用户开启定位状态
+/**
+ * @userPoint:object    用户定位的经纬度
+ * */
 function drawLocation(userPoint) {
     //  先画未定位
     drawUnLocation();
     //  用户定位
     drawUser(userPoint);
-    console.clear();
+    // console.clear();
     const MinPoint = getClosest(userPoint, StationList);
     console.log('离我最近的点', StationList[MinPoint]);
     return StationList[MinPoint];
@@ -343,12 +412,11 @@ function drawStartAndEnd(startPoint, endPoint) {
     //  绘制起点和终点
     if (startPoint) {
         drawStation(startPoint, ImageStationStart);
-        drawTips('在这里上车', startPoint, 100, 30);
+        drawTips('在这里上车', startPoint, tipData.height, tipData.fontSize, true);
     }
     if (endPoint) {
         drawStation(endPoint, ImageStationEnd);
-        drawTips('目的地', endPoint, 66, 30);
-        // drawTips('排队2人，预计5分钟', endPoint, 60, 30);
+        drawTips('目的地', endPoint, tipData.height, tipData.fontSize, true);
     }
     //  绘制用户的点位 只要用户曾经定位过，就永远在这里了
     UserPoint && drawUser(UserPoint);
@@ -360,25 +428,51 @@ function drawStartAndEnd(startPoint, endPoint) {
  * @waitingObject:object    排队对对象
  *
  * */
-function drawQueueUp(waitingObject) {
+function drawQueueUp(waitingData) {
     drawNoCar();
     //  绘制起点与终点，这来个点我控制
     drawStation(StartPoint, ImageStationStart);
-    drawTips(waitingObject, StartPoint, 30, 16);
+    drawTips(waitingData, StartPoint, tipData.height, tipData.fontSize, true);
     drawStation(EndPoint, ImageStationEnd);
-    drawTips('终点', EndPoint, 30, 16);
+    drawTips('终点', EndPoint, tipData.height, tipData.fontSize, true);
 }
 
 //  开始接驾
-function drawCatchStarting(waitingObject) {
+function drawCatchStarting(waitingData) {
     drawNoCar();
     //  绘制起点与终点，这来个点我控制
     drawStation(StartPoint, ImageStationStart);
-    drawTips(waitingObject, StartPoint, 30, 16);
+    drawTips(waitingData, StartPoint, tipData.height, tipData.fontSize);
     drawStation(EndPoint, ImageStationEnd);
-    drawTips('终点', EndPoint, 30, 16);
+    drawTips('终点', EndPoint, tipData.height, tipData.fontSize, true);
 }
 
+//  等待乘车
+/**
+ * @carArrived:object   车辆已到达的倒计时对象
+ * */
+function drawCarArrived(carArrivedData) {
+    drawNoCar();
+    drawStation(EndPoint, ImageStationEnd);
+    drawTips('终点', EndPoint, tipData.height, tipData.fontSize, true);
+    drawStation(StartPoint, ImageStationStart);
+    drawTips(carArrivedData, StartPoint, tipData.height, tipData.fontSize);
+}
+
+//  乘车中
+/**
+ * @drivingData:object  汽车行驶状态对象
+ *
+ * */
+function drawInTheBus(drivingData) {
+    drawNoCar();
+    drawStation(EndPoint, ImageStationEnd);
+    drawTips('终点', EndPoint, tipData.height, tipData.fontSize, true);
+
+
+    drawStation(StartPoint, ImageStationStart);
+    drawTips(drivingData, StartPoint, tipData.height, tipData.fontSize);
+}
 
 //  测试
 

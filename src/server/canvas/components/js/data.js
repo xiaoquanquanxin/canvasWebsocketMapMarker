@@ -64,7 +64,7 @@ const RoadList = [
 //  图片配置
 //  地图
 const ImageMap = new Image();
-ImageMap._src = './img/map5.png';
+ImageMap._src = './img/map6.png';
 //  小车
 const ImageCar = new Image();
 ImageCar._src = './img/car.png';

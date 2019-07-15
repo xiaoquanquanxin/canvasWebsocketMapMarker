@@ -129,13 +129,47 @@ function getCarAngle(index, list) {
 }
 
 
+//  处理时间字符串，返回数值和单位
+/**
+ * @timeStr:string  时间字符串
+ * @isShowAl:boolean    需要展示全部？
+ * @return:object   数值和单位
+ * */
+function getTimeData(timeStr) {
+    const timeArr = timeStr.split('-');
+    let data = {};
+    if (timeArr[0] !== '00') {
+        data.unit = '小时';
+        data.value = timeArr[0];
+    } else if (timeArr[1] !== '00') {
+        data.unit = '分钟';
+        data.value = timeArr[1];
+    } else {
+        data.unit = '秒';
+        data.value = timeArr[2];
+    }
+    return data;
+}
+
+//  处理距离字符串，返回数值和单位
+/**
+ *
+ * */
+function getDistanceData(distanceStr) {
+    const _distance = Number(distanceStr);
+    if (_distance - 1000 >= 0) {
+        return {unit: 'km', value: (_distance / 1000).toFixed(1)}
+    } else {
+        return {unit: 'm', value: _distance.toFixed(0)}
+    }
+}
 
 /**
  * requestAnimationFrame兼容性扩展，两方面工作：
  * 1、把各浏览器前缀进行统一
  * 2、在浏览器没有requestAnimationFrame方法时将其指向setTimeout方法
  * */
-(function() {
+(function () {
     let lastTime = 0;
     let vendors = ["webkit", "moz"];
     for (let x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
@@ -144,10 +178,10 @@ function getCarAngle(index, list) {
         window.cancelAnimationFrame = window[vendors[x] + "CancelAnimationFrame"] || window[vendors[x] + "CancelRequestAnimationFrame"];
     }
     if (!window.requestAnimationFrame) {
-        window.requestAnimationFrame = function(callback, element) {
+        window.requestAnimationFrame = function (callback, element) {
             let currTime = new Date().getTime();
             let timeToCall = Math.max(0, 16.7 - (currTime - lastTime));
-            let id = window.setTimeout(function() {
+            let id = window.setTimeout(function () {
                 callback(currTime + timeToCall);
             }, timeToCall);
             lastTime = currTime + timeToCall;
@@ -155,12 +189,11 @@ function getCarAngle(index, list) {
         };
     }
     if (!window.cancelAnimationFrame) {
-        window.cancelAnimationFrame = function(id) {
+        window.cancelAnimationFrame = function (id) {
             clearTimeout(id);
         };
     }
 }());
-
 
 
 //  测试  四角定位

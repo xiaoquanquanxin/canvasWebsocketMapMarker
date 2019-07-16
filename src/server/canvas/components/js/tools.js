@@ -124,7 +124,7 @@ function getCarAngle(index, list) {
     var CarObject = getK_B(FirstPoint.x, FirstPoint.y, LastPoint.x, LastPoint.y);
     // console.log(CarObject);
     var Angle = Math.atan(CarObject.k) * 180 / Math.PI;
-    console.log(Angle);
+    // console.log(Angle);
     return Angle;
 }
 
@@ -219,9 +219,13 @@ function getPathOfTravel(startPoint, endPoint, roadList) {
     // console.log(startPoint, endPoint, roadList);
     //  fixme   这个地方必然有bug，没有考虑小车运动的方向
     var startPointIndex = getClosest(startPoint, roadList);
-    var endPointIndex = getClosest(endPoint, roadList) + 1;
-    return roadList.slice(startPointIndex, endPointIndex);
+    var endPointIndex = getClosest(endPoint, roadList);
+    var _startIndex = Math.min(startPointIndex, endPointIndex);
+    var _endIndex = Math.max(startPointIndex, endPointIndex) + 1;
+    return roadList.slice(_startIndex, _endIndex);
 }
+
+//  获取
 
 
 //  测试  四角定位

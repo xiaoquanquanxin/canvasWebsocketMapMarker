@@ -118,7 +118,7 @@ function getClosest(referenceSpot, pointList) {
  * */
 function getCarAngle(index, list) {
     var FirstIndex = Math.max(0, index - 3);
-    var LastIndex = FirstIndex + 5;
+    var LastIndex = Math.min(FirstIndex + 5, list.length - 1);
     var FirstPoint = calculatePoint(list[FirstIndex]);
     var LastPoint = calculatePoint(list[LastIndex]);
     var CarObject = getK_B(FirstPoint.x, FirstPoint.y, LastPoint.x, LastPoint.y);

@@ -166,9 +166,9 @@ function mainRender() {
     // taskList[1]();
     // taskList[2]();
     taskList[3]();
-    taskList[4]();
+    // taskList[4]();
     // taskList[5]();
-    // taskList[6]();
+    taskList[6]();
     // taskList[7]();
 
     return
@@ -224,11 +224,11 @@ var taskList = [
     },
     function (z5) {
         var pointData = {
-            longitude: 23.20890,
-            latitude: 113.552379
+            longitude: 23.20950,
+            latitude: 113.551139
         };
         var _pointData = calculatePoint(pointData);
-        console.log(_pointData);
+        console.log('红点', _pointData);
         // return;
         //  开始接驾的对象
         NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
@@ -237,7 +237,9 @@ var taskList = [
             longitude: pointData.longitude,
             latitude: pointData.latitude,
         }));
-        drawRound(_pointData, 10, 'red');
+        if (isTest) {
+            drawRound(_pointData, 10, 'red');
+        }
         return
     },
     function (z6) {

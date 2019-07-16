@@ -38,7 +38,7 @@ var roadData = {
     lineColor: 'rgb(160,165,180)',
     lineWidth: 10,
     inflexionPointColor: 'rgb(160,165,180)',
-    inflexionPointColor: 'yellow',
+    // inflexionPointColor: 'yellow',
     inflexionPointRadius: 5,
 };
 
@@ -49,6 +49,23 @@ var planRoadData = {
     inflexionPointColor: 'rgb(71,130,228)',
     inflexionPointColor: 'orange',
     inflexionPointRadius: 5,
+};
+
+//  重复路线配置
+var planRoadData = {
+    lineColor: '#ffa838',
+    lineWidth: 10,
+    inflexionPointColor: '#ffa838',
+    inflexionPointColor: 'red',
+    inflexionPointRadius: 5,
+};
+
+//  等待接驾路线配置        虚线
+var waitForRouteData = {
+    lineColor: 'white',
+    lineWidth: 2,
+    lineLength: 8,              //  线条长度
+    lineSpacing: 8,             //  线条间距长度
 };
 
 //  小车位置

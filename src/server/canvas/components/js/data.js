@@ -33,12 +33,21 @@ var tipData = {
     triangleHeight: 6,
     limitRightWidth: 10,        //  距离右侧的最小边距
 };
-//  路径配置
+//  常规路径配置
 var roadData = {
-    lineColor: 'grey',
+    lineColor: 'rgb(160,165,180)',
     lineWidth: 10,
-    inflexionPointColor: 'grey',
+    inflexionPointColor: 'rgb(160,165,180)',
     inflexionPointColor: 'yellow',
+    inflexionPointRadius: 5,
+};
+
+//  规划路线配置
+var planRoadData = {
+    lineColor: 'rgb(71,130,228)',
+    lineWidth: 10,
+    inflexionPointColor: 'rgb(71,130,228)',
+    inflexionPointColor: 'orange',
     inflexionPointRadius: 5,
 };
 

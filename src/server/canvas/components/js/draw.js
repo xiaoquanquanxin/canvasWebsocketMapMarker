@@ -139,18 +139,22 @@ function drawStations() {
 }
 
 //  绘制路径
-function drawRoad() {
+/**
+ *  @roadList:array     要画的路线
+ *  @configData:object  要画的路线的配置
+ * */
+function drawRoad(roadList, configData) {
     //  绘制路径
-    RoadList.reduce(function (prev, current) {
-        drawLine(calculatePoint(prev), calculatePoint(current), roadData.lineColor, roadData.lineWidth / imgRatio);
+    roadList.reduce(function (prev, current) {
+        drawLine(calculatePoint(prev), calculatePoint(current), configData.lineColor, configData.lineWidth / imgRatio);
         return current;
     });
 
     //  绘制拐弯
-    RoadList.forEach(function (item, index) {
+    roadList.forEach(function (item, index) {
         var __point = calculatePoint(item);
         //  绘制某个点
-        drawRound(__point, roadData.inflexionPointRadius / imgRatio, roadData.inflexionPointColor);
+        drawRound(__point, configData.inflexionPointRadius / imgRatio, configData.inflexionPointColor);
     });
 }
 
@@ -391,8 +395,9 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             //  绘制地图
             drawImage(ImageMap, {x: 0, y: 0}, canvas.width, canvas.height);
             //  绘制道路
-            drawRoad();
+            drawRoad(RoadList, roadData);
         },
+
         //  绘制未定位状态         🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊可约车状态
         drawUnLocation: function () {
             //  任何图都基于无可用车辆
@@ -430,7 +435,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             //  绘制地图
             drawMap();
             //  绘制道路
-            drawRoad();
+            drawRoad(RoadList, roadData);
             //  绘制全部站点
             drawStations();
             //  绘制起点和终点
@@ -442,7 +447,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
                     throw new Error('没有这个上车点位');
                 }
                 drawStation(StartPoint, ImageStationStart);
-                drawTips('在这里上车在这里上车在这里上车', StartPoint, tipData.height, tipData.fontSize, true);
+                drawTips('在这里上车', StartPoint, tipData.height, tipData.fontSize, true);
             }
             if (endPointId) {
                 window.EndPoint = StationList.find(function (item) {
@@ -472,12 +477,19 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             waitingData.type = 1;
             this.drawNoCar();
             //  绘制起点与终点，这来个点我控制
-            drawStation(StartPoint, ImageStationStart);
-            drawTips(waitingData, StartPoint, tipData.height, tipData.fontSize, true);
-            drawStation(EndPoint, ImageStationEnd);
-            drawTips('终点', EndPoint, tipData.height, tipData.fontSize, true);
-        },
+            var _StartPoint = JSON.parse(JSON.stringify(StartPoint));
+            var _EndPoint = JSON.parse(JSON.stringify(EndPoint));
+            var _RoadList = JSON.parse(JSON.stringify(RoadList));
+            //  获取行程的路径
+            var planRoadList = getPathOfTravel(_StartPoint, _EndPoint, _RoadList);
+            console.log(planRoadList);
+            drawRoad(planRoadList, planRoadData);
 
+            drawStation(_StartPoint, ImageStationStart);
+            drawTips(waitingData, _StartPoint, tipData.height, tipData.fontSize, true);
+            drawStation(_EndPoint, ImageStationEnd);
+            drawTips('终点', _EndPoint, tipData.height, tipData.fontSize, true);
+        },
 
         //  开始接驾
         /**
@@ -499,6 +511,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             drawCar(CarPoint);
             drawTips(catchData, CarPoint, tipData.height, tipData.fontSize);
         },
+
         //  等待乘车
         /**
          * @carArrived:object   车辆已到达的倒计时对象
@@ -525,7 +538,6 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             drawStation(StartPoint, ImageStationStart);
             drawTips(drivingData, StartPoint, tipData.height, tipData.fontSize);
         }
-
     }
 }());
 

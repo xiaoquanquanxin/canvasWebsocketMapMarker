@@ -206,6 +206,23 @@ function getCountDown(countDown) {
     }
 }());
 
+//  获取行程的路径
+/**
+ * @startPoint:object   起点
+ * @endPoint:object   终点
+ * @roadList:array      路径的list
+ *
+ * 说明：寻找路径中关于起点和终点最近的两个点，然后把他们在roadList中的那部分返回
+ * @return:array    返回应该被染色的list
+ * */
+function getPathOfTravel(startPoint, endPoint, roadList) {
+    // console.log(startPoint, endPoint, roadList);
+    //  fixme   这个地方必然有bug，没有考虑小车运动的方向
+    var startPointIndex = getClosest(startPoint, roadList);
+    var endPointIndex = getClosest(endPoint, roadList) + 1;
+    return roadList.slice(startPointIndex, endPointIndex);
+}
+
 
 //  测试  四角定位
 /**

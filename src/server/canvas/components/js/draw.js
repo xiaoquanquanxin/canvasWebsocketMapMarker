@@ -369,142 +369,147 @@ function drawTips(message, point, height, fontSize, hasTriangle) {
 
 
 //  对外暴露方法  export
+var NativeUtilsCallH5 = {};
+//  无人车对象
+NativeUtilsCallH5.DriverLessCar = (function () {
+    return {
+        //  绘制无可用车辆         🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉无可用车辆
+        drawNoCar: function () {
+            //  任何时候都要先晴空
+            drawClear();
+            //  绘制地图
+            drawImage(ImageMap, {x: 0, y: 0}, canvas.width, canvas.height);
+            //  绘制道路
+            drawRoad();
+        },
+        //  绘制未定位状态         🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊可约车状态
+        drawUnLocation: function () {
+            //  任何图都基于无可用车辆
+            this.drawNoCar();
+            //  绘制全部站点
+            drawStations();
+        },
 
-//  绘制无可用车辆         🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉无可用车辆
-function drawNoCar() {
-    //  任何时候都要先晴空
-    drawClear();
-    //  绘制地图
-    drawImage(ImageMap, {x: 0, y: 0}, canvas.width, canvas.height);
-    //  绘制道路
-    drawRoad();
-}
+        //  绘制用户开启定位状态
+        /**
+         * @userPoint:object    用户定位的经纬度
+         * */
+        drawLocation: function (userPoint) {
+            //  用户位置
+            window.UserPoint = JSON.parse(userPoint);
+            //  先画未定位
+            this.drawUnLocation();
+            //  用户定位
+            drawUser(UserPoint);
+            // console.clear();
+            var MinPoint = getClosest(UserPoint, StationList);
+            console.log('离我最近的点', StationList[MinPoint]);
+            return StationList[MinPoint];
+        },
 
-//  绘制未定位状态         🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊可约车状态
-function drawUnLocation() {
-    //  任何图都基于无可用车辆
-    drawNoCar();
-    //  绘制全部站点
-    drawStations();
-}
+        //  绘制起点终点
+        // startPointId, endPointId
+        /**
+         * @startPointId:number 起点id
+         * @endPointId:number   终点id
+         * */
+        drawStartAndEnd: function (startPointId, endPointId) {
+            //  绘制起点需要全部擦除
+            drawClear();
+            //  绘制地图
+            drawMap();
+            //  绘制道路
+            drawRoad();
+            //  绘制全部站点
+            drawStations();
+            //  绘制起点和终点
+            if (startPointId) {
+                window.StartPoint = StationList.find(function (item) {
+                    return item.id === startPointId;
+                });
+                drawStation(StartPoint, ImageStationStart);
+                drawTips('在这里上车', StartPoint, tipData.height, tipData.fontSize, true);
+            }
+            if (endPointId) {
+                window.EndPoint = StationList.find(function (item) {
+                    return item.id === endPointId;
+                });
+                drawStation(EndPoint, ImageStationEnd);
+                drawTips('目的地', EndPoint, tipData.height, tipData.fontSize, true);
+            }
+            //  绘制用户的点位 只要用户曾经定位过，就永远在这里了
+            if (typeof UserPoint === 'object') {
+                drawUser(UserPoint);
+            }
+        },
 
-//  绘制用户开启定位状态
-/**
- * @userPoint:object    用户定位的经纬度
- * */
-function drawLocation(userPoint) {
-    //  用户位置
-    window.UserPoint = JSON.parse(userPoint);
-    //  先画未定位
-    drawUnLocation();
-    //  用户定位
-    drawUser(UserPoint);
-    // console.clear();
-    var MinPoint = getClosest(UserPoint, StationList);
-    console.log('离我最近的点', StationList[MinPoint]);
-    return StationList[MinPoint];
-}
+        //  等待排队            🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎有未完成订单       以后就没有UserPoint了
+        /**
+         * @waitingObject:string    排队对象的json字符串
+         *
+         * */
+        drawQueueUp: function (waitingString) {
+            console.log('waitingString', waitingString);
+            var waitingData = JSON.parse(waitingString);
+            waitingData.type = 1;
+            this.drawNoCar();
+            //  绘制起点与终点，这来个点我控制
+            drawStation(StartPoint, ImageStationStart);
+            drawTips(waitingData, StartPoint, tipData.height, tipData.fontSize, true);
+            drawStation(EndPoint, ImageStationEnd);
+            drawTips('终点', EndPoint, tipData.height, tipData.fontSize, true);
+        },
 
-//  绘制起点终点
-// startPointId, endPointId
-/**
- * @startPointId:number 起点id
- * @endPointId:number   终点id
- * */
-function drawStartAndEnd(startPointId, endPointId) {
-    //  绘制起点需要全部擦除
-    drawClear();
-    //  绘制地图
-    drawMap();
-    //  绘制道路
-    drawRoad();
-    //  绘制全部站点
-    drawStations();
-    //  绘制起点和终点
-    if (startPointId) {
-        window.StartPoint = StationList.find(function (item) {
-            return item.id === startPointId;
-        });
-        drawStation(StartPoint, ImageStationStart);
-        drawTips('在这里上车', StartPoint, tipData.height, tipData.fontSize, true);
+
+        //  开始接驾
+        /**
+         * @catchString:string  开始接驾的对象
+         * */
+        drawCatchStarting: function (catchString) {
+            console.log('catchString', catchString);
+            var catchData = JSON.parse(catchString);
+            catchData.type = 2;
+            console.log(catchData);
+            window.CarPoint.longitude = catchData.longitude;
+            window.CarPoint.latitude = catchData.latitude;
+            this.drawNoCar();
+            //  绘制起点与终点，这来个点我控制
+            drawStation(StartPoint, ImageStationStart);
+            drawTips(catchData, CarPoint, tipData.height, tipData.fontSize);
+            drawCar(CarPoint);
+            drawStation(EndPoint, ImageStationEnd);
+            drawTips('终点', EndPoint, tipData.height, tipData.fontSize, true);
+        },
+        //  等待乘车
+        /**
+         * @carArrived:object   车辆已到达的倒计时对象
+         * */
+        drawCarArrived: function (carArrivedData) {
+            this.drawNoCar();
+            drawStation(EndPoint, ImageStationEnd);
+            drawTips('终点', EndPoint, tipData.height, tipData.fontSize, true);
+            drawStation(StartPoint, ImageStationStart);
+            drawTips(carArrivedData, StartPoint, tipData.height, tipData.fontSize);
+        },
+
+        //  乘车中
+        /**
+         * @drivingData:object  汽车行驶状态对象
+         *
+         * */
+        drawInTheBus: function (drivingData) {
+            this.drawNoCar();
+            drawStation(EndPoint, ImageStationEnd);
+            drawTips('终点', EndPoint, tipData.height, tipData.fontSize, true);
+
+
+            drawStation(StartPoint, ImageStationStart);
+            drawTips(drivingData, StartPoint, tipData.height, tipData.fontSize);
+        }
+
     }
-    if (endPointId) {
-        window.EndPoint = StationList.find(function (item) {
-            return item.id === endPointId;
-        });
-        drawStation(EndPoint, ImageStationEnd);
-        drawTips('目的地', EndPoint, tipData.height, tipData.fontSize, true);
-    }
-    //  绘制用户的点位 只要用户曾经定位过，就永远在这里了
-    if (typeof UserPoint === 'object') {
-        drawUser(UserPoint);
-    }
-}
+}());
 
-
-//  等待排队            🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎有未完成订单       以后就没有UserPoint了
-/**
- * @waitingObject:string    排队对象的json字符串
- *
- * */
-function drawQueueUp(waitingString) {
-    console.log('waitingString', waitingString);
-    var waitingData = JSON.parse(waitingString);
-    waitingData.type = 1;
-    drawNoCar();
-    //  绘制起点与终点，这来个点我控制
-    drawStation(StartPoint, ImageStationStart);
-    drawTips(waitingData, StartPoint, tipData.height, tipData.fontSize, true);
-    drawStation(EndPoint, ImageStationEnd);
-    drawTips('终点', EndPoint, tipData.height, tipData.fontSize, true);
-}
-
-//  开始接驾
-/**
- * @catchString:string  开始接驾的对象
- * */
-function drawCatchStarting(catchString) {
-    console.log('catchString', catchString);
-    var catchData = JSON.parse(catchString);
-    catchData.type = 2;
-    console.log(catchData);
-    window.CarPoint.longitude = catchData.longitude;
-    window.CarPoint.latitude = catchData.latitude;
-    drawNoCar();
-    //  绘制起点与终点，这来个点我控制
-    drawStation(StartPoint, ImageStationStart);
-    drawTips(catchData, CarPoint, tipData.height, tipData.fontSize);
-    drawCar(CarPoint);
-    drawStation(EndPoint, ImageStationEnd);
-    drawTips('终点', EndPoint, tipData.height, tipData.fontSize, true);
-}
-
-//  等待乘车
-/**
- * @carArrived:object   车辆已到达的倒计时对象
- * */
-function drawCarArrived(carArrivedData) {
-    drawNoCar();
-    drawStation(EndPoint, ImageStationEnd);
-    drawTips('终点', EndPoint, tipData.height, tipData.fontSize, true);
-    drawStation(StartPoint, ImageStationStart);
-    drawTips(carArrivedData, StartPoint, tipData.height, tipData.fontSize);
-}
-
-//  乘车中
-/**
- * @drivingData:object  汽车行驶状态对象
- *
- * */
-function drawInTheBus(drivingData) {
-    drawNoCar();
-    drawStation(EndPoint, ImageStationEnd);
-    drawTips('终点', EndPoint, tipData.height, tipData.fontSize, true);
-
-
-    drawStation(StartPoint, ImageStationStart);
-    drawTips(drivingData, StartPoint, tipData.height, tipData.fontSize);
-}
 
 //  测试
 

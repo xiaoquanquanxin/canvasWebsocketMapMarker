@@ -162,12 +162,12 @@ function iconImageError(e) {
 //  主绘制
 //  封装了绘制路线和地图
 function mainRender() {
-    taskList[0]();
-    taskList[1]();
-    taskList[2]();
+    // taskList[0]();
+    // taskList[1]();
+    // taskList[2]();
     taskList[3]();
     taskList[4]();
-    taskList[5]();
+    // taskList[5]();
     // taskList[6]();
     // taskList[7]();
 
@@ -191,17 +191,17 @@ function mainRender() {
 }
 
 var taskList = [
-    function () {
+    function (z0) {
         //  绘制无可用车辆
         NativeUtilsCallH5.DriverLessCar.drawNoCar();
         return;
     },
-    function () {
+    function (z1) {
         //  绘制未定位状态
         NativeUtilsCallH5.DriverLessCar.drawUnLocation();
         return;
     },
-    function () {
+    function (z2) {
         //  绘制用户开启定位状态
         NativeUtilsCallH5.DriverLessCar.drawLocation(JSON.stringify({
             latitude: 113.5516910000,
@@ -209,12 +209,12 @@ var taskList = [
         }));
         return;
     },
-    function () {
+    function (z3) {
         //  绘制起点终点
         NativeUtilsCallH5.DriverLessCar.drawStartAndEnd(4, 5);
         return;
     },
-    function () {
+    function (z4) {
         //  等待排队
         NativeUtilsCallH5.DriverLessCar.drawQueueUp(JSON.stringify({
             remainingTime: '00:00:32',           //  剩余时间
@@ -222,7 +222,7 @@ var taskList = [
         }));
         return;
     },
-    function () {
+    function (z5) {
         var pointData = {
             longitude: 23.20890,
             latitude: 113.552379
@@ -240,7 +240,7 @@ var taskList = [
         drawRound(_pointData, 10, 'red');
         return
     },
-    function () {
+    function (z6) {
         //  等待乘车
         var CarArrivedData = {
             type: 3,
@@ -249,7 +249,7 @@ var taskList = [
         NativeUtilsCallH5.DriverLessCar.drawCarArrived(CarArrivedData);
         return;
     },
-    function () {
+    function (z7) {
         //  乘车中
         var drivingData = {
             type: 4,

@@ -162,14 +162,15 @@ function iconImageError(e) {
 //  主绘制
 //  封装了绘制路线和地图
 function mainRender() {
-    // taskList[0]();
+    taskList[0]();
+    return;
     // taskList[1]();
     // taskList[2]();
     taskList[3]();
     // taskList[4]();
     // taskList[5]();
-    taskList[6]();
-    // taskList[7]();
+    // taskList[6]();
+    taskList[7]();
 
     return
     var index = 0;
@@ -211,7 +212,7 @@ var taskList = [
     },
     function (z3) {
         //  绘制起点终点
-        NativeUtilsCallH5.DriverLessCar.drawStartAndEnd(4, 5);
+        NativeUtilsCallH5.DriverLessCar.drawStartAndEnd(3, 5);
         return;
     },
     function (z4) {
@@ -223,14 +224,12 @@ var taskList = [
         return;
     },
     function (z5) {
+        //  开始接驾的对象
         var pointData = {
             longitude: 23.20950,
             latitude: 113.551139
         };
-        var _pointData = calculatePoint(pointData);
-        console.log('红点', _pointData);
         // return;
-        //  开始接驾的对象
         NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
             startPointDistance: 13,            //  剩余距离，米
             startPointTime: '00:10:02',         //  剩余时间
@@ -238,6 +237,8 @@ var taskList = [
             latitude: pointData.latitude,
         }));
         if (isTest) {
+            var _pointData = calculatePoint(pointData);
+            console.log('红点', _pointData);
             drawRound(_pointData, 10, 'red');
         }
         return
@@ -245,19 +246,23 @@ var taskList = [
     function (z6) {
         //  等待乘车
         var CarArrivedData = {
-            type: 3,
             countDown: '00:00:03',              //  倒计时
         };
         NativeUtilsCallH5.DriverLessCar.drawCarArrived(CarArrivedData);
         return;
     },
     function (z7) {
+        var pointData = {
+            longitude: 23.20950,
+            latitude: 113.551139
+        };
         //  乘车中
         var drivingData = {
-            type: 4,
             fromTheEnd: 1221,                   //  距离终点
             estimatedTime: '00:00:13',          //  预计时间
+            longitude: pointData.longitude,
+            latitude: pointData.latitude,
         };
-        NativeUtilsCallH5.DriverLessCar.drawInTheBus(drivingData);
+        NativeUtilsCallH5.DriverLessCar.drawInTheBus(JSON.stringify(drivingData));
     }
 ];

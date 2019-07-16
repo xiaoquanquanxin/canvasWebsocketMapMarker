@@ -29,6 +29,8 @@ ImageUser._src = './img/user.png';
 var tipData = {
     fontSize: 20,
     height: 30,
+    triangleWidth :6,
+    triangleHeight:6,
 };
 //  路径配置
 var roadData = {

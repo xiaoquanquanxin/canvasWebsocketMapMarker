@@ -164,12 +164,14 @@ function iconImageError(e) {
 function mainRender() {
     taskList[3]();
     taskList[5]();
+
     // taskList[7]();
 
     return
     var index = 0;
     var timer = null;
-    taskList = taskList.slice(3,6);
+
+    // taskList = taskList.slice(3,6);
 
     function taskFn() {
         console.log(index);
@@ -219,12 +221,23 @@ var taskList = [
         return;
     },
     function () {
+        var pointData = {
+            longitude: 23.20818,
+            latitude: 113.551073
+        };
+        var _pointData = calculatePoint(pointData);
+        console.log(_pointData);
+        drawRound(_pointData, 10, 'red');
+
+
+        // return;
+
         //  开始接驾的对象
         NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
             startPointDistance: 13,            //  剩余距离，米
             startPointTime: '00:10:02',         //  剩余时间
-            longitude: 23.206638,
-            latitude: 113.550973
+            longitude: pointData.longitude,
+            latitude: pointData.latitude,
         }));
         return
     },

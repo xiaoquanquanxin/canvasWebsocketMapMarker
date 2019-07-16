@@ -308,7 +308,6 @@ function drawTips(message, point, height, fontSize, hasTriangle) {
                 // console.log(TextArr);
                 break;
             case 3:             //  type === 3 ：等待乘车
-                console.log(message);
                 var countDownData = getCountDown(message.countDown.toString());
                 console.log(countDownData);
                 TextArr = [
@@ -317,10 +316,9 @@ function drawTips(message, point, height, fontSize, hasTriangle) {
                 ];
                 break;
             case 4:
-                console.log(message);
                 var fromTheEndData = getDistanceData(message.fromTheEnd.toString());
                 var estimatedTimeData = getTimeData(message.estimatedTime.toString());
-                console.log(fromTheEndData, estimatedTimeData);
+                // console.log(fromTheEndData, estimatedTimeData);
                 TextArr = [
                     {word: '距离终点', color: 'black', textLength: '距离终点'.length * _fontSize},
                     {
@@ -375,8 +373,8 @@ function drawTips(message, point, height, fontSize, hasTriangle) {
         }
         if (tipsIsCarCondition) {
             console.log('计算tips，是小车');
-            // __point.y -= (ImageCar.height + _height - 15 / imgRatio);        //  这是另一种配置
-            __point.y -= (ImageCar.height + _height);
+            __point.y -= (ImageCar.height + _height - 15 / imgRatio);        //  这是另一种配置
+            // __point.y -= (ImageCar.height + _height);
         } else {
             __point.y -= ImageStationBasic.height + _height;
         }
@@ -552,6 +550,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
          * @carArrived:object   车辆已到达的倒计时对象
          * */
         drawCarArrived: function (carArrivedData) {
+            carArrivedData.type = 3;
             this.drawNoCar();
             //  绘制起点与终点，这来个点我控制，来一份起点和终点和路径的备份
             var _StartPoint = JSON.parse(JSON.stringify(StartPoint));
@@ -571,14 +570,23 @@ NativeUtilsCallH5.DriverLessCar = (function () {
          * @drivingData:object  汽车行驶状态对象
          *
          * */
-        drawInTheBus: function (drivingData) {
+        drawInTheBus: function (drivingString) {
+            var drivingData = JSON.parse(drivingString);
+            drivingData.type = 4;
+            window.CarPoint.longitude = drivingData.longitude;
+            window.CarPoint.latitude = drivingData.latitude;
+
             this.drawNoCar();
-            drawStation(EndPoint, ImageStationEnd);
-            drawTips('终点', EndPoint, tipData.height, tipData.fontSize, true);
+            //  绘制起点与终点，这来个点我控制，来一份起点和终点和路径的备份
+            var _StartPoint = JSON.parse(JSON.stringify(StartPoint));
+            var _EndPoint = JSON.parse(JSON.stringify(EndPoint));
+            drawStation(_EndPoint, ImageStationEnd);
+            drawTips('终点', _EndPoint, tipData.height, tipData.fontSize, true);
+            drawStation(_StartPoint, ImageStationStart);
 
-
-            drawStation(StartPoint, ImageStationStart);
-            drawTips(drivingData, StartPoint, tipData.height, tipData.fontSize);
+            //  todo
+            drawCar(CarPoint);
+            drawTips(drivingData, CarPoint, tipData.height, tipData.fontSize);
         }
     }
 }());

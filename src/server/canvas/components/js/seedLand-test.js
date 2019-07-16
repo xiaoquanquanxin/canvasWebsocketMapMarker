@@ -162,25 +162,18 @@ function iconImageError(e) {
 //  主绘制
 //  封装了绘制路线和地图
 function mainRender() {
-    taskList[3]();
-    taskList[5]();
-
-    // taskList[7]();
-
     return
     var index = 0;
     var timer = null;
 
-    // taskList = taskList.slice(3,6);
-
     function taskFn() {
-        console.log(index);
         timer = setTimeout(taskFn, 1000);
         if (taskList[index] === undefined) {
             clearInterval(timer);
             timer = null;
             return;
         }
+        console.log(index);
         taskList[index]();
         index++;
     }
@@ -228,10 +221,7 @@ var taskList = [
         var _pointData = calculatePoint(pointData);
         console.log(_pointData);
         drawRound(_pointData, 10, 'red');
-
-
         // return;
-
         //  开始接驾的对象
         NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
             startPointDistance: 13,            //  剩余距离，米

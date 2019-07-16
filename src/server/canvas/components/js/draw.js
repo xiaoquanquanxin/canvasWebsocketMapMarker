@@ -160,7 +160,7 @@ function drawCar(point) {
     var MinIndex = getClosest(point, RoadList);
     console.log(RoadList[MinIndex]);
     //  todo    或longitude\latitude
-    CarPoint = RoadList[MinIndex];
+    CarPoint = JSON.parse(JSON.stringify(RoadList[MinIndex]));
     //  找到可以用来求解的两个点    这两个点应该是前三和后三
     var CarAngle = getCarAngle(MinIndex, RoadList);
     var __point = calculatePoint(RoadList[MinIndex]);
@@ -332,13 +332,21 @@ function drawTips(message, point, height, fontSize, hasTriangle) {
 
     //  三角形对象
     var triangleObject = {};
-    triangleObject.width = 6 / imgRatio;
-    triangleObject.height = 6 / imgRatio;
+    triangleObject.width = tipData.triangleWidth / imgRatio;
+    triangleObject.height = tipData.triangleHeight / imgRatio;
+
+    //  如果是小车的tips,总是在上方
+    var tipsIsCarCondition = message.type === 2 || message.type === 3 || message.type === 4;
 
     //  限界，主要是考虑右侧
-    if (__point.x + _width + 10 * ratio + ImageStationBasic.width * 0.5 >= canvas.width) {
+    if (__point.x + _width + 10 * ratio + ImageStationBasic.width * 0.5 >= canvas.width || tipsIsCarCondition) {
         //  如果实际tips的右边  与  canvas右边距离少于10px，则让他放到上面
         __point.x -= _width / 2;
+
+        if (__point.x + _width >= canvas.width - 10 / imgRatio) {
+            __point.x = Math.min(__point.x, canvas.width - 10 / imgRatio - _width)
+        }
+
         __point.y -= ImageStationBasic.height + _height;
         triangleObject.x = __point.x + _width / 2;
         triangleObject.y = __point.y + _height + triangleObject.height;
@@ -350,6 +358,15 @@ function drawTips(message, point, height, fontSize, hasTriangle) {
         triangleObject.y = __point.y + _height * 0.5;
         triangleObject.turn = 270;
     }
+
+    // //  给小车加的tips
+    // if (message.type === 2 || message.type === 3|| message.type === 4) {
+    //     console.log(__point.x + _width, canvas.width - 10 / imgRatio);
+    //     if (__point.x + _width >= canvas.width - 10 / imgRatio) {
+    //         __point.x = Math.min(__point.x, canvas.width - 10 / imgRatio - _width)
+    //     }
+    // }
+
 
     //  绘制圆角矩形
     drawRoundRect(__point.x, __point.y, _width, _height, 5, 'white');
@@ -468,6 +485,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
          * @catchString:string  开始接驾的对象
          * */
         drawCatchStarting: function (catchString) {
+            // debugger
             console.log('catchString', catchString);
             var catchData = JSON.parse(catchString);
             catchData.type = 2;
@@ -476,12 +494,11 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             window.CarPoint.latitude = catchData.latitude;
             this.drawNoCar();
             //  绘制起点与终点，这来个点我控制
+            drawStation(EndPoint, ImageStationEnd);
+            drawTips('终点', EndPoint, tipData.height, tipData.fontSize, true);
             drawStation(StartPoint, ImageStationStart);
             drawCar(CarPoint);
             drawTips(catchData, CarPoint, tipData.height, tipData.fontSize);
-
-            drawStation(EndPoint, ImageStationEnd);
-            drawTips('终点', EndPoint, tipData.height, tipData.fontSize, true);
         },
         //  等待乘车
         /**

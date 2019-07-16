@@ -172,7 +172,8 @@ function getDistanceData(distanceStr) {
  * @return:string       返回时间字符串
  * */
 function getCountDown(countDown) {
-    return countDown.substring(3).replace(':', '\'');
+    var _arr = countDown.substring(3).replace(':', '\'').split('\'');
+    return Number(_arr[0]) + '\'' + _arr[1];
 }
 
 /**

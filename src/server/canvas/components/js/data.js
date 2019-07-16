@@ -3,8 +3,6 @@ var northernLatitude = 1;
 //  图片绘制的比例，根据地图与window.innerWidth的比例
 var imgRatio = 1;
 
-
-
 //  图片配置
 var ImageList = [];
 //  地图
@@ -29,23 +27,16 @@ ImageUser._src = './img/user.png';
 
 //  小标签tips的配置
 var tipData = {
-    fontSize: 16,
+    fontSize: 20,
     height: 30,
 };
-
-
-//  活动数据
-
-
-//  测试点
-var TestPoint = {
-    latitude: 113.5520550000,
-    longitude: 23.2089110000,
+//  路径配置
+var roadData = {
+    lineColor: 'grey',
+    lineWidth: 10,
+    inflexionPointColor: 'grey',
+    inflexionPointRadius: 5,
 };
-
 
 //  小车位置
 var CarPoint = {};
-// var CarPoint = {longitude: 23.208435, latitude: 113.55239};
-
-

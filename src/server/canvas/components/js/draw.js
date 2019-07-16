@@ -142,7 +142,7 @@ function drawStations() {
 function drawRoad() {
     //  绘制路径
     RoadList.reduce(function (prev, current) {
-        drawLine(calculatePoint(prev), calculatePoint(current), 'rgba(0,199,0,0.4)', 15);
+        drawLine(calculatePoint(prev), calculatePoint(current), roadData.lineColor, roadData.lineWidth / imgRatio);
         return current;
     });
 
@@ -150,7 +150,7 @@ function drawRoad() {
     RoadList.forEach(function (item, index) {
         var __point = calculatePoint(item);
         //  绘制某个点
-        drawRound(__point, 13, 'purple');
+        drawRound(__point, roadData.inflexionPointRadius / imgRatio, roadData.inflexionPointColor);
     });
 }
 
@@ -158,7 +158,9 @@ function drawRoad() {
 function drawCar(point) {
     //  获取汽车应该在的点
     var MinIndex = getClosest(point, RoadList);
-    console.log(MinIndex, RoadList);
+    console.log(RoadList[MinIndex]);
+    //  todo    或longitude\latitude
+    CarPoint = RoadList[MinIndex];
     //  找到可以用来求解的两个点    这两个点应该是前三和后三
     var CarAngle = getCarAngle(MinIndex, RoadList);
     var __point = calculatePoint(RoadList[MinIndex]);
@@ -475,8 +477,9 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             this.drawNoCar();
             //  绘制起点与终点，这来个点我控制
             drawStation(StartPoint, ImageStationStart);
-            drawTips(catchData, CarPoint, tipData.height, tipData.fontSize);
             drawCar(CarPoint);
+            drawTips(catchData, CarPoint, tipData.height, tipData.fontSize);
+
             drawStation(EndPoint, ImageStationEnd);
             drawTips('终点', EndPoint, tipData.height, tipData.fontSize, true);
         },

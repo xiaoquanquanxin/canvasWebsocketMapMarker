@@ -162,60 +162,88 @@ function iconImageError(e) {
 //  主绘制
 //  封装了绘制路线和地图
 function mainRender() {
-    //  绘制无可用车辆
-    NativeUtilsCallH5.DriverLessCar.drawNoCar();
-    return;
+    taskList[3]();
+    taskList[5]();
+    // taskList[7]();
 
-    //  绘制未定位状态
-    // NativeUtilsCallH5.DriverLessCar.drawUnLocation();
-    // return;
+    return
+    var index = 0;
+    var timer = null;
+    taskList = taskList.slice(3,6);
 
-    //  绘制用户开启定位状态
-    // NativeUtilsCallH5.DriverLessCar.drawLocation(JSON.stringify({
-    //     latitude: 113.5516910000,
-    //     longitude: 23.2090780000,
-    // }));
-    // return;
+    function taskFn() {
+        console.log(index);
+        timer = setTimeout(taskFn, 1000);
+        if (taskList[index] === undefined) {
+            clearInterval(timer);
+            timer = null;
+            return;
+        }
+        taskList[index]();
+        index++;
+    }
 
-    //  绘制起点终点
-    // NativeUtilsCallH5.DriverLessCar.drawStartAndEnd(3, 5);
-    // return;
-
-
-
-    //  等待排队
-    // NativeUtilsCallH5.DriverLessCar.drawQueueUp(JSON.stringify({
-    //     remainingTime: '00:00:32',           //  剩余时间
-    //     numberOfPeople: 2,          //  排队人数
-    // }));
-    // return;
-
-
-    //  开始接驾的对象
-    // NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
-    //     startPointDistance: 13,            //  剩余距离，米
-    //     startPointTime: '00:10:02',         //  剩余时间
-    //     longitude: 23.209638,
-    //     latitude: 113.550973
-    // }));
-    // return
-
-    //  等待乘车
-    // var CarArrivedData = {
-    //     type: 3,
-    //     countDown: '00:00:03',              //  倒计时
-    // };
-    // NativeUtilsCallH5.DriverLessCar.drawCarArrived(CarArrivedData);
-    // return;
-
-
-    //  乘车中
-    // var drivingData = {
-    //     type: 4,
-    //     fromTheEnd: 1221,                   //  距离终点
-    //     estimatedTime: '00:00:13',          //  预计时间
-    // };
-    // NativeUtilsCallH5.DriverLessCar.drawInTheBus(drivingData);
-
-
+    taskFn();
 }
+
+var taskList = [
+    function () {
+        //  绘制无可用车辆
+        NativeUtilsCallH5.DriverLessCar.drawNoCar();
+        return;
+    },
+    function () {
+        //  绘制未定位状态
+        NativeUtilsCallH5.DriverLessCar.drawUnLocation();
+        return;
+    },
+    function () {
+        //  绘制用户开启定位状态
+        NativeUtilsCallH5.DriverLessCar.drawLocation(JSON.stringify({
+            latitude: 113.5516910000,
+            longitude: 23.2090780000,
+        }));
+        return;
+    },
+    function () {
+        //  绘制起点终点
+        NativeUtilsCallH5.DriverLessCar.drawStartAndEnd(3, 5);
+        return;
+    },
+    function () {
+        //  等待排队
+        NativeUtilsCallH5.DriverLessCar.drawQueueUp(JSON.stringify({
+            remainingTime: '00:00:32',           //  剩余时间
+            numberOfPeople: 2,          //  排队人数
+        }));
+        return;
+    },
+    function () {
+        //  开始接驾的对象
+        NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
+            startPointDistance: 13,            //  剩余距离，米
+            startPointTime: '00:10:02',         //  剩余时间
+            longitude: 23.206638,
+            latitude: 113.550973
+        }));
+        return
+    },
+    function () {
+        //  等待乘车
+        var CarArrivedData = {
+            type: 3,
+            countDown: '00:00:03',              //  倒计时
+        };
+        NativeUtilsCallH5.DriverLessCar.drawCarArrived(CarArrivedData);
+        return;
+    },
+    function () {
+        //  乘车中
+        var drivingData = {
+            type: 4,
+            fromTheEnd: 1221,                   //  距离终点
+            estimatedTime: '00:00:13',          //  预计时间
+        };
+        NativeUtilsCallH5.DriverLessCar.drawInTheBus(drivingData);
+    }
+];

@@ -29,14 +29,16 @@ ImageUser._src = './img/user.png';
 var tipData = {
     fontSize: 20,
     height: 30,
-    triangleWidth :6,
-    triangleHeight:6,
+    triangleWidth: 6,
+    triangleHeight: 6,
+    limitRightWidth: 10,        //  距离右侧的最小边距
 };
 //  路径配置
 var roadData = {
     lineColor: 'grey',
     lineWidth: 10,
     inflexionPointColor: 'grey',
+    inflexionPointColor: 'yellow',
     inflexionPointRadius: 5,
 };
 

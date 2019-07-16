@@ -162,6 +162,15 @@ function iconImageError(e) {
 //  主绘制
 //  封装了绘制路线和地图
 function mainRender() {
+    taskList[0]();
+    taskList[1]();
+    taskList[2]();
+    taskList[3]();
+    taskList[4]();
+    taskList[5]();
+    // taskList[6]();
+    // taskList[7]();
+
     return
     var index = 0;
     var timer = null;
@@ -202,7 +211,7 @@ var taskList = [
     },
     function () {
         //  绘制起点终点
-        NativeUtilsCallH5.DriverLessCar.drawStartAndEnd(3, 5);
+        NativeUtilsCallH5.DriverLessCar.drawStartAndEnd(4, 5);
         return;
     },
     function () {
@@ -215,12 +224,11 @@ var taskList = [
     },
     function () {
         var pointData = {
-            longitude: 23.20818,
-            latitude: 113.551073
+            longitude: 23.20890,
+            latitude: 113.552379
         };
         var _pointData = calculatePoint(pointData);
         console.log(_pointData);
-        drawRound(_pointData, 10, 'red');
         // return;
         //  开始接驾的对象
         NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
@@ -229,6 +237,7 @@ var taskList = [
             longitude: pointData.longitude,
             latitude: pointData.latitude,
         }));
+        drawRound(_pointData, 10, 'red');
         return
     },
     function () {

@@ -338,17 +338,17 @@ function drawTips(message, point, height, fontSize, hasTriangle) {
     //  如果是小车的tips,总是在上方
     var tipsIsCarCondition = message.type === 2 || message.type === 3 || message.type === 4;
 
+    // debugger;
     //  限界，主要是考虑右侧
-    if (__point.x + _width + 10 * ratio + ImageStationBasic.width * 0.5 >= canvas.width || tipsIsCarCondition) {
+    if (__point.x + _width + tipData.limitRightWidth / imgRatio + ImageStationBasic.width * 0.5 >= canvas.width || tipsIsCarCondition) {
+        //  tips的x轴
+        triangleObject.x = __point.x;
         //  如果实际tips的右边  与  canvas右边距离少于10px，则让他放到上面
         __point.x -= _width / 2;
-
-        if (__point.x + _width >= canvas.width - 10 / imgRatio) {
-            __point.x = Math.min(__point.x, canvas.width - 10 / imgRatio - _width)
+        if (__point.x + _width >= canvas.width - tipData.limitRightWidth / imgRatio) {
+            __point.x = Math.min(__point.x, canvas.width - tipData.limitRightWidth / imgRatio - _width)
         }
-
         __point.y -= ImageStationBasic.height + _height;
-        triangleObject.x = __point.x + _width / 2;
         triangleObject.y = __point.y + _height + triangleObject.height;
         triangleObject.turn = 180;
     } else {
@@ -358,14 +358,6 @@ function drawTips(message, point, height, fontSize, hasTriangle) {
         triangleObject.y = __point.y + _height * 0.5;
         triangleObject.turn = 270;
     }
-
-    // //  给小车加的tips
-    // if (message.type === 2 || message.type === 3|| message.type === 4) {
-    //     console.log(__point.x + _width, canvas.width - 10 / imgRatio);
-    //     if (__point.x + _width >= canvas.width - 10 / imgRatio) {
-    //         __point.x = Math.min(__point.x, canvas.width - 10 / imgRatio - _width)
-    //     }
-    // }
 
 
     //  绘制圆角矩形
@@ -446,13 +438,20 @@ NativeUtilsCallH5.DriverLessCar = (function () {
                 window.StartPoint = StationList.find(function (item) {
                     return item.id === startPointId;
                 });
+                if (window.StartPoint === undefined) {
+                    throw new Error('没有这个上车点位');
+                }
                 drawStation(StartPoint, ImageStationStart);
-                drawTips('在这里上车', StartPoint, tipData.height, tipData.fontSize, true);
+                drawTips('在这里上车在这里上车在这里上车', StartPoint, tipData.height, tipData.fontSize, true);
             }
             if (endPointId) {
                 window.EndPoint = StationList.find(function (item) {
                     return item.id === endPointId;
                 });
+                if (window.EndPoint === undefined) {
+                    throw new Error('没有这个下车点位');
+                }
+                //  todo    别忘了放开注释
                 drawStation(EndPoint, ImageStationEnd);
                 drawTips('目的地', EndPoint, tipData.height, tipData.fontSize, true);
             }

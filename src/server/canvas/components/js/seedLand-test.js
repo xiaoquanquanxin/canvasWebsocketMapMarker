@@ -163,27 +163,28 @@ function iconImageError(e) {
 //  封装了绘制路线和地图
 function mainRender() {
     //  绘制无可用车辆
-    // drawNoCar();
-    // return;
+    NativeUtilsCallH5.DriverLessCar.drawNoCar();
+    return;
 
     //  绘制未定位状态
-    // drawUnLocation();
+    // NativeUtilsCallH5.DriverLessCar.drawUnLocation();
     // return;
 
     //  绘制用户开启定位状态
-    // drawLocation(JSON.stringify({
+    // NativeUtilsCallH5.DriverLessCar.drawLocation(JSON.stringify({
     //     latitude: 113.5516910000,
     //     longitude: 23.2090780000,
     // }));
     // return;
 
     //  绘制起点终点
-    drawStartAndEnd(3, 5);
+    // NativeUtilsCallH5.DriverLessCar.drawStartAndEnd(3, 5);
     // return;
 
 
+
     //  等待排队
-    // drawQueueUp(JSON.stringify({
+    // NativeUtilsCallH5.DriverLessCar.drawQueueUp(JSON.stringify({
     //     remainingTime: '00:00:32',           //  剩余时间
     //     numberOfPeople: 2,          //  排队人数
     // }));
@@ -191,30 +192,30 @@ function mainRender() {
 
 
     //  开始接驾的对象
-    drawCatchStarting(JSON.stringify({
-        startPointDistance: 13,            //  剩余距离，米
-        startPointTime: '00:10:02',         //  剩余时间
-        longitude: 23.209638,
-        latitude: 113.550973
-    }));
-    return
+    // NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
+    //     startPointDistance: 13,            //  剩余距离，米
+    //     startPointTime: '00:10:02',         //  剩余时间
+    //     longitude: 23.209638,
+    //     latitude: 113.550973
+    // }));
+    // return
 
     //  等待乘车
-    var CarArrivedData = {
-        type: 3,
-        countDown: '00:00:03',              //  倒计时
-    };
-    // drawCarArrived(CarArrivedData);
+    // var CarArrivedData = {
+    //     type: 3,
+    //     countDown: '00:00:03',              //  倒计时
+    // };
+    // NativeUtilsCallH5.DriverLessCar.drawCarArrived(CarArrivedData);
     // return;
 
 
     //  乘车中
-    var drivingData = {
-        type: 4,
-        fromTheEnd: 1221,                   //  距离终点
-        estimatedTime: '00:00:13',          //  预计时间
-    };
-    drawInTheBus(drivingData);
+    // var drivingData = {
+    //     type: 4,
+    //     fromTheEnd: 1221,                   //  距离终点
+    //     estimatedTime: '00:00:13',          //  预计时间
+    // };
+    // NativeUtilsCallH5.DriverLessCar.drawInTheBus(drivingData);
 
 
 }

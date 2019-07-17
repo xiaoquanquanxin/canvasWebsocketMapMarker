@@ -30,7 +30,7 @@ if (isTest) {
     }());
     //  获取车站站点经纬度
     window.StationList = [
-        // {"longitude": 23.2096000000, "latitude": 113.5511030000, "id": 1},
+        {"longitude": 23.2096000000, "latitude": 113.5511030000, "id": 1},
         {"longitude": 23.2093780000, "latitude": 113.5517330000, "id": 2},
         {"longitude": 23.2091780000, "latitude": 113.5523630000, "id": 3},
         {"longitude": 23.2085350000, "latitude": 113.5522950000, "id": 4},
@@ -54,7 +54,26 @@ if (isTest) {
         {"longitude": 23.2078490000, "latitude": 113.5515170000},
         {"longitude": 23.2079490000, "latitude": 113.5512570000},
         {"longitude": 23.2081220000, "latitude": 113.5508160000},
-    ]
+    ];
+
+
+    //  测试状态 4，5，6，7的数据
+    var startId = 2;
+    var endId = 4;
+    //  无人车在左上角
+    var pointData = {longitude: 23.20950, latitude: 113.5512};
+    //  虚线路径    正方向
+    var toGoThroughList = [StationList[1], StationList[2], StationList[3]];
+    //  虚线路径    反方向
+    // var toGoThroughList = [StationList[0], StationList[1], StationList[2]];
+    //  无人车在右下角
+    // var pointData = {longitude: 23.20830, latitude: 113.551839};
+    //  虚线路径    正方向
+    // var toGoThroughList = [StationList[4]];
+    //  虚线路径    反方向
+    // var toGoThroughList = [StationList[3], StationList[2], StationList[1], StationList[0], StationList[1], StationList[2], StationList[3], StationList[4]];
+
+
 } else {
     // window.Corner = H5Callxxx.getCornerData()
     // window.StationList = getStationList()
@@ -168,10 +187,9 @@ function mainRender() {
     // taskList[2]();
     taskList[3]();
     // taskList[4]();
-    taskList[5]();
+    // taskList[5]();
     // taskList[6]();
-    // taskList[7]();
-
+    taskList[7]();
     return
     var index = 0;
     var timer = null;
@@ -212,7 +230,7 @@ var taskList = [
     },
     function (z3) {
         //  绘制起点终点
-        NativeUtilsCallH5.DriverLessCar.drawStartAndEnd(3, 5);
+        NativeUtilsCallH5.DriverLessCar.drawStartAndEnd(startId, endId);
         return;
     },
     function (z4) {
@@ -224,16 +242,6 @@ var taskList = [
         return;
     },
     function (z5) {
-        //  无人车在左上角
-        var pointData = {longitude: 23.20950, latitude: 113.551139};
-        //  虚线路径    正方向
-        var toGoThroughList = [StationList[0], StationList[1]];
-        //  无人车在右下角
-        // var pointData = {longitude: 23.20830, latitude: 113.551839};
-        //  虚线路径    正方向
-        // var toGoThroughList = [StationList[3]];
-        //  虚线路径    反方向
-        // var toGoThroughList = [StationList[2], StationList[1], StationList[0], StationList[1]];
         // return;
         NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
             startPointDistance: 1311,            //  剩余距离，米
@@ -245,7 +253,7 @@ var taskList = [
         if (isTest) {
             var _pointData = calculatePoint(pointData);
             // console.log('红点', _pointData);
-            drawRound(_pointData, 10, 'red');
+            drawCircle(_pointData, 10, 'red');
         }
         return
     },
@@ -258,17 +266,17 @@ var taskList = [
         return;
     },
     function (z7) {
-        var pointData = {
-            longitude: 23.20950,
-            latitude: 113.551139
-        };
+        console.log(pointData, toGoThroughList);
         //  乘车中
         var drivingData = {
             fromTheEnd: 1221,                   //  距离终点
             estimatedTime: '00:00:13',          //  预计时间
             longitude: pointData.longitude,
             latitude: pointData.latitude,
+            toGoThroughList: toGoThroughList
         };
         NativeUtilsCallH5.DriverLessCar.drawInTheBus(JSON.stringify(drivingData));
     }
 ];
+
+//  fixme   判断车头车尾的还是有点问题   taskList[6]();

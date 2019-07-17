@@ -169,10 +169,8 @@ function drawScreen(roadList, configData) {
     ctx.strokeStyle = configData.lineColor;
     ctx.beginPath();
     roadList.reduce(function (prev, current) {
-        var _prev = calculatePoint(prev);
-        var _current = calculatePoint(current);
-        ctx.moveTo(_prev.x, _prev.y);
-        ctx.lineTo(_current.x, _current.y);
+        ctx.moveTo(prev.x, prev.y);
+        ctx.lineTo(current.x, current.y);
         return current;
     });
     ctx.stroke();
@@ -185,11 +183,15 @@ function drawCar(point) {
     var MinIndex = getClosest(point, RoadList);
     // console.log(RoadList[MinIndex]);
     //  todo    或longitude\latitude
-    CarPoint = JSON.parse(JSON.stringify(RoadList[MinIndex]));
+    var _CarPoint = JSON.parse(JSON.stringify(RoadList[MinIndex]));
+    CarPoint.longitude = _CarPoint.longitude;
+    CarPoint.latitude = _CarPoint.latitude;
     //  找到可以用来求解的两个点    这两个点应该是前三和后三
     var CarAngle = getCarAngle(MinIndex, RoadList);
+    CarAngle = CarAngle + 180 * (!point.turn);
     var __point = calculatePoint(RoadList[MinIndex]);
-    // console.log(__point, CarAngle);
+    console.log(__point, CarAngle);
+    // CarAngle = 180-64
     //  位移
     ctx.translate(__point.x, __point.y);
     //  旋转
@@ -372,7 +374,7 @@ function drawTips(message, point, height, fontSize, hasTriangle) {
             __point.x = Math.min(__point.x, canvas.width - tipData.limitRightWidth / imgRatio - _width)
         }
         if (tipsIsCarCondition) {
-            console.log('计算tips，是小车');
+            // console.log('计算tips，是小车');
             __point.y -= (ImageCar.height + _height - 15 / imgRatio);        //  这是另一种配置
             // __point.y -= (ImageCar.height + _height);
         } else {
@@ -409,7 +411,7 @@ function drawTips(message, point, height, fontSize, hasTriangle) {
 
 
 //  对外暴露方法  export
-var NativeUtilsCallH5 = {};
+window.NativeUtilsCallH5 = {};
 //  无人车对象
 NativeUtilsCallH5.DriverLessCar = (function () {
     return {
@@ -522,7 +524,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             catchData.type = 2;
             window.CarPoint.longitude = catchData.longitude;
             window.CarPoint.latitude = catchData.latitude;
-            console.log('离红点最近的路线坐标', CarPoint);
+            console.log('汽车真实经纬度', CarPoint);
             this.drawNoCar();
             //  绘制起点与终点，这来个点我控制，来一份起点和终点和路径的备份
             var _StartPoint = JSON.parse(JSON.stringify(StartPoint));
@@ -530,13 +532,20 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             var _RoadList = JSON.parse(JSON.stringify(RoadList));
             //  被计算出来的汽车位置的起点，用于绘制虚线，是虚线的起点
             var _waitForRoutePoint = _RoadList[getClosest(CarPoint, _RoadList)];
+            console.log('汽车修正经纬度', _waitForRoutePoint);
+            //  下一行仅测试
+            // drawRound(calculatePoint(_waitForRoutePoint), 10, 'red');
             //  起点终点
             drawStation(_EndPoint, ImageStationEnd);
             drawTips('终点', _EndPoint, tipData.height, tipData.fontSize, true);
             drawStation(_StartPoint, ImageStationStart);
+            //  获取行程的路径     以及无人车方向
+            var pathOfTravelData = getPathOfTravel(CarPoint, catchData.toGoThroughList, _RoadList);
+            console.log(pathOfTravelData);
             //  获取行程的路径
-            var waitForRouteList = getPathOfTravel(_StartPoint, _waitForRoutePoint, _RoadList);
-            // console.log(waitForRouteList, waitForRouteData);
+            var waitForRouteList = pathOfTravelData.list;
+            //  小车方向
+            CarPoint.turn = pathOfTravelData.turn;
             //  画虚线
             drawScreen(waitForRouteList, waitForRouteData);
             //  小车

@@ -30,7 +30,7 @@ if (isTest) {
     }());
     //  获取车站站点经纬度
     window.StationList = [
-        {"longitude": 23.2096000000, "latitude": 113.5511030000, "id": 1},
+        // {"longitude": 23.2096000000, "latitude": 113.5511030000, "id": 1},
         {"longitude": 23.2093780000, "latitude": 113.5517330000, "id": 2},
         {"longitude": 23.2091780000, "latitude": 113.5523630000, "id": 3},
         {"longitude": 23.2085350000, "latitude": 113.5522950000, "id": 4},
@@ -162,15 +162,15 @@ function iconImageError(e) {
 //  主绘制
 //  封装了绘制路线和地图
 function mainRender() {
-    taskList[0]();
-    return;
+    // taskList[0]();
+    // return;
     // taskList[1]();
     // taskList[2]();
     taskList[3]();
     // taskList[4]();
-    // taskList[5]();
+    taskList[5]();
     // taskList[6]();
-    taskList[7]();
+    // taskList[7]();
 
     return
     var index = 0;
@@ -224,21 +224,27 @@ var taskList = [
         return;
     },
     function (z5) {
-        //  开始接驾的对象
-        var pointData = {
-            longitude: 23.20950,
-            latitude: 113.551139
-        };
+        //  无人车在左上角
+        var pointData = {longitude: 23.20950, latitude: 113.551139};
+        //  虚线路径    正方向
+        var toGoThroughList = [StationList[0], StationList[1]];
+        //  无人车在右下角
+        // var pointData = {longitude: 23.20830, latitude: 113.551839};
+        //  虚线路径    正方向
+        // var toGoThroughList = [StationList[3]];
+        //  虚线路径    反方向
+        // var toGoThroughList = [StationList[2], StationList[1], StationList[0], StationList[1]];
         // return;
         NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
-            startPointDistance: 13,            //  剩余距离，米
+            startPointDistance: 1311,            //  剩余距离，米
             startPointTime: '00:10:02',         //  剩余时间
-            longitude: pointData.longitude,
-            latitude: pointData.latitude,
+            longitude: pointData.longitude,     //  无人车当前的纬度
+            latitude: pointData.latitude,       //  无人车当前的经度
+            toGoThroughList: toGoThroughList,
         }));
         if (isTest) {
             var _pointData = calculatePoint(pointData);
-            console.log('红点', _pointData);
+            // console.log('红点', _pointData);
             drawRound(_pointData, 10, 'red');
         }
         return

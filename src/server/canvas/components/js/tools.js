@@ -108,6 +108,25 @@ function getClosest(referenceSpot, pointList) {
     return MinIndex;
 }
 
+//  返回最近的点
+/**
+ * @referenceSpot:参考点位
+ * @pointList:一系列点
+ *
+ * @return:number 从pointList中,返回最近的那个点的下标
+ * */
+function getCanvasClosest(referenceSpot, pointList) {
+    //  作出距离的list
+    var __differList = pointList.map(function (item) {
+        return getDiffer(item.x, item.y, referenceSpot.x, referenceSpot.y);
+    });
+    var Min = Math.min.apply(null, __differList);
+    var MinIndex = __differList.findIndex(function (item) {
+        return item === Min;
+    });
+    return MinIndex;
+}
+
 
 //  获取前后三个点【差值为5的点】的斜率               👌👌纯函数
 /**
@@ -122,9 +141,12 @@ function getCarAngle(index, list) {
     var FirstPoint = calculatePoint(list[FirstIndex]);
     var LastPoint = calculatePoint(list[LastIndex]);
     var CarObject = getK_B(FirstPoint.x, FirstPoint.y, LastPoint.x, LastPoint.y);
-    // console.log(CarObject);
+    console.log(CarObject);
     var Angle = Math.atan(CarObject.k) * 180 / Math.PI;
-    // console.log(Angle);
+    if (CarObject.k < 0) {
+        Angle = 180 + Angle
+    }
+    console.log('Angle无人车角度', Angle);
     return Angle;
 }
 
@@ -209,21 +231,54 @@ function getCountDown(countDown) {
 
 //  获取行程的路径
 /**
- * @startPoint:object   起点
- * @endPoint:object   终点
+ * @carPoint:object     无人车的位置
+ * @expectList:array    要经过路径的list
  * @roadList:array      路径的list
  *
- * 说明：寻找路径中关于起点和终点最近的两个点，然后把他们在roadList中的那部分返回
- * @return:array    返回应该被染色的list
+ * 说明：寻找路径中关于起点和终点最近的两个点，然后把他们在roadList中的那部分返回  ，以及无人车方向
+ * @return:object
+ * @list:array    返回应该被染色的list
+ * @turn:boolean    无人车方向
  * */
-function getPathOfTravel(startPoint, endPoint, roadList) {
-    // console.log(startPoint, endPoint, roadList);
-    //  fixme   这个地方必然有bug，没有考虑小车运动的方向
-    var startPointIndex = getClosest(startPoint, roadList);
-    var endPointIndex = getClosest(endPoint, roadList);
-    var _startIndex = Math.min(startPointIndex, endPointIndex);
-    var _endIndex = Math.max(startPointIndex, endPointIndex) + 1;
-    return roadList.slice(_startIndex, _endIndex);
+function getPathOfTravel(carPoint, expectList, roadList) {
+    expectList.unshift(carPoint);
+    //  先转换坐标系，预计虚线路线
+    var _expectList = expectList.map(function (item) {
+        return calculatePoint(item);
+    });
+    // console.log(_expectList);
+    //  道路的路线
+    var _roadList = roadList.map(function (item) {
+        return calculatePoint(item);
+    });
+    //  预计虚线路线在道路路线上对应的点位下标
+    var _dottedLineIndex = _expectList.map(function (item) {
+        return getCanvasClosest(item, _roadList);
+    });
+    // console.log(_dottedLineIndex);
+    //  至少有两个点
+    if (_dottedLineIndex.length <= 1) {
+        throw new Error('不可能出现有少于两个点点情况,至少要用一个无人车的点，和一个站点【用户选择的上车站点】');
+    }
+    //  无人车方向
+    var turn = true;
+    //  反转
+    if (_dottedLineIndex[1] - _dottedLineIndex[0] === -1) {
+        console.log('反方向');
+        turn = false;
+    } else {
+        //  如果相等，也说明正方向
+        console.log('正方向');
+    }
+    //  虚线的roadList的起点和终点
+    var _dottedStartIndex = Math.min.apply(null, _dottedLineIndex);
+    //  todo    结束的点的index+1可能有坑
+    var _dottedEndIndex = Math.max.apply(null, _dottedLineIndex) + 1;
+    // console.log(_dottedStartIndex, _dottedEndIndex, _roadList);
+    return {
+        list: _roadList.slice(_dottedStartIndex, _dottedEndIndex),
+        turn: turn
+    };
 }
 
 //  获取

@@ -82,6 +82,12 @@ function calculatePoint(point) {
     };
 }
 
+//  将某个list的经纬度全部转为canvas坐标系点
+function calculateList(list) {
+    return list.map(function (item) {
+        return calculatePoint(item);
+    })
+}
 
 //  返回最近的点
 /**
@@ -141,12 +147,12 @@ function getCarAngle(index, list) {
     var FirstPoint = calculatePoint(list[FirstIndex]);
     var LastPoint = calculatePoint(list[LastIndex]);
     var CarObject = getK_B(FirstPoint.x, FirstPoint.y, LastPoint.x, LastPoint.y);
-    console.log(CarObject);
+    // console.log(CarObject);
     var Angle = Math.atan(CarObject.k) * 180 / Math.PI;
     if (CarObject.k < 0) {
         Angle = 180 + Angle
     }
-    console.log('Angle无人车角度', Angle);
+    // console.log('Angle无人车角度', Angle);
     return Angle;
 }
 
@@ -312,22 +318,22 @@ function __testCorner(bottom_differ, left_differ, productOfSlope) {
 //  测试
 function testDraw(bottom_differ, left_differ) {
     //  test右下角
-    drawRound({
+    drawCircle({
         x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(Number(bottom_differ)),
         y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(0),
     }, 20, 'red');
     //  test右上角
-    drawRound({
+    drawCircle({
         x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(Number(bottom_differ)),
         y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(left_differ)
     }, 20, 'red');
     //  test左上角
-    drawRound({
+    drawCircle({
         x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(0),
         y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(left_differ)
     }, 20, 'red');
     //  test左下角
-    drawRound({
+    drawCircle({
         x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(0),
         y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(0)
     }, 20, 'red');

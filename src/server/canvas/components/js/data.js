@@ -37,8 +37,8 @@ var tipData = {
 var roadData = {
     lineColor: 'rgb(160,165,180)',
     lineWidth: 10,
-    inflexionPointColor: 'rgb(160,165,180)',
-    // inflexionPointColor: 'yellow',
+    inflexionPointColor: 'yellow',
+    // inflexionPointColor: 'rgb(160,165,180)',
     inflexionPointRadius: 5,
 };
 
@@ -52,7 +52,7 @@ var planRoadData = {
 };
 
 //  重复路线配置
-var planRoadData = {
+var repeatPlanRoadData = {
     lineColor: '#ffa838',
     lineWidth: 10,
     inflexionPointColor: '#ffa838',
@@ -69,4 +69,6 @@ var waitForRouteData = {
 };
 
 //  小车位置
-var CarPoint = {};
+var CarPoint = {
+    turn: true
+};

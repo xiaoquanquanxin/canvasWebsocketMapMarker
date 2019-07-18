@@ -596,6 +596,10 @@ window.NativeUtilsCallH5 = window.NativeUtilsCallH5 || {};
 //  无人车对象
 NativeUtilsCallH5.DriverLessCar = (function () {
     return {
+        //  清除数据, 除了 地图四角经纬度, 路径经纬度,站点经纬度以外的全部数据
+        drawReset: function () {
+            resetData();
+        },
         //  刚进入页面的初始化状态，只有地图
         drawInit: function () {
             //  任何时候都要先晴空
@@ -625,7 +629,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
          *
          * @return:string   JSON串：："{"id":2,"x":577.2850539290472,"y":385.72152093401405}"
          * */
-        drawLocation: function (userPoint) {
+        drawLocation: function (userPoint, stationList) {
             //  用户位置
             window.UserPoint = calculatePoint(JSON.parse(userPoint));
             //  先画未定位

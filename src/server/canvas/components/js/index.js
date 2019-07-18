@@ -104,14 +104,32 @@ var taskList = [
         }));
     },
     function (z6) {
-        // return;
+        var _StationList = getStationList();
+        //  先获取等待接驾数据
+        NativeUtilsCallH5.DriverLessCar.setWaitForRouteList(JSON.stringify(
+            [_StationList[1], _StationList[2], _StationList[3]]
+        ), JSON.stringify({
+            longitude: pointData.longitude,     //  无人车当前的纬度
+            latitude: pointData.latitude,       //  无人车当前的经度
+        }));
+
+        //  后绘制
         NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
             startPointDistance: 1311,            //  剩余距离，米
             startPointTime: '00:10:02',         //  剩余时间
             longitude: pointData.longitude,     //  无人车当前的纬度
             latitude: pointData.latitude,       //  无人车当前的经度
-            toGoThroughList: toGoThroughList,
         }));
+
+        //  fixme   测试
+        setTimeout(function () {
+            NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
+                startPointDistance: 1311,            //  剩余距离，米
+                startPointTime: '00:10:02',         //  剩余时间
+                longitude: getStationList()[2].longitude,     //  无人车当前的纬度
+                latitude: getStationList()[2].latitude,       //  无人车当前的经度
+            }));
+        }, 1000);
         if (isTest) {
             var _pointData = calculatePoint(obtainCopy(pointData));
             // console.log('红点', _pointData);
@@ -166,36 +184,14 @@ function imagesIsAllLoaded() {
     } else {
         //  fixme   本地测试,将来要删除
         //  获取四个角落的经纬度  这个数据将来从移动端获取的时候，再做处理
-        window.Corner = getCorner();
+        NativeUtilsCallH5.DriverLessCar.setCornerData(JSON.stringify(getCorner()));
         //  获取车站站点经纬度
-        window.StationList = getStationList();
+        NativeUtilsCallH5.DriverLessCar.setStationList(JSON.stringify(getStationList()));
         //  获取路线经纬度
-        window.RoadList = getRoadList();
+        NativeUtilsCallH5.DriverLessCar.setRoadList(JSON.stringify(getRoadList()));
         //  载入测试数据
         testUsingData();
     }
-
-    //  点的简写
-    var bl = Corner.bottomLeft;
-    var br = Corner.bottomRight;
-    //  获得底边斜率k, 和b
-    window.bottomLineParams = getK_B(br.latitude, br.longitude, bl.latitude, bl.longitude);
-    // console.log('底边k,b对象', bottomLineParams);
-    var tl = Corner.topLeft;
-
-    //  获得左边斜率k,和b
-    window.leftLineParams = getK_B(tl.latitude, tl.longitude, bl.latitude, bl.longitude);
-    // console.log('左边k,b对象', leftLineParams);
-
-    //  根据左下角和右下角求底边在canvas坐标系下的长度
-    window.bottom_differ = getDiffer(bl.latitude, bl.longitude, br.latitude, br.longitude);
-    //  单位经纬度坐标系长度相当于n个像素的比例,是一个很大的数
-    window.getRatio = canvas.width / bottom_differ;
-    window.left_differ = getDiffer(bl.latitude, bl.longitude, tl.latitude, tl.longitude);
-
-    RoadList = calculateList(RoadList);
-    StationList = calculateList(StationList);
-
     console.log('h5完全准备好了，可以调用任何方法了 ');
     NativeUtilsCallH5.DriverLessCar.drawInit();
     myTest();

@@ -63,7 +63,9 @@ var repeatPlanRoadData = {
 //  等待接驾路线配置        虚线
 var waitForRouteData = {
     lineColor: 'white',
+    lineColor: 'blue',
     lineWidth: 2,
+    lineWidth: 4,
     lineLength: 8,              //  线条长度
     lineSpacing: 8,             //  线条间距长度
 };
@@ -84,12 +86,16 @@ function resetData() {
         w.EndPoint = null;
         w.CarPoint = null;
         w.CarPoint = null;
+        w.toGoThroughList = null;
+        w.WaitForRouteList = null;
+        w.PassingStationList = null;
     }(window));
 }
 
 
 //  fixme   测试数据
-
+//  fixme   测试数据
+//  fixme   测试数据
 //  车站数据
 function getStationList() {
     return [
@@ -125,7 +131,7 @@ function getRoadList() {
 
 //  获取四角数据
 function getCorner() {
-    return transformOriginData(function () {
+    return (function () {
         var Left = 113.5502100000;
         var Top = 23.2102910000;
         var Right = 113.5528060000;
@@ -157,12 +163,12 @@ function getCorner() {
 function testUsingData() {
     return (function (w) {
         //  测试状态 4，5，6，7的数据
-        w.startId = 2;
-        w.endId = 4;
+        w.startId = 4;
+        w.endId = 5;
         //  无人车在左上角
         w.pointData = {longitude: 23.20950, latitude: 113.5512};
         //  虚线路径    正方向
-        w.toGoThroughList = [StationList[1], StationList[2], StationList[3]];
+        // w.toGoThroughList = [StationList[1], StationList[2], StationList[3]];
         //  虚线路径    反方向
         // var toGoThroughList = [StationList[0], StationList[1], StationList[2]];
         //  无人车在右下角

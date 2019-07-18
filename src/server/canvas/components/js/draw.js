@@ -526,17 +526,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             CarPoint = calculatePoint(CarPoint);
             // console.log('汽车真实经纬度', CarPoint);
             this.drawNoCar();
-            debugger;
 
-            //  获取行程的路径     以及无人车方向
-            var pathOfTravelData = getPathOfTravel(obtainCopy(CarPoint), catchData.toGoThroughList, obtainCopy(RoadList));
-            // console.log(pathOfTravelData);
-            //  获取行程的路径
-            var waitForRouteList = pathOfTravelData.list;
-            //  小车方向
-            CarPoint.turn = pathOfTravelData.turn;
-            //  画虚线
-            drawScreen(waitForRouteList, waitForRouteData);
 
             //  起点终点
             drawStation(obtainCopy(EndPoint), ImageStationEnd);
@@ -549,6 +539,15 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             // debugger
             drawCar(CarPoint);
             drawCanvasTips(catchData, obtainCopy(CarPoint), tipData.height, tipData.fontSize);
+
+            //  完整的待接驾路线 [1,2,3,4,5,6,7,8,9]
+            console.log(PassingStationList);
+            console.log(CarPoint);
+            var passIndex = getCanvasClosest(CarPoint, PassingStationList);
+            PassingStationList = PassingStationList.slice(passIndex);
+
+            //  画虚线
+            drawScreen(PassingStationList, waitForRouteData);
         },
 
         //  等待乘车
@@ -605,6 +604,57 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             drawCar(CarPoint);
             drawCanvasTips(drivingData, CarPoint, tipData.height, tipData.fontSize);
         },
+
+        /**
+         * 服务端推数据
+         * */
+        //  四角数据
+        setCornerData: function (cornerData) {
+            window.Corner = transformOriginData(JSON.parse(cornerData));
+
+            //  帮助完成坐标系的建立
+            //  点的简写
+            var bl = Corner.bottomLeft;
+            var br = Corner.bottomRight;
+            //  获得底边斜率k, 和b
+            window.bottomLineParams = getK_B(br.latitude, br.longitude, bl.latitude, bl.longitude);
+            // console.log('底边k,b对象', bottomLineParams);
+            var tl = Corner.topLeft;
+
+            //  获得左边斜率k,和b
+            window.leftLineParams = getK_B(tl.latitude, tl.longitude, bl.latitude, bl.longitude);
+            // console.log('左边k,b对象', leftLineParams);
+
+            //  根据左下角和右下角求底边在canvas坐标系下的长度
+            window.bottom_differ = getDiffer(bl.latitude, bl.longitude, br.latitude, br.longitude);
+            //  单位经纬度坐标系长度相当于n个像素的比例,是一个很大的数
+            window.getRatio = canvas.width / bottom_differ;
+            window.left_differ = getDiffer(bl.latitude, bl.longitude, tl.latitude, tl.longitude);
+        },
+        //  车站数据    转换数据得完成对坐标系的建立之后才能执行
+        setStationList: function (stationListData) {
+            window.StationList = calculateList(JSON.parse(stationListData));
+        },
+        //  路径数据    转换数据得完成对坐标系的建立之后才能执行
+        setRoadList: function (RoadListData) {
+            window.RoadList = calculateList(JSON.parse(RoadListData));
+        },
+
+        //  等待接驾数据
+        setWaitForRouteList: function (waitForRouteList, carPoint) {
+            window.WaitForRouteList = calculateList(JSON.parse(waitForRouteList));
+            var _carPoint = JSON.parse(carPoint);
+            window.CarPoint.longitude = _carPoint.longitude;
+            window.CarPoint.latitude = _carPoint.latitude;
+            CarPoint = calculatePoint(CarPoint);
+            //  获取行程的路径     以及无人车方向
+            var pathOfTravelData = getPathOfTravel(obtainCopy(CarPoint), obtainCopy(WaitForRouteList), obtainCopy(RoadList));
+            //  虚线的路径的点
+            window.PassingStationList = pathOfTravelData.list;
+            //  无人车的方向
+            CarPoint.turn = pathOfTravelData.turn;
+        },
+
 
         //  仅用于计算的东西,和绘图物管
         getUserClosestStation: function (userPoint, stationList) {

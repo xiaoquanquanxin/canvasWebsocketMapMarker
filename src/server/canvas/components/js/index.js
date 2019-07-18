@@ -1,7 +1,7 @@
 //  测试、本地
 var isTest = true;
 if (isTest) {
-    //  获取四个角落的经纬度
+    //  获取四个角落的经纬度  这个数据将来从移动端获取的时候，再做处理
     window.Corner = transformOriginData(function () {
         var Left = 113.5502100000;
         var Top = 23.2102910000;
@@ -73,9 +73,14 @@ if (isTest) {
     //  虚线路径    反方向
     // var toGoThroughList = [StationList[3], StationList[2], StationList[1], StationList[0], StationList[1], StationList[2], StationList[3], StationList[4]];
 
-
 } else {
-    // window.Corner = H5Callxxx.getCornerData()
+    // window.Corner = transformOriginData(function () {
+    //     var _corner = (function () {
+    //         return H5Callxxx.getCornerData()
+    //     })();
+    //     northernLatitude = Math.cos(Math.PI * ((_corner.Top + _corner.Bottom) / 2 / 180));
+    //     return _corner
+    // }());
     // window.StationList = getStationList()
     // window.RoadList = getRoadList()
 }
@@ -178,17 +183,26 @@ function iconImageError(e) {
     imagesIsAllLoaded();
 }
 
+//  初始化数据，处理数据，将坐标系转换
+function initData() {
+    RoadList = calculateList(RoadList);
+    StationList = calculateList(StationList);
+}
+
 //  主绘制
 //  封装了绘制路线和地图
 function mainRender() {
+    //  初始化数据，处理数据，将坐标系转换
+    initData();
     // taskList[0]();
-    // return;
     // taskList[1]();
     // taskList[2]();
     taskList[3]();
     // taskList[4]();
-    // taskList[5]();
-    // taskList[6]();
+    taskList[5]();
+    return;
+
+    taskList[6]();
     taskList[7]();
     return
     var index = 0;
@@ -250,8 +264,9 @@ var taskList = [
             latitude: pointData.latitude,       //  无人车当前的经度
             toGoThroughList: toGoThroughList,
         }));
+
         if (isTest) {
-            var _pointData = calculatePoint(pointData);
+            var _pointData = calculatePoint(obtainCopy(pointData));
             // console.log('红点', _pointData);
             drawCircle(_pointData, 10, 'red');
         }

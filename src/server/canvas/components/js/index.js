@@ -205,6 +205,6 @@ function imagesIsAllLoaded() {
 function myTest() {
     taskList.slice(0, 7).forEach(function (fn) {
         fn();
-    })
+    });
 }
 

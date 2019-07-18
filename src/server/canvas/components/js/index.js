@@ -141,6 +141,14 @@ ImageMap.onload = function () {
     canvas.style.height = canvas.height / ratio + 'px';
     loadIconImage();
     imagesIsAllLoaded();
+
+    this.isLoaded = true;
+    return
+    debugger
+    //  如果移动端调用我的 drawInit 方法了
+    if(NativeUtilsCallH5.DriverLessCar.drawInitCalled === true){
+        taskList[0]();
+    }
 };
 
 
@@ -194,17 +202,18 @@ function initData() {
 function mainRender() {
     //  初始化数据，处理数据，将坐标系转换
     initData();
-    // taskList[0]();
-    // taskList[1]();
-    // taskList[2]();
-    taskList[3]();
-    // taskList[4]();
-    taskList[5]();
+    taskList[0]();
     return;
-
+    taskList[1]();
+    taskList[2]();
+    taskList[3]();
+    taskList[4]();
+    taskList[5]();
     taskList[6]();
     taskList[7]();
-    return
+    taskList[8]();
+    return;
+
     var index = 0;
     var timer = null;
 
@@ -225,16 +234,19 @@ function mainRender() {
 
 var taskList = [
     function (z0) {
+        NativeUtilsCallH5.DriverLessCar.drawInit();
+    },
+    function (z1) {
         //  绘制无可用车辆
         NativeUtilsCallH5.DriverLessCar.drawNoCar();
         return;
     },
-    function (z1) {
+    function (z2) {
         //  绘制未定位状态
         NativeUtilsCallH5.DriverLessCar.drawUnLocation();
         return;
     },
-    function (z2) {
+    function (z3) {
         //  绘制用户开启定位状态
         NativeUtilsCallH5.DriverLessCar.drawLocation(JSON.stringify({
             latitude: 113.5516910000,
@@ -242,12 +254,12 @@ var taskList = [
         }));
         return;
     },
-    function (z3) {
+    function (z4) {
         //  绘制起点终点
         NativeUtilsCallH5.DriverLessCar.drawStartAndEnd(startId, endId);
         return;
     },
-    function (z4) {
+    function (z5) {
         //  等待排队
         NativeUtilsCallH5.DriverLessCar.drawQueueUp(JSON.stringify({
             remainingTime: '00:00:32',           //  剩余时间
@@ -255,7 +267,7 @@ var taskList = [
         }));
         return;
     },
-    function (z5) {
+    function (z6) {
         // return;
         NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
             startPointDistance: 1311,            //  剩余距离，米
@@ -272,7 +284,7 @@ var taskList = [
         }
         return
     },
-    function (z6) {
+    function (z7) {
         //  等待乘车
         var CarArrivedData = {
             countDown: '00:00:03',              //  倒计时
@@ -280,7 +292,7 @@ var taskList = [
         NativeUtilsCallH5.DriverLessCar.drawCarArrived(CarArrivedData);
         return;
     },
-    function (z7) {
+    function (z8) {
         console.log(pointData, toGoThroughList);
         //  乘车中
         var drivingData = {

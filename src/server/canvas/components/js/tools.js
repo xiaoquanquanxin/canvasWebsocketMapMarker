@@ -76,10 +76,15 @@ function calculatePoint(point) {
         latitude: _point.latitude - leftLineParams.x,
         longitude: _point.longitude - bottomLineParams.y
     };
-    return {
-        x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.latitude),
-        y: canvas.height - transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.longitude)
-    };
+    // return {
+    //     x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.latitude),
+    //     y: canvas.height - transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.longitude)
+    // };
+    point.x = transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.latitude);
+    point.y = canvas.height - transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.longitude)
+    delete point.latitude;
+    delete point.longitude;
+    return point;
 }
 
 //  将某个list的经纬度全部转为canvas坐标系点
@@ -114,6 +119,7 @@ function getClosest(referenceSpot, pointList) {
     return MinIndex;
 }
 
+
 //  返回最近的点
 /**
  * @referenceSpot:参考点位
@@ -144,8 +150,8 @@ function getCanvasClosest(referenceSpot, pointList) {
 function getCarAngle(index, list) {
     var FirstIndex = Math.max(0, index - 3);
     var LastIndex = Math.min(FirstIndex + 5, list.length - 1);
-    var FirstPoint = calculatePoint(list[FirstIndex]);
-    var LastPoint = calculatePoint(list[LastIndex]);
+    var FirstPoint = list[FirstIndex];
+    var LastPoint = list[LastIndex];
     var CarObject = getK_B(FirstPoint.x, FirstPoint.y, LastPoint.x, LastPoint.y);
     // console.log(CarObject);
     var Angle = Math.atan(CarObject.k) * 180 / Math.PI;
@@ -248,18 +254,9 @@ function getCountDown(countDown) {
  * */
 function getPathOfTravel(carPoint, expectList, roadList) {
     expectList.unshift(carPoint);
-    //  先转换坐标系，预计虚线路线
-    var _expectList = expectList.map(function (item) {
-        return calculatePoint(item);
-    });
-    // console.log(_expectList);
-    //  道路的路线
-    var _roadList = roadList.map(function (item) {
-        return calculatePoint(item);
-    });
     //  预计虚线路线在道路路线上对应的点位下标
-    var _dottedLineIndex = _expectList.map(function (item) {
-        return getCanvasClosest(item, _roadList);
+    var _dottedLineIndex = expectList.map(function (item) {
+        return getCanvasClosest(item, roadList);
     });
     // console.log(_dottedLineIndex);
     //  至少有两个点
@@ -280,9 +277,9 @@ function getPathOfTravel(carPoint, expectList, roadList) {
     var _dottedStartIndex = Math.min.apply(null, _dottedLineIndex);
     //  todo    结束的点的index+1可能有坑
     var _dottedEndIndex = Math.max.apply(null, _dottedLineIndex) + 1;
-    // console.log(_dottedStartIndex, _dottedEndIndex, _roadList);
+    // console.log(_dottedStartIndex, _dottedEndIndex, roadList);
     return {
-        list: _roadList.slice(_dottedStartIndex, _dottedEndIndex),
+        list: roadList.slice(_dottedStartIndex, _dottedEndIndex),
         turn: turn
     };
 }
@@ -337,4 +334,10 @@ function testDraw(bottom_differ, left_differ) {
         x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(0),
         y: transformLongitudeAndLatitudeToCartesianCoordinateSystem(0)
     }, 20, 'red');
+}
+
+
+//  获取一个json对象的副本
+function obtainCopy(data) {
+    return JSON.parse(JSON.stringify(data));
 }

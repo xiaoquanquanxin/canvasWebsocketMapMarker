@@ -132,29 +132,10 @@ function drawMap() {
 
 //  绘制全部站点
 function drawStations() {
+    var _StationList = JSON.parse(JSON.stringify(StationList));
     //  绘制全部站点
-    StationList.forEach(function (item, index) {
+    _StationList.forEach(function (item, index) {
         drawStation(item, ImageStationBasic);
-    });
-}
-
-//  绘制路径
-/**
- *  @roadList:array     要画的路线
- *  @configData:object  要画的路线的配置
- * */
-function drawRoad(roadList, configData) {
-    //  绘制路径
-    roadList.reduce(function (prev, current) {
-        drawLine(calculatePoint(prev), calculatePoint(current), configData.lineColor, configData.lineWidth / imgRatio);
-        return current;
-    });
-
-    //  绘制拐弯
-    roadList.forEach(function (item, index) {
-        var __point = calculatePoint(item);
-        //  绘制某个点
-        drawCircle(__point, configData.inflexionPointRadius / imgRatio, configData.inflexionPointColor);
     });
 }
 
@@ -200,17 +181,17 @@ function drawScreen(roadList, configData) {
 //  fixme   没有考虑汽车运行方向
 function drawCar(point) {
     //  获取汽车应该在的点
-    var MinIndex = getClosest(point, RoadList);
+    var MinIndex = getCanvasClosest(point, RoadList);
     // console.log(RoadList[MinIndex]);
     //  todo    或longitude\latitude
-    var _CarPoint = JSON.parse(JSON.stringify(RoadList[MinIndex]));
-    CarPoint.longitude = _CarPoint.longitude;
-    CarPoint.latitude = _CarPoint.latitude;
+    var _CarPoint = obtainCopy(RoadList[MinIndex]);
+    CarPoint.x = _CarPoint.x;
+    CarPoint.y = _CarPoint.y;
     CarPoint.turn = point.turn || CarPoint.turn;
     //  找到可以用来求解的两个点    这两个点应该是前三和后三
     var CarAngle = getCarAngle(MinIndex, RoadList);
     CarAngle = CarAngle + 180 * (!CarPoint.turn);
-    var __point = calculatePoint(RoadList[MinIndex]);
+    var __point = obtainCopy(RoadList[MinIndex]);
     // console.log(__point, CarAngle);
     // CarAngle = 180-64
     //  位移
@@ -233,18 +214,16 @@ function drawCar(point) {
  * @img:    不同类型的图片
  * */
 function drawStation(point, img) {
-    var __point = calculatePoint(point);
-    __point.x -= img.width / 2;
-    __point.y -= img.height;
-    drawImage(img, __point, img.width, img.height);
+    point.x -= img.width / 2;
+    point.y -= img.height;
+    drawImage(img, point, img.width, img.height);
 }
 
 //  绘制用户
 function drawUser(point) {
-    var __point = calculatePoint(point);
-    __point.x = __point.x - ImageUser.width / 2;
-    __point.y = __point.y - ImageUser.height * 0.9;
-    drawImage(ImageUser, __point, ImageUser.width, ImageUser.height);
+    point.x = point.x - ImageUser.width / 2;
+    point.y = point.y - ImageUser.height * 0.9;
+    drawImage(ImageUser, point, ImageUser.width, ImageUser.height);
 
 }
 
@@ -431,6 +410,187 @@ function drawTips(message, point, height, fontSize, hasTriangle) {
 }
 
 
+//  绘制小标记
+//  fixme   可能需要重构
+//  todo    根据传入的message的字数，去计算出来宽度
+/**
+ * @message:any 范型,字符串或对象
+ * @point:object    位置
+ * @height:number   tips的高度
+ * @fontSize:number 字体大小
+ * @hasTriangle:boolean 是否需要
+ * */
+function drawCanvasTips(message, point, height, fontSize, hasTriangle) {
+    var _height = height / imgRatio;
+    var _fontSize = fontSize / imgRatio;
+
+    //  用于输入文字的对象
+    var TextArr = [];
+    //  文字长度
+    var wordWidth = 0;
+
+    if (typeof message === 'string') {
+        wordWidth = message.length * _fontSize;
+        TextArr = [{word: message}];
+    } else {
+        //  数字的宽度对于普通文字的宽度的比
+        var NumberTextRatio = 0.55;
+        switch (message.type) {
+            case 1:                 //  type === 1 : 等待排队
+                var NumberOfPeople = message.numberOfPeople.toString();
+                var RemainingTimeData = getTimeData(message.remainingTime.toString());
+                console.log(RemainingTimeData);
+                TextArr = [
+                    {word: '排队', color: 'black', textLength: '排队'.length * _fontSize},
+                    {
+                        word: NumberOfPeople,
+                        color: 'red',
+                        textLength: NumberOfPeople.length * NumberTextRatio * _fontSize
+                    },
+                    {word: '人，预计', color: 'black', textLength: '人，预计'.length * _fontSize},
+                    {
+                        word: RemainingTimeData.value,
+                        color: 'red',
+                        textLength: RemainingTimeData.value.length * NumberTextRatio * _fontSize
+                    },
+                    {
+                        word: RemainingTimeData.unit,
+                        color: 'black',
+                        textLength: RemainingTimeData.unit.length * _fontSize
+                    }
+                ];
+                break;
+            case 2:                 //  type === 2  :等待接驾
+                var StartPointDistanceData = getDistanceData(message.startPointDistance.toString());
+                // console.log(StartPointDistanceData);
+                var StartPointTimeData = getTimeData(message.startPointTime.toString());
+                // console.log(StartPointTimeData);
+                TextArr = [
+                    {word: '距离', color: 'black', textLength: '距离'.length * _fontSize},
+                    {
+                        word: StartPointDistanceData.value,
+                        color: 'red',
+                        textLength: StartPointDistanceData.value.length * NumberTextRatio * _fontSize
+                    },
+                    {
+                        word: StartPointDistanceData.unit + ' ，',
+                        color: 'black',
+                        textLength: (StartPointDistanceData.unit + ' ，').length * NumberTextRatio * _fontSize
+                    },
+                    {
+                        word: StartPointTimeData.value,
+                        color: 'red',
+                        textLength: StartPointTimeData.value.length * NumberTextRatio * _fontSize
+                    },
+                    {
+                        word: StartPointTimeData.unit,
+                        color: 'black',
+                        textLength: StartPointTimeData.unit.length * _fontSize
+                    },
+                ];
+                // console.log(TextArr);
+                break;
+            case 3:             //  type === 3 ：等待乘车
+                var countDownData = getCountDown(message.countDown.toString());
+                console.log(countDownData);
+                TextArr = [
+                    {word: '车已到达，倒计时', color: 'black', textLength: '车已到达，倒计时'.length * _fontSize},
+                    {word: countDownData, color: 'red', textLength: countDownData.length * NumberTextRatio * _fontSize}
+                ];
+                break;
+            case 4:
+                var fromTheEndData = getDistanceData(message.fromTheEnd.toString());
+                var estimatedTimeData = getTimeData(message.estimatedTime.toString());
+                // console.log(fromTheEndData, estimatedTimeData);
+                TextArr = [
+                    {word: '距离终点', color: 'black', textLength: '距离终点'.length * _fontSize},
+                    {
+                        word: fromTheEndData.value,
+                        color: 'red',
+                        textLength: fromTheEndData.value.length * NumberTextRatio * _fontSize
+                    },
+                    {
+                        word: fromTheEndData.unit + ' ，预计',
+                        color: 'black',
+                        textLength: ((fromTheEndData.unit + ' ').length * NumberTextRatio + '，预计'.length) * _fontSize
+                    },
+                    {
+                        word: estimatedTimeData.value,
+                        color: 'red',
+                        textLength: estimatedTimeData.value.length * NumberTextRatio * _fontSize
+                    },
+                    {
+                        word: estimatedTimeData.unit,
+                        color: 'black',
+                        textLength: estimatedTimeData.unit.length * _fontSize
+                    }
+                ];
+                break;
+            default:
+                return;
+        }
+        wordWidth = TextArr.reduce(function (prev, current) {
+            return prev + current.textLength
+        }, 0);
+    }
+    //  tips长度
+    var _width = wordWidth + _fontSize;
+
+    //  三角形对象
+    var triangleObject = {};
+    triangleObject.width = tipData.triangleWidth / imgRatio;
+    triangleObject.height = tipData.triangleHeight / imgRatio;
+
+    //  如果是小车的tips,总是在上方
+    var tipsIsCarCondition = message.type === 2 || message.type === 3 || message.type === 4;
+
+    // debugger;
+    // 限界，主要是考虑右侧
+    if (point.x + _width + tipData.limitRightWidth / imgRatio + ImageStationBasic.width * 0.5 >= canvas.width || tipsIsCarCondition) {
+        //  tips的x轴
+        triangleObject.x = point.x;
+        //  如果实际tips的右边  与  canvas右边距离少于10px，则让他放到上面
+        point.x -= _width / 2;
+        if (point.x + _width >= canvas.width - tipData.limitRightWidth / imgRatio) {
+            point.x = Math.min(point.x, canvas.width - tipData.limitRightWidth / imgRatio - _width)
+        }
+        if (tipsIsCarCondition) {
+            // console.log('计算tips，是小车');
+            point.y -= (ImageCar.height + _height - 15 / imgRatio);        //  这是另一种配置
+            // point.y -= (ImageCar.height + _height);
+        } else {
+            point.y -= ImageStationBasic.height + _height;
+        }
+        triangleObject.y = point.y + _height + triangleObject.height;
+        triangleObject.turn = 180;
+    } else {
+        point.x += ImageStationBasic.width * 0.5;
+        point.y -= ImageStationBasic.height / 2 + _height * 0.7;
+        triangleObject.x = point.x - triangleObject.width;
+        triangleObject.y = point.y + _height * 0.5;
+        triangleObject.turn = 270;
+    }
+
+
+    //  绘制圆角矩形
+    drawCircleRect(point.x, point.y, _width, _height, 5, 'white');
+
+    if (hasTriangle) {
+        //  tips的小三角
+        drawTriangle(triangleObject.turn, triangleObject, triangleObject.width, triangleObject.height, 'white');
+    }
+
+    //  文字对象
+    var textLeft = point.x + _fontSize / 2;
+    var textTop = point.y + _height * 0.75;
+    //  写入文字
+    TextArr.forEach(function (item, index, arr) {
+        textLeft += arr[index - 1] && arr[index - 1].textLength || 0;
+        drawText(item.word, textLeft, textTop, _fontSize, item.color);
+    });
+}
+
+
 //  对外暴露方法  export
 window.NativeUtilsCallH5 = {};
 //  无人车对象
@@ -442,10 +602,8 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             drawClear();
             //  绘制地图
             drawMap();
-            debugger
-            var _RoadList = calculateList(RoadList);
             //  绘制道路
-            drawRoad(RoadList, roadData);
+            drawCanvasRoad(RoadList, roadData);
         },
 
         //  绘制未定位状态         🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊可约车状态
@@ -459,18 +617,21 @@ NativeUtilsCallH5.DriverLessCar = (function () {
         //  绘制用户开启定位状态
         /**
          * @userPoint:object    用户定位的经纬度
+         *
+         * @return:string   JSON串：："{"id":2,"x":577.2850539290472,"y":385.72152093401405}"
          * */
         drawLocation: function (userPoint) {
             //  用户位置
-            window.UserPoint = JSON.parse(userPoint);
+            window.UserPoint = calculatePoint(JSON.parse(userPoint));
             //  先画未定位
             this.drawUnLocation();
+            var _UserPoint = JSON.parse(JSON.stringify(UserPoint));
             //  用户定位
-            drawUser(UserPoint);
+            drawUser(_UserPoint);
             // console.clear();
-            var MinPoint = getClosest(UserPoint, StationList);
-            console.log('离我最近的点', StationList[MinPoint]);
-            return StationList[MinPoint];
+            var MinPointIndex = getCanvasClosest(UserPoint, StationList);
+            // console.log('返回给移动端离我最近的点', StationList[MinPointIndex]);
+            return JSON.stringify(StationList[MinPointIndex]);
         },
 
         //  绘制起点终点
@@ -480,9 +641,8 @@ NativeUtilsCallH5.DriverLessCar = (function () {
          * @endPointId:number   终点id
          * */
         drawStartAndEnd: function (startPointId, endPointId) {
-            this.drawNoCar();
-            //  绘制全部站点
-            drawStations();
+            //  绘制未定位状态
+            this.drawUnLocation();
             //  绘制起点和终点
             if (startPointId) {
                 window.StartPoint = StationList.find(function (item) {
@@ -491,8 +651,8 @@ NativeUtilsCallH5.DriverLessCar = (function () {
                 if (window.StartPoint === undefined) {
                     throw new Error('没有这个上车点位');
                 }
-                drawStation(StartPoint, ImageStationStart);
-                drawTips('在这里上车', StartPoint, tipData.height, tipData.fontSize, true);
+                drawStation(obtainCopy(StartPoint), ImageStationStart);
+                drawCanvasTips('在这里上车', obtainCopy(StartPoint), tipData.height, tipData.fontSize, true);
             }
             if (endPointId) {
                 window.EndPoint = StationList.find(function (item) {
@@ -502,12 +662,12 @@ NativeUtilsCallH5.DriverLessCar = (function () {
                     throw new Error('没有这个下车点位');
                 }
                 //  todo    别忘了放开注释
-                drawStation(EndPoint, ImageStationEnd);
-                drawTips('目的地', EndPoint, tipData.height, tipData.fontSize, true);
+                drawStation(obtainCopy(EndPoint), ImageStationEnd);
+                drawCanvasTips('目的地', obtainCopy(EndPoint), tipData.height, tipData.fontSize, true);
             }
             //  绘制用户的点位 只要用户曾经定位过，就永远在这里了
             if (typeof UserPoint === 'object') {
-                drawUser(UserPoint);
+                drawUser(obtainCopy(UserPoint));
             }
         },
 
@@ -521,14 +681,10 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             var waitingData = JSON.parse(waitingString);
             waitingData.type = 1;
             this.drawNoCar();
-            //  绘制起点与终点，这来个点我控制，来一份起点和终点和路径的备份
-            var _StartPoint = JSON.parse(JSON.stringify(StartPoint));
-            var _EndPoint = JSON.parse(JSON.stringify(EndPoint));
-
-            drawStation(_StartPoint, ImageStationStart);
-            drawTips(waitingData, _StartPoint, tipData.height, tipData.fontSize, true);
-            drawStation(_EndPoint, ImageStationEnd);
-            drawTips('终点', _EndPoint, tipData.height, tipData.fontSize, true);
+            drawStation(obtainCopy(StartPoint), ImageStationStart);
+            drawCanvasTips(waitingData, obtainCopy(StartPoint), tipData.height, tipData.fontSize, true);
+            drawStation(obtainCopy(EndPoint), ImageStationEnd);
+            drawCanvasTips('终点', obtainCopy(EndPoint), tipData.height, tipData.fontSize, true);
         },
 
         //  开始接驾
@@ -536,20 +692,16 @@ NativeUtilsCallH5.DriverLessCar = (function () {
          * @catchString:string  开始接驾的对象
          * */
         drawCatchStarting: function (catchString) {
-            // debugger
-            // console.log('catchString', catchString);
+            console.log('catchString', catchString);
             var catchData = JSON.parse(catchString);
             catchData.type = 2;
             window.CarPoint.longitude = catchData.longitude;
             window.CarPoint.latitude = catchData.latitude;
+            CarPoint = calculatePoint(CarPoint);
             // console.log('汽车真实经纬度', CarPoint);
             this.drawNoCar();
-            //  绘制起点与终点，这来个点我控制，来一份起点和终点和路径的备份
-            var _StartPoint = JSON.parse(JSON.stringify(StartPoint));
-            var _EndPoint = JSON.parse(JSON.stringify(EndPoint));
-            var _RoadList = JSON.parse(JSON.stringify(RoadList));
             //  获取行程的路径     以及无人车方向
-            var pathOfTravelData = getPathOfTravel(CarPoint, catchData.toGoThroughList, _RoadList);
+            var pathOfTravelData = getPathOfTravel(obtainCopy(CarPoint), catchData.toGoThroughList, obtainCopy(RoadList));
             // console.log(pathOfTravelData);
             //  获取行程的路径
             var waitForRouteList = pathOfTravelData.list;
@@ -559,14 +711,16 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             drawScreen(waitForRouteList, waitForRouteData);
 
             //  起点终点
-            drawStation(_EndPoint, ImageStationEnd);
-            drawTips('终点', _EndPoint, tipData.height, tipData.fontSize, true);
-            drawStation(_StartPoint, ImageStationStart);
+            drawStation(obtainCopy(EndPoint), ImageStationEnd);
+
+            drawCanvasTips('终点', obtainCopy(EndPoint), tipData.height, tipData.fontSize, true);
+            drawStation(obtainCopy(StartPoint), ImageStationStart);
 
             //  小车
             //  todo
+            // debugger
             drawCar(CarPoint);
-            drawTips(catchData, CarPoint, tipData.height, tipData.fontSize);
+            drawCanvasTips(catchData, obtainCopy(CarPoint), tipData.height, tipData.fontSize);
         },
 
         //  等待乘车
@@ -576,17 +730,13 @@ NativeUtilsCallH5.DriverLessCar = (function () {
         drawCarArrived: function (carArrivedData) {
             carArrivedData.type = 3;
             this.drawNoCar();
-            //  绘制起点与终点，这来个点我控制，来一份起点和终点和路径的备份
-            var _StartPoint = JSON.parse(JSON.stringify(StartPoint));
-            var _EndPoint = JSON.parse(JSON.stringify(EndPoint));
-            drawStation(_EndPoint, ImageStationEnd);
-            drawTips('终点', _EndPoint, tipData.height, tipData.fontSize, true);
-            drawStation(_StartPoint, ImageStationStart);
+            drawStation(obtainCopy(EndPoint), ImageStationEnd);
+            drawCanvasTips('终点', obtainCopy(EndPoint), tipData.height, tipData.fontSize, true);
+            drawStation(obtainCopy(StartPoint), ImageStationStart);
             //  无人车
-            drawCar(_StartPoint);
+            drawCar(obtainCopy(StartPoint));
             console.log(CarPoint);
-            var _CarPoint = JSON.parse(JSON.stringify(CarPoint));
-            drawTips(carArrivedData, _CarPoint, tipData.height, tipData.fontSize);
+            drawCanvasTips(carArrivedData, obtainCopy(CarPoint), tipData.height, tipData.fontSize);
         },
 
         //  乘车中

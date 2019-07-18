@@ -104,22 +104,22 @@ function getStationList() {
 //  路径数据
 function getRoadList() {
     return [
-        {"longitude": 23.2096380000, "latitude": 113.5509730000},
-        {"longitude": 23.2095080000, "latitude": 113.5513900000},
-        {"longitude": 23.2093680000, "latitude": 113.5517830000},
-        {"longitude": 23.2092180000, "latitude": 113.5522130000},
+        {"longitude": 23.2096380000, "latitude": 113.5509730000, "id": 1},
+        {"longitude": 23.2095080000, "latitude": 113.5513900000, "id": 2},
+        {"longitude": 23.2093680000, "latitude": 113.5517830000, "id": 3},
+        {"longitude": 23.2092180000, "latitude": 113.5522130000, "id": 4},
 
-        {"longitude": 23.2090900000, "latitude": 113.5526080000},
-        {"longitude": 23.2090000000, "latitude": 113.5525650000},
-        {"longitude": 23.2085350000, "latitude": 113.5523200000},
-        {"longitude": 23.2081350000, "latitude": 113.5521200000},
-        {"longitude": 23.2077930000, "latitude": 113.5519400000},
+        {"longitude": 23.2090900000, "latitude": 113.5526080000, "id": 5},
+        {"longitude": 23.2090000000, "latitude": 113.5525650000, "id": 6},
+        {"longitude": 23.2085350000, "latitude": 113.5523200000, "id": 7},
+        {"longitude": 23.2081350000, "latitude": 113.5521200000, "id": 8},
+        {"longitude": 23.2077930000, "latitude": 113.5519400000, "id": 9},
 
-        {"longitude": 23.2077530000, "latitude": 113.5519100000},
-        {"longitude": 23.2077490000, "latitude": 113.5517770000},
-        {"longitude": 23.2078490000, "latitude": 113.5515170000},
-        {"longitude": 23.2079490000, "latitude": 113.5512570000},
-        {"longitude": 23.2081220000, "latitude": 113.5508160000},
+        {"longitude": 23.2077530000, "latitude": 113.5519100000, "id": 10},
+        {"longitude": 23.2077490000, "latitude": 113.5517770000, "id": 11},
+        {"longitude": 23.2078490000, "latitude": 113.5515170000, "id": 12},
+        {"longitude": 23.2079490000, "latitude": 113.5512570000, "id": 13},
+        {"longitude": 23.2081220000, "latitude": 113.5508160000, "id": 14},
     ]
 }
 

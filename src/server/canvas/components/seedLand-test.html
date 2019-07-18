@@ -1,32 +1,45 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>实地常春藤3期</title>
-    <link rel="stylesheet" href="./style/index.css">
+	<meta charset="UTF-8">
+	<meta name="viewport"
+	      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>实地常春藤3期</title>
+	<link rel="stylesheet" href="./style/index.css">
 </head>
 <body>
 <canvas id="my-canvas"></canvas>
 
 <div style="position:absolute;bottom:0;left:0;">
-    <ul>
-        <li>latitude-x; longitude-y;</li>
-        <li>画图顺序</li>
-        <li>地图</li>
-        <li>路线</li>
-        <li>站点</li>
-        <li>站点logo</li>
-        <li>用户</li>
-        <li>汽车</li>
-        <li>汽车logo</li>
-    </ul>
+	<ul>
+		<li>latitude-x; longitude-y;</li>
+		<li>画图顺序</li>
+		<li>地图</li>
+		<li>路线</li>
+		<li>站点</li>
+		<li>站点logo</li>
+		<li>用户</li>
+		<li>汽车</li>
+		<li>汽车logo</li>
+	</ul>
 </div>
-<script title="数据" src="js/data.js?v=001"></script>
-<script title="工具类" src="js/tools.js?v=001"></script>
-<script title="绘制类" src="js/draw.js?v=001"></script>
-<script src="js/index.js?v=001"></script>
+<!--<script title="数据" src="js/data.js?v=002"></script>-->
+<!--<script title="工具类" src="js/tools.js?v=002"></script>-->
+<!--<script title="绘制类" src="js/draw.js?v=002"></script>-->
+<!--<script src="js/index.js?v=002"></script>-->
 </body>
+<script>
+    function f(src) {
+        var script = document.createElement('script');
+        document.body.append(script);
+        script.src = src + '?v=' + Math.random();
+    }
+    f('js/data.js');
+    f('js/tools.js');
+    f('js/draw.js');
+    window.onload = function (ev) {
+        f('js/index.js');
+    }
+</script>
 </html>

@@ -629,7 +629,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
          *
          * @return:string   JSON串：："{"id":2,"x":577.2850539290472,"y":385.72152093401405}"
          * */
-        drawLocation: function (userPoint, stationList) {
+        drawLocation: function (userPoint) {
             //  用户位置
             window.UserPoint = calculatePoint(JSON.parse(userPoint));
             //  先画未定位
@@ -785,17 +785,23 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             //  todo
             drawCar(CarPoint);
             drawTips(drivingData, CarPoint, tipData.height, tipData.fontSize);
+        },
+
+        //  仅用于计算的东西,和绘图物管
+        getUserClosestStation: function (userPoint, stationList) {
+            if (stationList) {
+                var point = getClosest(JSON.parse(userPoint), stationList);
+                console.log('返回给移动端的位置', point);
+                return point;
+            }
+        },
+
+        //  测试坐标精准度
+        testCoordinatePrecision: function (styleData, testPoint) {
+            // 测试四角--证明坐标系准确性
+            __testCorner(bottom_differ, left_differ, bottomLineParams.k * leftLineParams.k);
+            //  测试点位
+                testPoint && drawCircle(calculatePoint(testPoint), styleData.radio || 10, styleData.color || 'red');
         }
     }
 }());
-
-
-//  测试
-
-//  测试坐标精准度
-function testCoordinatePrecision(testPoint) {
-    // 测试四角--证明坐标系准确性
-    __testCorner(bottom_differ, left_differ, bottomLineParams.k * leftLineParams.k);
-    //  测试点位
-    testPoint && drawCircle(calculatePoint(testPoint), 10, 'red');
-}

@@ -94,29 +94,60 @@ function calculateList(list) {
     })
 }
 
+//  在没有load图片的时候的
+function calculateListOverride(list) {
+    return list.map(function (item) {
+        debugger
+        var _nL = Math.cos(Math.PI * (item.longitude / 180));
+        item.latitude = item.latitude * _nL;
+        //  换算为canvas坐标系后的坐标
+        var __point = {
+            latitude: item.latitude,
+            longitude: item.longitude,
+        };
+        // return {
+        //     x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.latitude),
+        //     y: canvas.height - transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.longitude)
+        // };
+        item.x = (__point.latitude);
+        item.y = canvas.height - transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.longitude)
+        delete item.latitude;
+        delete item.longitude;
+        return item;
+    })
+}
+
 //  返回最近的点
 /**
  * @referenceSpot:参考点位
  * @pointList:一系列点
  *
- * @return:number 从pointList中,返回最近的那个点的下标
+ * @return:string 从pointList中,返回最近的那个点的下标
  * */
 function getClosest(referenceSpot, pointList) {
+    var _pointList = obtainCopy(pointList);
+    getItem(referenceSpot);
     //  转为canvas坐标系
-    var __referenceSpot = calculatePoint(referenceSpot);
-    //  转为canvas坐标系
-    var __pointList = pointList.map(function (item, index) {
-        return calculatePoint(item);
-    });
+    pointList.forEach(getItem);
+
+    function getItem(item) {
+        item.x = item.latitude * Math.cos(Math.PI * (item.longitude / 180));
+        item.y = item.longitude;
+        delete item.latitude;
+        delete item.longitude;
+        return item
+    }
+
+    // console.log(referenceSpot, pointList, _pointList);
     //  作出距离的list
-    var __differList = __pointList.map(function (item) {
-        return getDiffer(item.x, item.y, __referenceSpot.x, __referenceSpot.y);
+    var __differList = pointList.map(function (item) {
+        return getDiffer(item.x, item.y, referenceSpot.x, referenceSpot.y);
     });
     var Min = Math.min.apply(null, __differList);
     var MinIndex = __differList.findIndex(function (item) {
         return item === Min;
     });
-    return MinIndex;
+    return JSON.stringify(_pointList[MinIndex]);
 }
 
 
@@ -304,7 +335,7 @@ function __testCorner(bottom_differ, left_differ, productOfSlope) {
     console.log('width_rate_left : 每个单位相当于  ** 个像素', width_rate_left);
     console.log('width_rate_bottom 应该等于 width_rate', Math.floor(width_rate_bottom), Math.floor(width_rate_left));
 
-    console.log('\n', '四角坐标', _corner, '\n\t');
+    console.log('\n', '四角坐标', Corner, '\n\t');
     console.log('两边斜率乘积 , 越接近 -1 越精确', productOfSlope);
 
     console.log('*******************************四角定位测试*******************************');

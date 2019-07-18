@@ -592,16 +592,21 @@ function drawCanvasTips(message, point, height, fontSize, hasTriangle) {
 
 
 //  对外暴露方法  export
-window.NativeUtilsCallH5 = {};
+window.NativeUtilsCallH5 = window.NativeUtilsCallH5 || {};
 //  无人车对象
 NativeUtilsCallH5.DriverLessCar = (function () {
     return {
-        //  绘制无可用车辆         🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉无可用车辆
-        drawNoCar: function () {
+        //  刚进入页面的初始化状态，只有地图
+        drawInit: function () {
             //  任何时候都要先晴空
             drawClear();
             //  绘制地图
             drawMap();
+        },
+
+        //  绘制无可用车辆         🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉无可用车辆
+        drawNoCar: function () {
+            this.drawInit();
             //  绘制道路
             drawCanvasRoad(RoadList, roadData);
         },

@@ -32,7 +32,6 @@ var ratio = getPixelRatio(ctx);
 
 //  主背景图
 ImageMap.onload = function () {
-    return
     imgRatio = this.width / window.innerWidth / ratio;
     // console.log('imgRatio', imgRatio);
     //  载入图标图片
@@ -40,55 +39,6 @@ ImageMap.onload = function () {
     canvas.style.height = canvas.height / ratio + 'px';
     loadIconImage();
 };
-
-//  判断图片全部加载完了，或者有失败的也没有关系
-function imagesIsAllLoaded() {
-    if (ImageList.length !== 5) {
-        return
-    }
-    //  调用 移动端的一个方法
-    if (typeof H5CallNativieUtils !== 'undefined') {
-        if (typeof H5CallNativieUtils.h5IsReady === 'function') {
-            H5CallNativieUtils.h5IsReady();
-        }
-    } else {
-        //  fixme   本地测试,将来要删除
-        //  获取四个角落的经纬度  这个数据将来从移动端获取的时候，再做处理
-        window.Corner = getCorner();
-        //  获取车站站点经纬度
-        window.StationList = getStationList();
-        //  获取路线经纬度
-        window.RoadList = getRoadList();
-        testUsingData();
-    }
-
-    /**
-     * 上面的拿完数据了
-     * **/
-
-        //  点的简写
-    var bl = Corner.bottomLeft;
-    var br = Corner.bottomRight;
-    //  获得底边斜率k, 和b
-    window.bottomLineParams = getK_B(br.latitude, br.longitude, bl.latitude, bl.longitude);
-    // console.log('底边k,b对象', bottomLineParams);
-    var tl = Corner.topLeft;
-
-    //  获得左边斜率k,和b
-    window.leftLineParams = getK_B(tl.latitude, tl.longitude, bl.latitude, bl.longitude);
-    // console.log('左边k,b对象', leftLineParams);
-
-    //  根据左下角和右下角求底边在canvas坐标系下的长度
-    window.bottom_differ = getDiffer(bl.latitude, bl.longitude, br.latitude, br.longitude);
-    //  单位经纬度坐标系长度相当于n个像素的比例,是一个很大的数
-    window.getRatio = canvas.width / bottom_differ;
-    window.left_differ = getDiffer(bl.latitude, bl.longitude, tl.latitude, tl.longitude);
-
-    RoadList = calculateList(RoadList);
-    StationList = calculateList(StationList);
-    //  测试
-    // testRender();
-}
 
 
 //  载入图标图片
@@ -121,40 +71,6 @@ function iconImageError(e) {
     this.isError = true;
     ImageList.push(this);
     imagesIsAllLoaded();
-}
-
-
-//  主绘制
-//  封装了绘制路线和地图
-function testRender() {
-
-    // taskList[0]();
-    // taskList[1]();
-    // taskList[2]();
-    taskList[3]();
-    // taskList[4]();
-    // taskList[5]();
-    // taskList[6]();
-    // taskList[7]();
-    // taskList[8]();
-    return;
-
-    var index = 0;
-    var timer = null;
-
-    function taskFn() {
-        timer = setTimeout(taskFn, 1000);
-        if (taskList[index] === undefined) {
-            clearInterval(timer);
-            timer = null;
-            return;
-        }
-        console.log(index);
-        taskList[index]();
-        index++;
-    }
-
-    taskFn();
 }
 
 var taskList = [
@@ -221,9 +137,74 @@ var taskList = [
         };
         NativeUtilsCallH5.DriverLessCar.drawInTheBus(JSON.stringify(drivingData));
     },
+    function (z9) {
+        window.StationList = getStationList();
+        NativeUtilsCallH5.DriverLessCar.getUserClosestStation(JSON.stringify({
+            latitude: 113.5516910000,
+            longitude: 23.2090780000,
+        }), StationList);
+    },
     function (z100) {
         //  重置
         NativeUtilsCallH5.DriverLessCar.drawReset();
     }
 ];
+
+//  判断图片全部加载完了，或者有失败的也没有关系
+function imagesIsAllLoaded() {
+    if (ImageList.length !== 5) {
+        return
+    }
+    console.log('图片全部加载完了,这个log永久保留');
+    /**
+     * 问移动端拿数据
+     * **/
+    if (typeof H5CallNativieUtils !== 'undefined') {
+        if (typeof H5CallNativieUtils.h5IsReady === 'function') {
+            H5CallNativieUtils.h5IsReady();
+        }
+    } else {
+        //  fixme   本地测试,将来要删除
+        //  获取四个角落的经纬度  这个数据将来从移动端获取的时候，再做处理
+        window.Corner = getCorner();
+        //  获取车站站点经纬度
+        window.StationList = getStationList();
+        //  获取路线经纬度
+        window.RoadList = getRoadList();
+        //  载入测试数据
+        testUsingData();
+    }
+
+    //  点的简写
+    var bl = Corner.bottomLeft;
+    var br = Corner.bottomRight;
+    //  获得底边斜率k, 和b
+    window.bottomLineParams = getK_B(br.latitude, br.longitude, bl.latitude, bl.longitude);
+    // console.log('底边k,b对象', bottomLineParams);
+    var tl = Corner.topLeft;
+
+    //  获得左边斜率k,和b
+    window.leftLineParams = getK_B(tl.latitude, tl.longitude, bl.latitude, bl.longitude);
+    // console.log('左边k,b对象', leftLineParams);
+
+    //  根据左下角和右下角求底边在canvas坐标系下的长度
+    window.bottom_differ = getDiffer(bl.latitude, bl.longitude, br.latitude, br.longitude);
+    //  单位经纬度坐标系长度相当于n个像素的比例,是一个很大的数
+    window.getRatio = canvas.width / bottom_differ;
+    window.left_differ = getDiffer(bl.latitude, bl.longitude, tl.latitude, tl.longitude);
+
+    RoadList = calculateList(RoadList);
+    StationList = calculateList(StationList);
+
+    console.log('h5完全准备好了，可以调用任何方法了 ');
+    NativeUtilsCallH5.DriverLessCar.drawInit();
+    myTest();
+}
+
+//  我的测试
+function myTest() {
+    taskList.slice(0, 7).forEach(function (fn) {
+        fn();
+    })
+}
 

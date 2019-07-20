@@ -132,7 +132,9 @@ function drawMap() {
 
 //  绘制全部站点
 function drawStations() {
-    var _StationList = JSON.parse(JSON.stringify(StationList));
+    var _StationList = obtainCopy(StationList);
+    console.log('StationList的json串是');
+    console.log(_StationList);
     //  绘制全部站点
     _StationList.forEach(function (item, index) {
         drawStation(item, ImageStationBasic);
@@ -414,7 +416,13 @@ NativeUtilsCallH5.DriverLessCar = (function () {
     return {
         //  清除数据, 除了 地图四角经纬度, 路径经纬度,站点经纬度以外的全部数据
         drawReset: function () {
+            console.log('drawReset调用');
             resetData();
+            //  任何时候都要先晴空
+            drawClear();
+            //  绘制地图
+            drawMap();
+            console.log('drawReset完成');
         },
         //  刚进入页面的初始化状态，只有地图
         drawInit: function () {
@@ -484,8 +492,8 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             var MinPointIndex = getCanvasClosest(UserPoint, StationList);
             // console.log('返回给移动端离我最近的点', StationList[MinPointIndex]);
             console.log('drawLocation完成');
-            StationList[MinPointIndex].station_id
-            return JSON.stringify(StationList[MinPointIndex]);
+            console.log('返回给移动端station_id是' + StationList[MinPointIndex].station_id);
+            return StationList[MinPointIndex].station_id;
         },
 
         //  绘制起点终点
@@ -495,8 +503,19 @@ NativeUtilsCallH5.DriverLessCar = (function () {
          * @endPointId:number   终点id
          * */
         drawStartAndEnd: function (startPointId, endPointId) {
+            console.log();
+            debugger
             //  绘制未定位状态
-            this.drawUnLocation();
+            (function () {
+                //  任何图都基于无可用车辆
+                drawClear();
+                //  绘制地图
+                drawMap();
+                //  绘制道路
+                drawCanvasRoad(RoadList, roadData);
+                //  绘制全部站点
+                drawStations();
+            }());
             //  绘制起点和终点
             if (startPointId && startPointId !== -1) {
                 window.StartPoint = StationList.find(function (item) {
@@ -559,7 +578,6 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             // console.log(PassingStationList);
             // if (CarPoint.turn === true) {
             var passIndex = getCanvasClosest(CarPoint, PassingStationList);
-            // debugger
             PassingStationList = PassingStationList.slice(passIndex);
             // }
             //  画虚线
@@ -621,13 +639,11 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             window.CarPoint.longitude = drivingData.longitude;
             window.CarPoint.latitude = drivingData.latitude;
             // console.log('汽车真实经纬度', CarPoint);
-            debugger
             this.drawNoCar();
             //  绘制起点与终点，这来个点我控制，来一份起点和终点和路径的备份
             var _StartPoint = JSON.parse(JSON.stringify(StartPoint));
             var _EndPoint = JSON.parse(JSON.stringify(EndPoint));
             var _RoadList = JSON.parse(JSON.stringify(RoadList));
-            ;
             //  获取行程的路径     以及无人车方向
             var pathOfTravelData = getPathOfTravel(CarPoint, drivingData.toGoThroughList, _RoadList);
             console.log('获取行程的路径     以及无人车方向', pathOfTravelData);
@@ -661,22 +677,25 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             var bl = Corner.bottomLeft;
             var br = Corner.bottomRight;
             //  获得底边斜率k, 和b
+            //  获得y
             window.bottomLineParams = getK_B(br.longitude, br.latitude, bl.longitude, bl.latitude);
-            // console.log('底边k,b对象', bottomLineParams);
+            console.log('获得y', bottomLineParams.y);
             var tl = Corner.topLeft;
-
             //  获得左边斜率k,和b
+            //  获得x
             window.leftLineParams = getK_B(tl.longitude, tl.latitude, bl.longitude, bl.latitude);
-            // console.log('左边k,b对象', leftLineParams);
-
+            console.log('获得x', leftLineParams.x);
             //  根据左下角和右下角求底边在canvas坐标系下的长度
-            window.bottom_differ = getDiffer(bl.latitude, bl.longitude, br.latitude, br.longitude);
+            window.bottom_differ = br.longitude - bl.longitude;
+            console.log(bottom_differ);
             //  单位经纬度坐标系长度相当于n个像素的比例,是一个很大的数
             window.getRatio = canvas.width / bottom_differ;
-            window.left_differ = getDiffer(bl.latitude, bl.longitude, tl.latitude, tl.longitude);
+            // window.left_differ = getDiffer(bl.longitude, bl.latitude, tl.longitude, tl.latitude);
+            window.left_differ = tl.latitude - bl.latitude;
+            console.log(left_differ);
         },
         //  车站数据    转换数据得完成对坐标系的建立之后才能执行
-        setStationList: function (stationListData) {
+        setStationList: function (stationListData, roadListDataString) {
             console.log('从移动端获取的车站数据');
             var list = JSON.parse(stationListData);
             list.forEach(function (item) {
@@ -686,10 +705,17 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             console.log(list);
             window.StationList = calculateList(list);
             console.log(JSON.stringify(StationList));
-        },
-        //  路径数据    转换数据得完成对坐标系的建立之后才能执行
-        setRoadList: function (RoadListData) {
-            window.RoadList = calculateList(JSON.parse(RoadListData));
+            //  路径数据    转换数据得完成对坐标系的建立之后才能执行
+            var roadListData = JSON.parse(roadListDataString).map(function (item) {
+                var arr = item.split(',');
+                return {
+                    latitude: Number(arr[0]),
+                    longitude: Number(arr[1]),
+                };
+            });
+            console.log(roadListData);
+            window.RoadList = calculateList(roadListData);
+            console.log(RoadList);
         },
 
         //  等待接驾数据

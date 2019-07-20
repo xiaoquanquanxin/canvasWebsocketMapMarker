@@ -88,10 +88,8 @@ var taskList = [
     function (z3) {
         //  绘制用户开启定位状态
         var userClosestStationId = NativeUtilsCallH5.DriverLessCar.drawLocation(JSON.stringify({
-            latitude: 113.5516910000,
-            longitude: 23.2090780000,
-            longitude: 39.5,
-            latitude: 117.1
+            longitude: 113.5455810104,
+            latitude: 23.2128596807,
         }));
         console.log(userClosestStationId);
     },
@@ -205,9 +203,6 @@ function imagesIsAllLoaded() {
     console.log('h5自给的四个角的经纬度');
     console.log(JSON.stringify(window.Corner));
 
-    //  todo    暂时由我来提供
-    NativeUtilsCallH5.DriverLessCar.setRoadList(JSON.stringify(getRoadList()));
-
     /**
      * 问移动端拿数据
      * **/
@@ -220,10 +215,8 @@ function imagesIsAllLoaded() {
     } else {
         //  fixme   本地测试,将来要删除
         //  获取车站站点经纬度
-        // NativeUtilsCallH5.DriverLessCar.setStationList(JSON.stringify(getStationList()));
-        NativeUtilsCallH5.DriverLessCar.setStationList(JSON.stringify(getStationList()));
         //  获取路线经纬度
-        NativeUtilsCallH5.DriverLessCar.setRoadList(JSON.stringify(getRoadList()));
+        NativeUtilsCallH5.DriverLessCar.setStationList(JSON.stringify(getStationList()), JSON.stringify(getRoadList()));
         //  载入测试数据
         testUsingData();
     }

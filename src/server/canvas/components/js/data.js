@@ -100,14 +100,15 @@ function resetData() {
 //  fixme   测试数据
 //  车站数据
 function getStationList() {
+    //  广州
     return [{
         "create_time": 1552027370,
         "staion_both_sides": 1,
         "station_community_id": 1,
         "station_distance_to_next": 100,
         "station_id": 11,
-        "station_lat": 39.0620317,
-        "station_long": 117.3413198,
+        "station_lat": 23.2129878673,
+        "station_long": 113.5452645098,
         "station_name": "测试点4",
         "station_status": -9,
         "station_time_to_next": 3,
@@ -119,66 +120,40 @@ function getStationList() {
         "station_community_id": 1,
         "station_distance_to_next": 100,
         "station_id": 6,
-        "station_lat": 39.985468,
-        "station_long": 116.378841,
+        "station_lat": 23.2127709362,
+        "station_long": 113.5458492313,
         "station_name": "站点F",
         "station_status": 9,
         "station_time_to_next": 3,
         "station_type": 1,
         "update_time": 1529655509
     }]
-    return [
-        {"longitude": 23.2096000000, "latitude": 113.5511030000, "id": 1},
-        {"longitude": 23.2093780000, "latitude": 113.5517330000, "id": 2},
-        {"longitude": 23.2091780000, "latitude": 113.5523630000, "id": 3},
-        {"longitude": 23.2085350000, "latitude": 113.5522950000, "id": 4},
-        {"longitude": 23.2081220000, "latitude": 113.5508160000, "id": 5},
-    ]
 }
 
 //  路径数据
 function getRoadList() {
     return [
-        {"latitude": 39.0620317, "longitude": 117.3413198, "id": 1},
-        {"latitude": 39.46, "longitude": 117.00, "id": 3},
-        {"latitude": 39.4, "longitude": 116.70, "id": 3},
-        {"latitude": 39.985468, "longitude": 116.378841, "id": 2},
-    ];
-    return [
-        {"longitude": 23.2096380000, "latitude": 113.5509730000, "id": 1},
-        {"longitude": 23.2095080000, "latitude": 113.5513900000, "id": 2},
-        {"longitude": 23.2093680000, "latitude": 113.5517830000, "id": 3},
-        {"longitude": 23.2092180000, "latitude": 113.5522130000, "id": 4},
-
-        {"longitude": 23.2090900000, "latitude": 113.5526080000, "id": 5},
-        {"longitude": 23.2090000000, "latitude": 113.5525650000, "id": 6},
-        {"longitude": 23.2085350000, "latitude": 113.5523200000, "id": 7},
-        {"longitude": 23.2081350000, "latitude": 113.5521200000, "id": 8},
-        {"longitude": 23.2077930000, "latitude": 113.5519400000, "id": 9},
-
-        {"longitude": 23.2077530000, "latitude": 113.5519100000, "id": 10},
-        {"longitude": 23.2077490000, "latitude": 113.5517770000, "id": 11},
-        {"longitude": 23.2078490000, "latitude": 113.5515170000, "id": 12},
-        {"longitude": 23.2079490000, "latitude": 113.5512570000, "id": 13},
-        {"longitude": 23.2081220000, "latitude": 113.5508160000, "id": 14},
-    ]
+        "23.2129878673,113.5452645098",
+        "23.2129533555,113.5453557049",
+        "23.2129237740,113.5454415356",
+        "23.2128941925,113.5455005441",
+        "23.2128596807,113.5455810104",
+        "23.2128399597,113.5456292902",
+        "23.2128202387,113.5456936632",
+        "23.2128054479,113.5457526718",
+        "23.2127906572,113.5458009516",
+        "23.2127709362,113.5458492313"];
 }
 
 //  获取四角数据
 function getCorner() {
     return (function () {
-        var Left = 113.5502100000;
-        var Top = 23.2102910000;
-        var Right = 113.5528060000;
-        var Bottom = 23.2060700000;
-
-
-        //  现实接口数据
-        var Left = 116;
-        var Top = 40;
-        var Right = 118;
-        var Bottom = 38;
-
+        var Left = 113.5452645098;
+        var Top = 23.21300;        //  大
+        var Right = 113.5458492313;
+        var Bottom = 23.21210;
+        console.log(Right - Left > 0);
+        console.log(Top - Bottom > 0);
         northernLatitude = Math.cos(Math.PI * ((Top + Bottom) / 2 / 180));
         // console.log('当前纬度下,每个经度相当于  ' + northernLatitude + '  个纬度');
         return {

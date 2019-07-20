@@ -87,10 +87,13 @@ var taskList = [
     },
     function (z3) {
         //  绘制用户开启定位状态
-        NativeUtilsCallH5.DriverLessCar.drawLocation(JSON.stringify({
+        var userClosestStationId = NativeUtilsCallH5.DriverLessCar.drawLocation(JSON.stringify({
             latitude: 113.5516910000,
             longitude: 23.2090780000,
+            longitude: 39.5,
+            latitude: 117.1
         }));
+        console.log(userClosestStationId);
     },
     function (z4) {
         //  绘制起点终点
@@ -105,43 +108,65 @@ var taskList = [
     },
     function (z6) {
         var _StationList = getStationList();
+
+        var delayTime = 333;
+        //  普通正向    到站点4
+        var testCarList = [1, 2, 3, 4, 5, 6];
+        var testStation = [_StationList[1], _StationList[2], _StationList[3]];
+
+        //  普通反向    到站点4
+        var testCarList = [4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6];
+        var testStation = [_StationList[2], _StationList[1], _StationList[0], _StationList[1], _StationList[2], _StationList[3]];
+        //
+        //  大普通反向   到站点4，带一个起点折返
+        var testCarList = [8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6];
+        var testStation = [_StationList[3], _StationList[2], _StationList[1], _StationList[0], _StationList[1], _StationList[2], _StationList[3]];
+
+        //  普通正向到终点     到站点5
+        var testCarList = [10, 11, 12, 13];
+        var testStation = [_StationList[4]];
+
+        //  大反转终点到起点    到站点4，带一个终点折返
+        var testCarList = [10, 11, 12, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6];
+        var testStation = [_StationList[4], _StationList[3], _StationList[2], _StationList[1], _StationList[0], _StationList[1], _StationList[2], _StationList[3]];
+
         //  先获取等待接驾数据
-        NativeUtilsCallH5.DriverLessCar.setWaitForRouteList(JSON.stringify(
-            [_StationList[1], _StationList[2], _StationList[3]]
-        ), JSON.stringify({
-            longitude: pointData.longitude,     //  无人车当前的纬度
-            latitude: pointData.latitude,       //  无人车当前的经度
-        }));
-
-        //  后绘制
-        NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
-            startPointDistance: 1311,            //  剩余距离，米
-            startPointTime: '00:10:02',         //  剩余时间
-            longitude: pointData.longitude,     //  无人车当前的纬度
-            latitude: pointData.latitude,       //  无人车当前的经度
-        }));
-
-        //  fixme   测试
-        setTimeout(function () {
+        NativeUtilsCallH5.DriverLessCar.setWaitForRouteList(JSON.stringify({
+            longitude: getRoadList()[testCarList[0]].longitude,     //  无人车当前的纬度
+            latitude: getRoadList()[testCarList[0]].latitude,       //  无人车当前的经度
+        }), JSON.stringify(
+            testStation
+        ));
+        //  todo    无人车形式过程的模拟,有很多点
+        var index = 0;
+        var timer = setInterval(function () {
+            //  后绘制
             NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
-                startPointDistance: 1311,            //  剩余距离，米
+                startPointDistance: Math.random() * 1000,            //  剩余距离，米
                 startPointTime: '00:10:02',         //  剩余时间
-                longitude: getStationList()[2].longitude,     //  无人车当前的纬度
-                latitude: getStationList()[2].latitude,       //  无人车当前的经度
+                longitude: getRoadList()[testCarList[index]].longitude,     //  无人车当前的纬度
+                latitude: getRoadList()[testCarList[index]].latitude,       //  无人车当前的经度
             }));
-        }, 1000);
-        if (isTest) {
-            var _pointData = calculatePoint(obtainCopy(pointData));
-            // console.log('红点', _pointData);
-            drawCircle(_pointData, 10, 'red');
-        }
+            clearInterval(timer);
+            console.log(index);
+            index++;
+            if (index === testCarList.length) {
+                clearInterval(timer);
+            }
+        }, delayTime);
+        //  无人车偏差位置
+        // if (isTest) {
+        //     var _pointData = calculatePoint(obtainCopy(pointData));
+        //     // console.log('红点', _pointData);
+        //     drawCircle(_pointData, 10, 'red');
+        // }
     },
     function (z7) {
         //  等待乘车
         var CarArrivedData = {
             countDown: '00:00:03',              //  倒计时
         };
-        NativeUtilsCallH5.DriverLessCar.drawCarArrived(CarArrivedData);
+        NativeUtilsCallH5.DriverLessCar.drawCarArrived(JSON.stringify(CarArrivedData));
     },
     function (z8) {
         console.log(pointData, toGoThroughList);
@@ -174,18 +199,28 @@ function imagesIsAllLoaded() {
         return
     }
     console.log('图片全部加载完了,这个log永久保留');
+    //  获取四个角落的经纬度  这个数据将来从移动端获取的时候，再做处理
+
+    NativeUtilsCallH5.DriverLessCar.setCornerData(JSON.stringify(getCorner()));
+    console.log('h5自给的四个角的经纬度');
+    console.log(JSON.stringify(window.Corner));
+
+    //  todo    暂时由我来提供
+    NativeUtilsCallH5.DriverLessCar.setRoadList(JSON.stringify(getRoadList()));
+
     /**
      * 问移动端拿数据
      * **/
     if (typeof H5CallNativieUtils !== 'undefined') {
+        console.log('拥有 H5CallNativieUtils类');
         if (typeof H5CallNativieUtils.h5IsReady === 'function') {
+            console.log('拥有 H5CallNativieUtils.h5IsReady方法 ，我调用它了');
             H5CallNativieUtils.h5IsReady();
         }
     } else {
         //  fixme   本地测试,将来要删除
-        //  获取四个角落的经纬度  这个数据将来从移动端获取的时候，再做处理
-        NativeUtilsCallH5.DriverLessCar.setCornerData(JSON.stringify(getCorner()));
         //  获取车站站点经纬度
+        // NativeUtilsCallH5.DriverLessCar.setStationList(JSON.stringify(getStationList()));
         NativeUtilsCallH5.DriverLessCar.setStationList(JSON.stringify(getStationList()));
         //  获取路线经纬度
         NativeUtilsCallH5.DriverLessCar.setRoadList(JSON.stringify(getRoadList()));
@@ -199,8 +234,31 @@ function imagesIsAllLoaded() {
 
 //  我的测试
 function myTest() {
-    taskList.slice(0, 7).forEach(function (fn) {
-        fn();
+    return
+    if (typeof H5CallNativieUtils === 'undefined') {
+        taskList.slice(3, 4).forEach(function (fn) {
+            fn();
+        });
+    }
+}
+
+
+function test_canvas_point(point) {
+    drawCircle(point, 11, 'red');
+}
+
+function test_canvas_list(list) {
+    list.forEach(function (item) {
+        test_canvas_point(item);
     });
 }
 
+function test_point(point) {
+    drawCircle(calculatePoint(point), 11, 'red');
+}
+
+function test_List(list) {
+    list.forEach(function (item) {
+        test_point(item);
+    });
+}

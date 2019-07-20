@@ -129,8 +129,8 @@ var taskList = [
 
         //  先获取等待接驾数据
         NativeUtilsCallH5.DriverLessCar.setWaitForRouteList(JSON.stringify({
-            longitude: getRoadList()[testCarList[0]].longitude,     //  无人车当前的纬度
-            latitude: getRoadList()[testCarList[0]].latitude,       //  无人车当前的经度
+            longitude: 113.5452645098,      //  无人车当前的纬度
+            latitude: 23.2129878673,        //  无人车当前的经度
         }), JSON.stringify(
             testStation
         ));
@@ -141,8 +141,8 @@ var taskList = [
             NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
                 startPointDistance: Math.random() * 1000,            //  剩余距离，米
                 startPointTime: '00:10:02',         //  剩余时间
-                longitude: getRoadList()[testCarList[index]].longitude,     //  无人车当前的纬度
-                latitude: getRoadList()[testCarList[index]].latitude,       //  无人车当前的经度
+                longitude: 113.5452645098,      //  无人车当前的纬度
+                latitude: 23.2129878673,        //  无人车当前的经度
             }));
             clearInterval(timer);
             console.log(index);
@@ -225,18 +225,8 @@ function imagesIsAllLoaded() {
     }
     console.log('h5完全准备好了，可以调用任何方法了 ');
     NativeUtilsCallH5.DriverLessCar.drawInit();
-    myTest();
 }
 
-//  我的测试
-function myTest() {
-    return
-    if (typeof H5CallNativieUtils === 'undefined') {
-        taskList.slice(3, 4).forEach(function (fn) {
-            fn();
-        });
-    }
-}
 
 
 function test_canvas_point(point) {

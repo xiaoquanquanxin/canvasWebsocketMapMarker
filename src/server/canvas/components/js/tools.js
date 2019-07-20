@@ -7,8 +7,8 @@ function transformOriginData(originData) {
     for (var key in originData) {
         if (originData.hasOwnProperty(key)) {
             data[key] = {};
-            data[key].latitude = originData[key].latitude * northernLatitude;
-            data[key].longitude = originData[key].longitude;
+            data[key].latitude = originData[key].latitude;
+            data[key].longitude = originData[key].longitude * northernLatitude
         }
     }
     return data;
@@ -68,20 +68,16 @@ var getPixelRatio = function (context) {
 function calculatePoint(point) {
     //  某个点的数据
     var _point = {
-        latitude: point.latitude * northernLatitude,
-        longitude: point.longitude,
+        latitude: point.latitude,
+        longitude: point.longitude * northernLatitude
     };
     //  换算为canvas坐标系后的坐标
     var __point = {
-        latitude: _point.latitude - leftLineParams.x,
-        longitude: _point.longitude - bottomLineParams.y
+        latitude: _point.latitude - bottomLineParams.y,
+        longitude: _point.longitude - leftLineParams.x,
     };
-    // return {
-    //     x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.latitude),
-    //     y: canvas.height - transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.longitude)
-    // };
-    point.x = transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.latitude);
-    point.y = canvas.height - transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.longitude)
+    point.x = transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.longitude);
+    point.y = canvas.height - transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.latitude);
     delete point.latitude;
     delete point.longitude;
     return point;
@@ -94,28 +90,6 @@ function calculateList(list) {
     })
 }
 
-//  在没有load图片的时候的
-function calculateListOverride(list) {
-    return list.map(function (item) {
-        debugger
-        var _nL = Math.cos(Math.PI * (item.longitude / 180));
-        item.latitude = item.latitude * _nL;
-        //  换算为canvas坐标系后的坐标
-        var __point = {
-            latitude: item.latitude,
-            longitude: item.longitude,
-        };
-        // return {
-        //     x: transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.latitude),
-        //     y: canvas.height - transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.longitude)
-        // };
-        item.x = (__point.latitude);
-        item.y = canvas.height - transformLongitudeAndLatitudeToCartesianCoordinateSystem(__point.longitude)
-        delete item.latitude;
-        delete item.longitude;
-        return item;
-    })
-}
 
 //  返回最近的点
 /**
@@ -131,8 +105,8 @@ function getClosest(referenceSpot, pointList) {
     pointList.forEach(getItem);
 
     function getItem(item) {
-        item.x = item.latitude * Math.cos(Math.PI * (item.longitude / 180));
-        item.y = item.longitude;
+        item.x = item.longitude * Math.cos(Math.PI * (item.latitude / 180));
+        item.y = item.latitude;
         delete item.latitude;
         delete item.longitude;
         return item
@@ -179,6 +153,11 @@ function getCanvasClosest(referenceSpot, pointList) {
  * @return:number,小车需要转动的角度
  * */
 function getCarAngle(index, list) {
+    if (CarPoint.turn) {
+        console.log('计算无人车角度时，给与的无人车方向 , 正向');
+    } else {
+        console.log('计算无人车角度时，给与的无人车方向，反向');
+    }
     var FirstIndex = Math.max(0, index - 3);
     var LastIndex = Math.min(FirstIndex + 5, list.length - 1);
     var FirstPoint = list[FirstIndex];
@@ -283,6 +262,7 @@ function getCountDown(countDown) {
  * @list:array    返回应该被染色的list
  * @turn:boolean    无人车方向
  * */
+//  todo    未完成
 function getPathOfTravel(carPoint, expectList, roadList) {
     expectList.unshift(carPoint);
     //  预计虚线路线在道路路线上对应的点位下标
@@ -294,25 +274,54 @@ function getPathOfTravel(carPoint, expectList, roadList) {
     if (_dottedLineIndex.length <= 1) {
         throw new Error('不可能出现有少于两个点点情况,至少要用一个无人车的点，和一个站点【用户选择的上车站点】');
     }
-    //  无人车方向
-    var turn = true;
-    //  反转
-    if (_dottedLineIndex[1] - _dottedLineIndex[0] === -1) {
-        console.log('反方向');
-        turn = false;
-    } else {
-        //  如果相等，也说明正方向
-        console.log('正方向');
+
+    console.log(_dottedLineIndex);
+    //  对应道路的拐点  下标的最小值和最大值
+    var _listMinValue = Math.min.apply(null, _dottedLineIndex);
+    var _listMaxValue = Math.max.apply(null, _dottedLineIndex);
+    //  对应道路拐点下标
+    var _listMinInflexionIndex = _dottedLineIndex.findIndex(function (item) {
+        return item === _listMinValue;
+    });
+    var _listMaxInflexionIndex = _dottedLineIndex.findIndex(function (item) {
+        return item === _listMaxValue;
+    });
+    console.log(_listMinValue, _listMaxValue);
+    console.log(_listMinInflexionIndex, _listMaxInflexionIndex);
+
+    //  判断情况
+    //  1.[1, 2, 3, 4, 5, 6];
+    if (_listMinInflexionIndex === 0) {
+        if (_listMaxInflexionIndex === _dottedLineIndex.length - 1) {
+
+        }
     }
-    //  虚线的roadList的起点和终点
-    var _dottedStartIndex = Math.min.apply(null, _dottedLineIndex);
-    //  todo    结束的点的index+1可能有坑
-    var _dottedEndIndex = Math.max.apply(null, _dottedLineIndex) + 1;
-    // console.log(_dottedStartIndex, _dottedEndIndex, roadList);
-    return {
-        list: roadList.slice(_dottedStartIndex, _dottedEndIndex),
-        turn: turn
-    };
+
+    // debugger;
+    //  取起点和终点
+    var firstValue = _dottedLineIndex[0];
+    var lastValue = _dottedLineIndex[_dottedLineIndex.length - 1];
+
+    // debugger
+    // if (_dottedLineIndex[1] - _dottedLineIndex[0] < 0) {
+    //     console.log('初始 反方向');
+    //     if (firstValue > lastValue) {
+    //         firstValue++;
+    //     } else {
+    //         lastValue++;
+    //     }
+    // } else {
+    //     firstValue++;
+    //     lastValue++;
+    // }
+    firstValue++;
+    lastValue++;
+
+    var roadListMinValue = Math.min.apply(null, _dottedLineIndex);
+    // debugger
+    var list = roadList.slice(roadListMinValue + 1, firstValue).reverse().concat(roadList.slice(roadListMinValue, lastValue));
+    console.log(list);
+    return list;
 }
 
 //  获取

@@ -87,7 +87,9 @@ function resetData() {
         w.CarPoint = null;
         w.CarPoint = null;
         w.toGoThroughList = null;
+        //  等待接驾的站点数据   死值死值死值死值死值
         w.WaitForRouteList = null;
+        //  等待接驾的剩余路线点位     动态减少的值
         w.PassingStationList = null;
     }(window));
 }
@@ -98,6 +100,33 @@ function resetData() {
 //  fixme   测试数据
 //  车站数据
 function getStationList() {
+    return [{
+        "create_time": 1552027370,
+        "staion_both_sides": 1,
+        "station_community_id": 1,
+        "station_distance_to_next": 100,
+        "station_id": 11,
+        "station_lat": 39.0620317,
+        "station_long": 117.3413198,
+        "station_name": "测试点4",
+        "station_status": -9,
+        "station_time_to_next": 3,
+        "station_type": 1,
+        "update_time": 1555386925
+    }, {
+        "create_time": 1529655509,
+        "staion_both_sides": 1,
+        "station_community_id": 1,
+        "station_distance_to_next": 100,
+        "station_id": 6,
+        "station_lat": 39.985468,
+        "station_long": 116.378841,
+        "station_name": "站点F",
+        "station_status": 9,
+        "station_time_to_next": 3,
+        "station_type": 1,
+        "update_time": 1529655509
+    }]
     return [
         {"longitude": 23.2096000000, "latitude": 113.5511030000, "id": 1},
         {"longitude": 23.2093780000, "latitude": 113.5517330000, "id": 2},
@@ -109,6 +138,12 @@ function getStationList() {
 
 //  路径数据
 function getRoadList() {
+    return [
+        {"latitude": 39.0620317, "longitude": 117.3413198, "id": 1},
+        {"latitude": 39.46, "longitude": 117.00, "id": 3},
+        {"latitude": 39.4, "longitude": 116.70, "id": 3},
+        {"latitude": 39.985468, "longitude": 116.378841, "id": 2},
+    ];
     return [
         {"longitude": 23.2096380000, "latitude": 113.5509730000, "id": 1},
         {"longitude": 23.2095080000, "latitude": 113.5513900000, "id": 2},
@@ -136,27 +171,35 @@ function getCorner() {
         var Top = 23.2102910000;
         var Right = 113.5528060000;
         var Bottom = 23.2060700000;
+
+
+        //  现实接口数据
+        var Left = 116;
+        var Top = 40;
+        var Right = 118;
+        var Bottom = 38;
+
         northernLatitude = Math.cos(Math.PI * ((Top + Bottom) / 2 / 180));
         // console.log('当前纬度下,每个经度相当于  ' + northernLatitude + '  个纬度');
         return {
             topLeft: {
-                latitude: Left,
-                longitude: Top,
+                latitude: Top,
+                longitude: Left,
             },
             topRight: {
-                latitude: Right,
-                longitude: Top,
+                latitude: Top,
+                longitude: Right,
             },
             bottomLeft: {
-                latitude: Left,
-                longitude: Bottom,
+                latitude: Bottom,
+                longitude: Left,
             },
             bottomRight: {
-                latitude: Right,
-                longitude: Bottom,
+                latitude: Bottom,
+                longitude: Right,
             },
         };
-    }())
+    }());
 }
 
 //  测试需要的数据
@@ -167,6 +210,8 @@ function testUsingData() {
         w.endId = 5;
         //  无人车在左上角
         w.pointData = {longitude: 23.20950, latitude: 113.5512};
+        //                  无人车在右上角
+        w.pointData = {longitude: 23.20909, latitude: 113.552608, id: 5};
         //  虚线路径    正方向
         // w.toGoThroughList = [StationList[1], StationList[2], StationList[3]];
         //  虚线路径    反方向

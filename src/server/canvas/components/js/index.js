@@ -127,14 +127,8 @@ var taskList = [
         var testCarList = [10, 11, 12, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6];
         var testStation = [_StationList[4], _StationList[3], _StationList[2], _StationList[1], _StationList[0], _StationList[1], _StationList[2], _StationList[3]];
 
-        //  先获取等待接驾数据
-        NativeUtilsCallH5.DriverLessCar.setWaitForRouteList(JSON.stringify({
-            longitude: 113.5452645098,      //  无人车当前的纬度
-            latitude: 23.2129878673,        //  无人车当前的经度
-        }), JSON.stringify(
-            testStation
-        ));
-        //  todo    无人车形式过程的模拟,有很多点
+
+        //  不做虚线了
         var index = 0;
         var timer = setInterval(function () {
             //  后绘制
@@ -202,7 +196,7 @@ function imagesIsAllLoaded() {
 
     NativeUtilsCallH5.DriverLessCar.setCornerData(JSON.stringify(getCorner()));
     console.log('h5自给的四个角的经纬度');
-    console.log(JSON.stringify(window.Corner));
+    console.log(JSON.stringify(window.Corner).substr(0, 50));
 
     /**
      * 问移动端拿数据
@@ -226,7 +220,6 @@ function imagesIsAllLoaded() {
     console.log('h5完全准备好了，可以调用任何方法了 ');
     NativeUtilsCallH5.DriverLessCar.drawInit();
 }
-
 
 
 function test_canvas_point(point) {

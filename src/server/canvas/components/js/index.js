@@ -87,13 +87,12 @@ var taskList = [
     },
     function (z3) {
         //  绘制用户开启定位状态
-        var userClosestStationId = NativeUtilsCallH5.DriverLessCar.drawLocation(JSON.stringify({
+        NativeUtilsCallH5.DriverLessCar.drawLocation(JSON.stringify({
             longitude: 113.5455810104,
             latitude: 23.2128596807,
         }));
-        console.log(userClosestStationId);
     },
-    function (z4) {
+    function (startId, endId) {
         //  绘制起点终点
         NativeUtilsCallH5.DriverLessCar.drawStartAndEnd(startId, endId);
     },
@@ -179,15 +178,17 @@ var taskList = [
         NativeUtilsCallH5.DriverLessCar.drawInTheBus(JSON.stringify(drivingData));
     },
     function (z9) {
-        window.StationList = getStationList();
         NativeUtilsCallH5.DriverLessCar.getUserClosestStation(JSON.stringify({
-            latitude: 113.5516910000,
-            longitude: 23.2090780000,
-        }), StationList);
+            longitude: 113.5455810104,
+            latitude: 23.2128596807,
+        }), JSON.stringify(getStationList()));
     },
-    function (z100) {
+    function (z10) {
         //  重置
         NativeUtilsCallH5.DriverLessCar.drawReset();
+    },
+    function (z11) {
+        NativeUtilsCallH5.DriverLessCar.testCoordinatePrecision();
     }
 ];
 
@@ -211,6 +212,8 @@ function imagesIsAllLoaded() {
         if (typeof H5CallNativieUtils.h5IsReady === 'function') {
             console.log('拥有 H5CallNativieUtils.h5IsReady方法 ，我调用它了');
             H5CallNativieUtils.h5IsReady();
+        } else {
+            throw new Error('H5CallNativieUtils.h5IsReady方法不存在');
         }
     } else {
         //  fixme   本地测试,将来要删除

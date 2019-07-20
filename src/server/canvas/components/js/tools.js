@@ -91,39 +91,6 @@ function calculateList(list) {
 }
 
 
-//  返回最近的点
-/**
- * @referenceSpot:参考点位
- * @pointList:一系列点
- *
- * @return:string 从pointList中,返回最近的那个点的下标
- * */
-function getClosest(referenceSpot, pointList) {
-    var _pointList = obtainCopy(pointList);
-    getItem(referenceSpot);
-    //  转为canvas坐标系
-    pointList.forEach(getItem);
-
-    function getItem(item) {
-        item.x = item.longitude * Math.cos(Math.PI * (item.latitude / 180));
-        item.y = item.latitude;
-        delete item.latitude;
-        delete item.longitude;
-        return item
-    }
-
-    // console.log(referenceSpot, pointList, _pointList);
-    //  作出距离的list
-    var __differList = pointList.map(function (item) {
-        return getDiffer(item.x, item.y, referenceSpot.x, referenceSpot.y);
-    });
-    var Min = Math.min.apply(null, __differList);
-    var MinIndex = __differList.findIndex(function (item) {
-        return item === Min;
-    });
-    return JSON.stringify(_pointList[MinIndex]);
-}
-
 
 //  返回最近的点
 /**

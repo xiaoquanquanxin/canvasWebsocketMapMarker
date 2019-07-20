@@ -30,16 +30,16 @@
 <!--<script src="js/index.js?v=002"></script>-->
 </body>
 <script>
-    function f(src) {
+    function loadJs(src) {
         var script = document.createElement('script');
         document.body.append(script);
         script.src = src + '?v=' + Math.random();
     }
-    f('js/data.js');
-    f('js/tools.js');
-    f('js/draw.js');
+    loadJs('js/data.js');
+    loadJs('js/tools.js');
+    loadJs('js/draw.js');
     window.onload = function (ev) {
-        f('js/index.js');
+        loadJs('js/index.js');
     }
 </script>
 </html>

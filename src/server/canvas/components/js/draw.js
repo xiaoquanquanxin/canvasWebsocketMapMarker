@@ -389,7 +389,6 @@ function drawCanvasTips(message, point, height, fontSize, hasTriangle) {
         triangleObject.turn = 270;
     }
 
-
     //  绘制圆角矩形
     drawCircleRect(point.x, point.y, _width, _height, 5, 'white');
 
@@ -461,6 +460,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             }());
             //  绘制全部站点
             drawStations();
+            this.drawUnLocation.called = true;
             console.log('drawUnLocation完成');
         },
 
@@ -470,30 +470,19 @@ NativeUtilsCallH5.DriverLessCar = (function () {
          *
          * @return:string   JSON串：："{"id":2,"x":577.2850539290472,"y":385.72152093401405}"
          * */
-        drawLocation: function (userPoint) {
+        drawLocation: function (userPointString) {
             console.log('drawLocation调用');
             //  用户位置
-            window.UserPoint = calculatePoint(JSON.parse(userPoint));
-            //  先画未定位
-            (function () {
-                //  任何图都基于无可用车辆
-                drawClear();
-                //  绘制地图
-                drawMap();
-                //  绘制道路
-                drawCanvasRoad(RoadList, roadData);
-                //  绘制全部站点
-                drawStations();
-            }());
-            var _UserPoint = JSON.parse(JSON.stringify(UserPoint));
+            window.UserPoint = calculatePoint(JSON.parse(userPointString));
+            if (this.drawUnLocation.called !== true) {
+                //  先画未定位
+                this.drawUnLocation();
+            }
+            var _UserPoint = obtainCopy(UserPoint);
             //  用户定位
             drawUser(_UserPoint);
-            // console.clear();
-            var MinPointIndex = getCanvasClosest(UserPoint, StationList);
-            // console.log('返回给移动端离我最近的点', StationList[MinPointIndex]);
-            console.log('drawLocation完成');
-            console.log('返回给移动端station_id是' + StationList[MinPointIndex].station_id);
-            return StationList[MinPointIndex].station_id;
+            //  返回给移动端最近的stationId
+            this.returnClosestStationId(obtainCopy(UserPoint), obtainCopy(StationList));
         },
 
         //  绘制起点终点
@@ -503,19 +492,9 @@ NativeUtilsCallH5.DriverLessCar = (function () {
          * @endPointId:number   终点id
          * */
         drawStartAndEnd: function (startPointId, endPointId) {
-            console.log();
-            debugger
-            //  绘制未定位状态
-            (function () {
-                //  任何图都基于无可用车辆
-                drawClear();
-                //  绘制地图
-                drawMap();
-                //  绘制道路
-                drawCanvasRoad(RoadList, roadData);
-                //  绘制全部站点
-                drawStations();
-            }());
+            console.log('drawStartAndEnd调用');
+            //  先画未定位
+            this.drawUnLocation();
             //  绘制起点和终点
             if (startPointId && startPointId !== -1) {
                 window.StartPoint = StationList.find(function (item) {
@@ -596,7 +575,6 @@ NativeUtilsCallH5.DriverLessCar = (function () {
                 console.log('本次无人车运行以后再也画不出虚线了');
             }
 
-
             //  起点终点
             drawStation(obtainCopy(EndPoint), ImageStationEnd);
             drawCanvasTips('终点', obtainCopy(EndPoint), tipData.height, tipData.fontSize, true);
@@ -606,8 +584,6 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             //  todo
             drawCar(CarPoint);
             drawCanvasTips(catchData, obtainCopy(CarPoint), tipData.height, tipData.fontSize);
-
-
         },
 
         //  等待乘车
@@ -695,15 +671,15 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             console.log(left_differ);
         },
         //  车站数据    转换数据得完成对坐标系的建立之后才能执行
-        setStationList: function (stationListData, roadListDataString) {
+        setStationList: function (stationListDataString, roadListDataString) {
             console.log('从移动端获取的车站数据');
-            var list = JSON.parse(stationListData);
-            list.forEach(function (item) {
+            var stationListData = JSON.parse(stationListDataString);
+            stationListData.forEach(function (item) {
                 item.longitude = item.station_long;
                 item.latitude = item.station_lat;
             });
-            console.log(list);
-            window.StationList = calculateList(list);
+            console.log(stationListData);
+            window.StationList = calculateList(stationListData);
             console.log(JSON.stringify(StationList));
             //  路径数据    转换数据得完成对坐标系的建立之后才能执行
             var roadListData = JSON.parse(roadListDataString).map(function (item) {
@@ -739,12 +715,30 @@ NativeUtilsCallH5.DriverLessCar = (function () {
         },
 
 
-        //  仅用于计算的东西,和绘图物管
-        getUserClosestStation: function (userPoint, stationList) {
-            if (stationList) {
-                var point = getClosest(JSON.parse(userPoint), stationList);
-                console.log('返回给移动端的位置', point);
-                return point;
+        //  仅用于计算的东西,和绘图无关
+        getUserClosestStation: function (userPointString, stationListDataString) {
+            var stationListData = JSON.parse(stationListDataString);
+            stationListData.forEach(function (item) {
+                item.longitude = item.station_long;
+                item.latitude = item.station_lat;
+            });
+            window.StationList = calculateList(obtainCopy(stationListData));
+            window.UserPoint = calculatePoint(JSON.parse(userPointString));
+            //  返回给移动端最近的stationId
+            this.returnClosestStationId(obtainCopy(UserPoint), obtainCopy(StationList));
+        },
+        //  返回给移动端最近的stationId
+        returnClosestStationId: function (userPoint, stationList) {
+            var MinPointIndex = getCanvasClosest(userPoint, stationList);
+            if (typeof H5CallNativieUtils !== 'undefined') {
+                if (typeof H5CallNativieUtils.giveBackStationId === 'function') {
+                    console.log('返回给移动端station_id是' + StationList[MinPointIndex].station_id);
+                    H5CallNativieUtils.giveBackStationId(StationList[MinPointIndex].station_id);
+                } else {
+                    throw new Error('返回给移动端station_id的时候,H5CallNativieUtils.giveBackStationId不是一个方法');
+                }
+            } else {
+                throw new Error('返回给移动端station_id的时候,H5CallNativieUtils不存在, station_id是 ' + StationList[MinPointIndex].station_id);
             }
         },
 

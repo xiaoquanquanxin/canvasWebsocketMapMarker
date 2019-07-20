@@ -154,10 +154,16 @@ function getCorner() {
         var bottom = Math.min.apply(null, lef);
         var left = Math.min.apply(null, rig);
         var right = Math.max.apply(null, rig);
-        console.log(top, bottom, left, right);
+        // console.log(top, bottom, left, right);
         setTimeout(function () {
-            taskList[4](11, 6);
-            taskList[11]();
+            if (typeof H5CallNativieUtils === "undefined") {
+                taskList[4](11, 6);
+                taskList[5]();
+                taskList[7]();
+                taskList[8]();
+                // taskList[11]();
+            }
+
         }, 100)
     }(getRoadList()));
     return (function () {
@@ -166,8 +172,12 @@ function getCorner() {
         var Top = 23.21370;        //  大
         var Bottom = 23.20850;
 
-        console.log(Right - Left > 0);
-        console.log(Top - Bottom > 0);
+        if (Right - Left < 0) {
+            throw new Error('四个角的数据不对');
+        }
+        if (Top - Bottom < 0) {
+            throw new Error('四个角的数据不对');
+        }
         northernLatitude = Math.cos(Math.PI * ((Top + Bottom) / 2 / 180));
         // console.log('当前纬度下,每个经度相当于  ' + northernLatitude + '  个纬度');
         return {
@@ -194,11 +204,7 @@ function getCorner() {
 //  测试需要的数据
 function testUsingData() {
     return (function (w) {
-        //  测试状态 4，5，6，7的数据
-        //  无人车在左上角
-        w.pointData = {longitude: 23.20950, latitude: 113.5512};
-        //                  无人车在右上角
-        w.pointData = {longitude: 23.20909, latitude: 113.552608, id: 5};
+        w.pointData = {longitude: 113.5455005441, latitude: 23.2128941925, id: 5};
         //  虚线路径    正方向
         // w.toGoThroughList = [StationList[1], StationList[2], StationList[3]];
         w.toGoThroughList = [11, 6];

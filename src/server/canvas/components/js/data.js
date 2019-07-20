@@ -91,6 +91,8 @@ function resetData() {
         w.WaitForRouteList = null;
         //  等待接驾的剩余路线点位     动态减少的值
         w.PassingStationList = null;
+        //  重置调用状态
+        NativeUtilsCallH5.DriverLessCar.drawUnLocation.called = false;
     }(window));
 }
 
@@ -148,10 +150,33 @@ function getRoadList() {
 //  获取四角数据
 function getCorner() {
     return (function () {
-        var Left = 113.5452645098;
-        var Top = 23.21300;        //  大
-        var Right = 113.5458492313;
+        var Right = 113.5458892313;
+        var Left = 113.5452045098;
+        var Top = 23.21322;        //  大
         var Bottom = 23.21210;
+
+
+        var Right = 113.5528060000;
+        var Left = 113.5502100000;
+        var Top = 23.2102910000;
+        var Bottom = 23.2060700000;
+
+
+        var Right = 113.54688;
+        var Left = 113.54420;
+        var Top = 23.21322;        //  大
+        var Bottom = 23.21210;
+
+        var Top = 23.21355;        //  大
+        var Bottom = 23.20920;
+
+        setTimeout(function () {
+
+            // taskList[4](11,6)
+            // taskList[11]()
+        }, 100)
+
+
         console.log(Right - Left > 0);
         console.log(Top - Bottom > 0);
         northernLatitude = Math.cos(Math.PI * ((Top + Bottom) / 2 / 180));
@@ -181,8 +206,6 @@ function getCorner() {
 function testUsingData() {
     return (function (w) {
         //  测试状态 4，5，6，7的数据
-        w.startId = 4;
-        w.endId = 5;
         //  无人车在左上角
         w.pointData = {longitude: 23.20950, latitude: 113.5512};
         //                  无人车在右上角

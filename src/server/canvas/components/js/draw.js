@@ -455,7 +455,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
 
         //  绘制未定位状态         🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊可约车状态
         drawUnLocation: function () {
-            // console.log('drawUnLocation调用');
+            console.log('drawUnLocation调用');
             (function () {
                 //  任何图都基于无可用车辆
                 drawClear();
@@ -467,7 +467,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             //  绘制全部站点
             drawStations();
             this.drawUnLocation.called = true;
-            // console.log('drawUnLocation完成');
+            console.log('drawUnLocation完成');
         },
 
         //  绘制用户开启定位状态
@@ -502,22 +502,22 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             //  先画未定位
             this.drawUnLocation();
             //  绘制起点和终点
-            if (startPointId && startPointId !== -1) {
+            if (startPointId && Number(startPointId) !== -1) {
                 window.StartPoint = StationList.find(function (item) {
                     return Number(item.station_id) === Number(startPointId);
                 });
                 if (window.StartPoint === undefined) {
-                    throw new Error('没有这个上车点位');
+                    throw new Error('没有这个上车点位，startPointId是' + startPointId);
                 }
                 drawStation(obtainCopy(StartPoint), ImageStationStart);
                 drawCanvasTips('在这里上车', obtainCopy(StartPoint), tipData.height, tipData.fontSize, true);
             }
-            if (endPointId && endPointId !== -1) {
+            if (endPointId && Number(endPointId) !== -1) {
                 window.EndPoint = StationList.find(function (item) {
                     return Number(item.station_id) === Number(endPointId);
                 });
                 if (window.EndPoint === undefined) {
-                    throw new Error('没有这个下车点位');
+                    throw new Error('没有这个下车点位，endPointId是 ' + endPointId);
                 }
                 //  todo    别忘了放开注释
                 drawStation(obtainCopy(EndPoint), ImageStationEnd);

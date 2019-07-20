@@ -160,14 +160,13 @@ var taskList = [
         NativeUtilsCallH5.DriverLessCar.drawCarArrived(JSON.stringify(CarArrivedData));
     },
     function (z8) {
-        console.log(pointData, toGoThroughList);
+        // console.log(pointData, toGoThroughList);
         //  乘车中
         var drivingData = {
             fromTheEnd: 1221,                   //  距离终点
             estimatedTime: '00:00:13',          //  预计时间
             longitude: pointData.longitude,
             latitude: pointData.latitude,
-            toGoThroughList: toGoThroughList
         };
         NativeUtilsCallH5.DriverLessCar.drawInTheBus(JSON.stringify(drivingData));
     },
@@ -195,8 +194,8 @@ function imagesIsAllLoaded() {
     //  获取四个角落的经纬度  这个数据将来从移动端获取的时候，再做处理
 
     NativeUtilsCallH5.DriverLessCar.setCornerData(JSON.stringify(getCorner()));
-    console.log('h5自给的四个角的经纬度');
-    console.log(JSON.stringify(window.Corner).substr(0, 50));
+    // console.log('h5自给的四个角的经纬度');
+    // console.log(JSON.stringify(window.Corner).substr(0, 50));
 
     /**
      * 问移动端拿数据

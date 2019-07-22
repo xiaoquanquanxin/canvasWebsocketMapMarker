@@ -231,7 +231,11 @@ function getCountDown(countDown) {
  * */
 //  todo    未完成
 function getPathOfTravel(carPoint, expectList, roadList) {
-    expectList.unshift(carPoint);
+    //  不是null,就说明是真正的乘车中的状态
+    if (carPoint !== null) {
+        expectList.unshift(carPoint);
+    }
+
     //  预计虚线路线在道路路线上对应的点位下标
     var _dottedLineIndex = expectList.map(function (item) {
         return getCanvasClosest(item, roadList);
@@ -242,6 +246,7 @@ function getPathOfTravel(carPoint, expectList, roadList) {
         throw new Error('不可能出现有少于两个点点情况,至少要用一个无人车的点，和一个站点【用户选择的上车站点】');
     }
 
+    // debugger
     console.log(_dottedLineIndex);
     //  对应道路的拐点  下标的最小值和最大值
     var _listMinValue = Math.min.apply(null, _dottedLineIndex);
@@ -256,13 +261,6 @@ function getPathOfTravel(carPoint, expectList, roadList) {
     console.log(_listMinValue, _listMaxValue);
     console.log(_listMinInflexionIndex, _listMaxInflexionIndex);
 
-    //  判断情况
-    //  1.[1, 2, 3, 4, 5, 6];
-    if (_listMinInflexionIndex === 0) {
-        if (_listMaxInflexionIndex === _dottedLineIndex.length - 1) {
-
-        }
-    }
 
     // debugger;
     //  取起点和终点

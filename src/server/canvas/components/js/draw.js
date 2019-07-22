@@ -650,36 +650,14 @@ NativeUtilsCallH5.DriverLessCar = (function () {
          *
          * */
         drawInTheBus: function (drivingString) {
-            //  完整的待接驾路线 [1,2,3,4,5,6,7,8,9]
-            // console.log(PassingStationList);
-            // if (CarPoint.turn === true) {
-            // var passIndex = getCanvasClosest(CarPoint, PassingStationList);
-            // PassingStationList = PassingStationList.slice(passIndex);
-            // }
-            //  画虚线
-
-            // drawScreen(PassingStationList, waitForRouteData);
-            // console.log(PassingStationList[1], PassingStationList[0]);
-
-            //  todo    有bug    方向判断单一
-            // if (PassingStationList[1] === undefined || PassingStationList[1].id - PassingStationList[0].id > 0) {
-            //     CarPoint.turn = true;
-            // } else {
-            //     CarPoint.turn = false;
-            // }
-            // console.log(PassingStationList, CarPoint);
-            // if (PassingStationList.length === 1) {
-            //     console.log('本次无人车运行以后再也画不出虚线了');
-            // }
-            console.log('执行drawInTheBus,从移动端渠道的数据是');
-            console.log(drivingString);
+            // console.log('执行drawInTheBus,从移动端渠道的数据是');
+            // console.log(drivingString);
             var drivingData = JSON.parse(drivingString);
             drivingData.type = 4;
             window.CarPoint.longitude = drivingData.longitude;
             window.CarPoint.latitude = drivingData.latitude;
             CarPoint = calculatePoint(CarPoint);
             // console.log('汽车真实经纬度', CarPoint);
-            this.drawNoCar();
 
             //  获取行程的路径     以及无人车方向
             /**
@@ -687,19 +665,49 @@ NativeUtilsCallH5.DriverLessCar = (function () {
              * @expectList:array    要经过路径的list
              * @roadList:array      路径的list
              * */
-            var pathOfTravelData = getPathOfTravel(obtainCopy(CarPoint), obtainCopy(ridingList), obtainCopy(RoadList));
-            // console.log('获取行程的路径     以及无人车方向', pathOfTravelData);
 
-            //  画行驶路线
-            drawCanvasRoad(pathOfTravelData, planRoadData);
-            //  起点终点
+            if (typeof window.ridingActivityList === 'undefined' || window.ridingActivityList === null) {
+                window.ridingActivityList = this.setRidingList([StartPoint.station_id, EndPoint.station_id], true);
+            }
+
+            debugger
+            if (CarPoint.turn === true) {
+                var passIndex = getCanvasClosest(CarPoint, ridingActivityList);
+                window.ridingActivityList = ridingActivityList.slice(passIndex);
+                console.log('删除的index---------------:' + passIndex);
+            }
+
+            console.log(ridingActivityList[1], ridingActivityList[0]);
+
+            if (ridingActivityList[1] === undefined || ridingActivityList[1]._id - ridingActivityList[0]._id > 0) {
+                CarPoint.turn = true;
+                console.log();
+            } else {
+                CarPoint.turn = false;
+            }
+            console.log(ridingActivityList, CarPoint);
+            if (ridingActivityList.length === 1) {
+                console.log('本次无人车运行以后再也画不出虚线了');
+            }
+
+
+            //  order_1
+            this.drawNoCar();
+            //  order_test
+            drawCircle(CarPoint, 10, 'rgba(255,0,0,0.3)');
+            //  order_4
+            drawCar(CarPoint);
+            //  画行驶路线   order_2
+            drawCanvasRoad(obtainCopy(window.ridingActivityList), planRoadData);
+
+            //  起点终点    order_3
             drawStation(obtainCopy(EndPoint), ImageStationEnd);
             drawCanvasTips('终点', obtainCopy(EndPoint), tipData.height, tipData.fontSize, true);
             drawStation(obtainCopy(StartPoint), ImageStationStart);
 
-            //  小车
+            //  小车  order_4
             //  todo
-            drawCar(CarPoint);
+            // drawCar(CarPoint);
             drawCanvasTips(drivingData, CarPoint, tipData.height, tipData.fontSize);
         },
 

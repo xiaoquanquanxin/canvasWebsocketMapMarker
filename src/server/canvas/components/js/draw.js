@@ -280,31 +280,31 @@ function drawCanvasTips(message, point, height, fontSize, hasTriangle) {
                 ];
                 break;
             case 2:                 //  type === 2  :等待接驾
-                var StartPointDistanceData = getDistanceData(message.startPointDistance.toString());
+                // var StartPointDistanceData = getDistanceData(message.startPointDistance.toString());
                 // console.log(StartPointDistanceData);
                 var StartPointTimeData = getTimeData(message.startPointTime.toString());
                 // console.log(StartPointTimeData);
                 TextArr = [
-                    {word: '距离', color: 'black', textLength: '距离'.length * _fontSize},
-                    {
-                        word: StartPointDistanceData.value,
-                        color: 'red',
-                        textLength: StartPointDistanceData.value.length * NumberTextRatio * _fontSize
-                    },
-                    {
-                        word: StartPointDistanceData.unit + ' ，',
-                        color: 'black',
-                        textLength: (StartPointDistanceData.unit + ' ，').length * NumberTextRatio * _fontSize
-                    },
+                    {word: '车辆调度中，预计', color: 'black', textLength: '车辆调度中，预计'.length * _fontSize},
+                    // {
+                    //     word: StartPointDistanceData.value,
+                    //     color: 'red',
+                    //     textLength: StartPointDistanceData.value.length * NumberTextRatio * _fontSize
+                    // },
+                    // {
+                    //     word: StartPointDistanceData.unit + ' ，',
+                    //     color: 'black',
+                    //     textLength: (StartPointDistanceData.unit + ' ，').length * NumberTextRatio * _fontSize
+                    // },
                     {
                         word: StartPointTimeData.value,
                         color: 'red',
                         textLength: StartPointTimeData.value.length * NumberTextRatio * _fontSize
                     },
                     {
-                        word: StartPointTimeData.unit,
+                        word: StartPointTimeData.unit + '到达',
                         color: 'black',
-                        textLength: StartPointTimeData.unit.length * _fontSize
+                        textLength: (StartPointTimeData.unit + '到达').length * _fontSize,
                     },
                 ];
                 // console.log(TextArr);

@@ -86,15 +86,12 @@ function resetData() {
         w.UserPoint = null;
         w.StartPoint = null;
         w.EndPoint = null;
-        w.CarPoint = null;
-        w.CarPoint = null;
-        w.toGoThroughList = null;
-        //  等待接驾的站点数据   死值死值死值死值死值
-        w.WaitForRouteList = null;
-        //  等待接驾的剩余路线点位     动态减少的值
-        w.PassingStationList = null;
         //  重置调用状态
         NativeUtilsCallH5.DriverLessCar.drawUnLocation.called = false;
+        //  乘车预计路线
+        w.ridingList = null;
+        //  等待接驾的剩余路线点位     动态减少的值
+        w.PassingStationList = null;
     }(window));
 }
 
@@ -171,10 +168,13 @@ function getCorner() {
         setTimeout(function () {
             if (typeof H5CallNativieUtils === "undefined") {
                 taskList[4](11, 8);
+                //  从task 5 开始就要规划路径
                 // taskList[5]();
-                // taskList[7]();
-                taskList[8]();
-                taskList[9]();
+                // taskList[6]();
+                taskList[7]();
+                // taskList[8]();
+                // taskList[9]();
+                // taskList[10]();
                 // taskList[11]();
             }
 
@@ -221,7 +221,7 @@ function testUsingData() {
         w.pointData = {longitude: 113.5455005441, latitude: 23.2128941925, id: 5};
         //  虚线路径    正方向
         // w.toGoThroughList = [StationList[1], StationList[2], StationList[3]];
-        w.toGoThroughList = [6, 8];
+        w.jingguo = [6, 8];
         //  虚线路径    反方向
         // var toGoThroughList = [StationList[0], StationList[1], StationList[2]];
         //  无人车在右下角

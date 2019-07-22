@@ -91,7 +91,6 @@ function calculateList(list) {
 }
 
 
-
 //  返回最近的点
 /**
  * @referenceSpot:参考点位
@@ -235,7 +234,9 @@ function getPathOfTravel(carPoint, expectList, roadList) {
     if (carPoint !== null) {
         expectList.unshift(carPoint);
     }
-
+    roadList.forEach(function (item, index) {
+        item._id = index + 1;
+    });
     //  预计虚线路线在道路路线上对应的点位下标
     var _dottedLineIndex = expectList.map(function (item) {
         return getCanvasClosest(item, roadList);

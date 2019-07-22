@@ -144,15 +144,25 @@ var taskList = [
         NativeUtilsCallH5.DriverLessCar.drawCarArrived(JSON.stringify(CarArrivedData));
     },
     function (z8) {
-        // console.log(pointData, toGoThroughList);
         //  乘车中
-        var drivingData = {
-            fromTheEnd: 1221,                   //  距离终点
-            estimatedTime: '00:00:13',          //  预计时间
-            longitude: pointData.longitude,
-            latitude: pointData.latitude,
-        };
-        NativeUtilsCallH5.DriverLessCar.drawInTheBus(JSON.stringify(drivingData));
+        var index = 0;
+        var timer = setTimeout(fn, 333);
+
+        function fn() {
+            if (index === 6) {
+                clearTimeout(timer);
+                timer = null;
+                return
+            }
+            index++;
+            timer = setTimeout(fn, 333);
+            NativeUtilsCallH5.DriverLessCar.drawInTheBus(JSON.stringify({
+                fromTheEnd: Math.floor(Math.random() * 100),                 //  距离终点
+                estimatedTime: '00:00:13',                      //  预计时间
+                longitude: pointData.longitude + 0.00024 * index,
+                latitude: pointData.latitude - 0.00004 * index,
+            }));
+        }
     },
     function (z9) {
         //  在图片没加载出来以前,计算出来最近的点位

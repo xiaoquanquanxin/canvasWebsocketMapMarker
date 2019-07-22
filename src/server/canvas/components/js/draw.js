@@ -542,10 +542,9 @@ NativeUtilsCallH5.DriverLessCar = (function () {
          * */
         drawQueueUp: function (waitingString) {
             console.log('调用drawQueueUp,从移动端拿到的数据是');
-            console.log(waitingString)
+            console.log(waitingString);
             var waitingData = JSON.parse(waitingString);
             waitingData.type = 1;
-            this.drawNoCar();
             if (typeof StartPoint === 'undefined') {
                 console.log('error: 没有缓存到StartPoint');
                 return;
@@ -555,6 +554,18 @@ NativeUtilsCallH5.DriverLessCar = (function () {
                 console.log('error: 没有缓存到EndPoint');
                 return;
             }
+
+
+            //  乘车中的预计路线
+
+            if (typeof window.ridingList === 'undefined' || window.ridingList === null) {
+                window.ridingList = this.setRidingList([StartPoint.station_id, EndPoint.station_id], false);
+            }
+
+            this.drawNoCar();
+            //  画行驶路线
+            drawCanvasRoad(obtainCopy(window.ridingList), planRoadData);
+
             drawStation(obtainCopy(StartPoint), ImageStationStart);
             drawCanvasTips(waitingData, obtainCopy(StartPoint), tipData.height, tipData.fontSize, true);
             drawStation(obtainCopy(EndPoint), ImageStationEnd);
@@ -587,8 +598,14 @@ NativeUtilsCallH5.DriverLessCar = (function () {
                 return;
             }
 
-            // console.log('汽车真实经纬度', CarPoint);
+
+            //  乘车中的预计路线
+            if (typeof window.ridingList === 'undefined' || window.ridingList === null) {
+                window.ridingList = this.setRidingList([StartPoint.station_id, EndPoint.station_id], false);
+            }
             this.drawNoCar();
+            //  画行驶路线
+            drawCanvasRoad(obtainCopy(window.ridingList), planRoadData);
 
 
             //  起点终点
@@ -611,7 +628,13 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             console.log(carArrivedString);
             var carArrivedData = JSON.parse(carArrivedString);
             carArrivedData.type = 3;
+            //  乘车中的预计路线
+            if (typeof window.ridingList === 'undefined' || window.ridingList === null) {
+                window.ridingList = this.setRidingList([StartPoint.station_id, EndPoint.station_id], false);
+            }
             this.drawNoCar();
+            //  画行驶路线
+            drawCanvasRoad(obtainCopy(window.ridingList), planRoadData);
             drawStation(obtainCopy(EndPoint), ImageStationEnd);
             drawCanvasTips('终点', obtainCopy(EndPoint), tipData.height, tipData.fontSize, true);
             drawStation(obtainCopy(StartPoint), ImageStationStart);
@@ -658,7 +681,6 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             // console.log('汽车真实经纬度', CarPoint);
             this.drawNoCar();
 
-            console.log(toGoThroughList);
             //  获取行程的路径     以及无人车方向
             /**
              * carPoint:object     无人车的位置
@@ -737,14 +759,27 @@ NativeUtilsCallH5.DriverLessCar = (function () {
         },
 
         //  乘车中的预计路线
-        setRidingList: function (ridingListString) {
-            console.log('执行setRidingList,从移动端获取的数据是');
-            console.log(ridingListString);
-            window.ridingList = JSON.parse(ridingListString).map(function (item) {
+        setRidingList: function (ridingList, isRidingBoolean) {
+            console.log('执行setRidingList,这是我自己截的数据');
+            console.log(ridingList);
+            //  临时的list
+            var list = ridingList.map(function (item) {
                 return StationList.find(function (t) {
                     return Number(t.station_id) === Number(item);
                 })
             });
+            if (list.length === 0) {
+                throw new Error('没有乘车中的预计路线');
+            }
+            //  获取行程的路径     以及无人车方向
+            /**
+             * carPoint:object     无人车的位置
+             * @expectList:array    要经过路径的list
+             * @roadList:array      路径的list
+             * */
+            var pathOfTravelData = getPathOfTravel(isRidingBoolean ? obtainCopy(CarPoint) : null, obtainCopy(list), obtainCopy(RoadList));
+            console.log(pathOfTravelData);
+            return pathOfTravelData;
         },
 
 

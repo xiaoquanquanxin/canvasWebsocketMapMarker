@@ -98,18 +98,43 @@ var taskList = [
     },
     function (z5) {
         //  等待排队
-        NativeUtilsCallH5.DriverLessCar.drawQueueUp(JSON.stringify({
-            remainingTime: '00:00:32',           //  剩余时间
-            numberOfPeople: 2,          //  排队人数
-        }));
+        var index = 0;
+        var timer = setTimeout(fn, 333);
+        function fn() {
+            if (index === 3) {
+                clearTimeout(timer);
+                timer = null;
+                return
+            }
+            index++;
+            timer = setTimeout(fn, 333);
+            NativeUtilsCallH5.DriverLessCar.drawQueueUp(JSON.stringify({
+                remainingTime: '00:01:44',           //  剩余时间
+                numberOfPeople: Math.floor(Math.random() * 100),          //  排队人数
+            }));
+        }
     },
     function (z6) {
+        //  等待接驾
         NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
-            startPointDistance: Math.random() * 1000,            //  剩余距离，米
-            startPointTime: '00:10:02',         //  剩余时间
             longitude: pointData.longitude,      //  无人车当前的纬度
             latitude: pointData.latitude,        //  无人车当前的经度
-        }));
+        }), 2);
+        NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
+            startPointDistance: Math.random() * 8,            //  剩余距离，米
+            startPointTime: '00:99:02',         //  剩余时间
+        }), 1);
+        return
+        setTimeout(function () {
+            NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
+                longitude: pointData.longitude + 0.00004,      //  无人车当前的纬度
+                latitude: pointData.latitude - 0.00014,        //  无人车当前的经度
+            }), 2);
+            NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
+                startPointDistance: Math.random() * 1000,            //  剩余距离，米
+                startPointTime: '00:66:02',         //  剩余时间
+            }), 1);
+        }, 1000);
     },
     function (z7) {
         //  等待乘车
@@ -119,9 +144,6 @@ var taskList = [
         NativeUtilsCallH5.DriverLessCar.drawCarArrived(JSON.stringify(CarArrivedData));
     },
     function (z8) {
-        NativeUtilsCallH5.DriverLessCar.setRidingList(JSON.stringify(toGoThroughList));
-    },
-    function (z9) {
         // console.log(pointData, toGoThroughList);
         //  乘车中
         var drivingData = {
@@ -133,6 +155,7 @@ var taskList = [
         NativeUtilsCallH5.DriverLessCar.drawInTheBus(JSON.stringify(drivingData));
     },
     function (z9) {
+        //  在图片没加载出来以前,计算出来最近的点位
         NativeUtilsCallH5.DriverLessCar.getUserClosestStation(JSON.stringify({
             longitude: 113.5455810104,
             latitude: 23.2128596807,
@@ -143,6 +166,7 @@ var taskList = [
         NativeUtilsCallH5.DriverLessCar.drawReset();
     },
     function (z11) {
+        //  测试
         NativeUtilsCallH5.DriverLessCar.testCoordinatePrecision();
     }
 ];

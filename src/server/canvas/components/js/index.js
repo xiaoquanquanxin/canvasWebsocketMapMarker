@@ -205,7 +205,6 @@ function imagesIsAllLoaded() {
             throw new Error('H5CallNativieUtils.h5IsReady方法不存在');
         }
     } else {
-        //  fixme   本地测试,将来要删除
         //  获取车站站点经纬度
         //  获取路线经纬度
         NativeUtilsCallH5.DriverLessCar.setStationList(JSON.stringify(getStationList()), JSON.stringify(getRoadList()));

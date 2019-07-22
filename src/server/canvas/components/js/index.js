@@ -104,53 +104,12 @@ var taskList = [
         }));
     },
     function (z6) {
-        var _StationList = getStationList();
-
-        var delayTime = 333;
-        //  普通正向    到站点4
-        var testCarList = [1, 2, 3, 4, 5, 6];
-        var testStation = [_StationList[1], _StationList[2], _StationList[3]];
-
-        //  普通反向    到站点4
-        var testCarList = [4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6];
-        var testStation = [_StationList[2], _StationList[1], _StationList[0], _StationList[1], _StationList[2], _StationList[3]];
-        //
-        //  大普通反向   到站点4，带一个起点折返
-        var testCarList = [8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6];
-        var testStation = [_StationList[3], _StationList[2], _StationList[1], _StationList[0], _StationList[1], _StationList[2], _StationList[3]];
-
-        //  普通正向到终点     到站点5
-        var testCarList = [10, 11, 12, 13];
-        var testStation = [_StationList[4]];
-
-        //  大反转终点到起点    到站点4，带一个终点折返
-        var testCarList = [10, 11, 12, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6];
-        var testStation = [_StationList[4], _StationList[3], _StationList[2], _StationList[1], _StationList[0], _StationList[1], _StationList[2], _StationList[3]];
-
-
-        //  不做虚线了
-        var index = 0;
-        var timer = setInterval(function () {
-            //  后绘制
-            NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
-                startPointDistance: Math.random() * 1000,            //  剩余距离，米
-                startPointTime: '00:10:02',         //  剩余时间
-                longitude: 113.5452645098,      //  无人车当前的纬度
-                latitude: 23.2129878673,        //  无人车当前的经度
-            }));
-            clearInterval(timer);
-            console.log(index);
-            index++;
-            if (index === testCarList.length) {
-                clearInterval(timer);
-            }
-        }, delayTime);
-        //  无人车偏差位置
-        // if (isTest) {
-        //     var _pointData = calculatePoint(obtainCopy(pointData));
-        //     // console.log('红点', _pointData);
-        //     drawCircle(_pointData, 10, 'red');
-        // }
+        NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
+            startPointDistance: Math.random() * 1000,            //  剩余距离，米
+            startPointTime: '00:10:02',         //  剩余时间
+            longitude: pointData.longitude,      //  无人车当前的纬度
+            latitude: pointData.latitude,        //  无人车当前的经度
+        }));
     },
     function (z7) {
         //  等待乘车
@@ -160,6 +119,9 @@ var taskList = [
         NativeUtilsCallH5.DriverLessCar.drawCarArrived(JSON.stringify(CarArrivedData));
     },
     function (z8) {
+        NativeUtilsCallH5.DriverLessCar.setRidingList(JSON.stringify(toGoThroughList));
+    },
+    function (z9) {
         // console.log(pointData, toGoThroughList);
         //  乘车中
         var drivingData = {

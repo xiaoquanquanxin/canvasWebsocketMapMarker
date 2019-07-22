@@ -90,8 +90,8 @@ function resetData() {
         NativeUtilsCallH5.DriverLessCar.drawUnLocation.called = false;
         //  乘车预计路线
         w.ridingList = null;
-        //  等待接驾的剩余路线点位     动态减少的值
-        w.PassingStationList = null;
+        //  乘车预计路线  动态点位
+        w.ridingActivityList = null;
     }(window));
 }
 
@@ -167,12 +167,12 @@ function getCorner() {
         // console.log(top, bottom, left, right);
         setTimeout(function () {
             if (typeof H5CallNativieUtils === "undefined") {
-                taskList[4](11, 8);
+                taskList[4](6, 8);
                 //  从task 5 开始就要规划路径
                 // taskList[5]();
                 // taskList[6]();
-                taskList[7]();
-                // taskList[8]();
+                // taskList[7]();
+                taskList[8]();
                 // taskList[9]();
                 // taskList[10]();
                 // taskList[11]();

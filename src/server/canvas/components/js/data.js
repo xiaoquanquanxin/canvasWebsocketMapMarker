@@ -97,8 +97,6 @@ function resetData() {
 
 
 //  fixme   测试数据
-//  fixme   测试数据
-//  fixme   测试数据
 //  车站数据
 function getStationList() {
     //  广州

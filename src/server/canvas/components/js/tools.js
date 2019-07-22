@@ -120,9 +120,9 @@ function getCanvasClosest(referenceSpot, pointList) {
  * */
 function getCarAngle(index, list) {
     if (CarPoint.turn) {
-        console.log('计算无人车角度时，给与的无人车方向 , 正向');
+        console.log('计算无人车角度时，给与的无人车方向 , -------------正向');
     } else {
-        console.log('计算无人车角度时，给与的无人车方向，反向');
+        console.log('计算无人车角度时，给与的无人车方向 , -------------反向');
     }
     var FirstIndex = Math.max(0, index - 3);
     var LastIndex = Math.min(FirstIndex + 5, list.length - 1);
@@ -248,7 +248,7 @@ function getPathOfTravel(carPoint, expectList, roadList) {
     }
 
     // debugger
-    console.log(_dottedLineIndex);
+    console.log('无人车 + stations 映射在roadList上的点', _dottedLineIndex);
     //  对应道路的拐点  下标的最小值和最大值
     var _listMinValue = Math.min.apply(null, _dottedLineIndex);
     var _listMaxValue = Math.max.apply(null, _dottedLineIndex);
@@ -259,8 +259,8 @@ function getPathOfTravel(carPoint, expectList, roadList) {
     var _listMaxInflexionIndex = _dottedLineIndex.findIndex(function (item) {
         return item === _listMaxValue;
     });
-    console.log(_listMinValue, _listMaxValue);
-    console.log(_listMinInflexionIndex, _listMaxInflexionIndex);
+    // console.log(_listMinValue, _listMaxValue);
+    // console.log(_listMinInflexionIndex, _listMaxInflexionIndex);
 
 
     // debugger;
@@ -286,7 +286,7 @@ function getPathOfTravel(carPoint, expectList, roadList) {
     var roadListMinValue = Math.min.apply(null, _dottedLineIndex);
     // debugger
     var list = roadList.slice(roadListMinValue + 1, firstValue).reverse().concat(roadList.slice(roadListMinValue, lastValue));
-    console.log(list);
+    // console.log(list);
     return list;
 }
 

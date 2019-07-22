@@ -329,20 +329,26 @@ function drawCanvasTips(message, point, height, fontSize, hasTriangle) {
                         textLength: fromTheEndData.value.length * NumberTextRatio * _fontSize
                     },
                     {
-                        word: fromTheEndData.unit + ' ，预计',
+                        word: fromTheEndData.unit + '',
                         color: 'black',
-                        textLength: ((fromTheEndData.unit + ' ').length * NumberTextRatio + '，预计'.length) * _fontSize
+                        textLength: ((fromTheEndData.unit + ' ').length * NumberTextRatio + ''.length) * _fontSize
                     },
-                    {
-                        word: estimatedTimeData.value,
-                        color: 'red',
-                        textLength: estimatedTimeData.value.length * NumberTextRatio * _fontSize
-                    },
-                    {
-                        word: estimatedTimeData.unit,
-                        color: 'black',
-                        textLength: estimatedTimeData.unit.length * _fontSize
-                    }
+                    //  todo    暂时没有距离字段
+                    // {
+                    //     word: fromTheEndData.unit + ' ，预计',
+                    //     color: 'black',
+                    //     textLength: ((fromTheEndData.unit + ' ').length * NumberTextRatio + '，预计'.length) * _fontSize
+                    // },
+                    // {
+                    //     word: estimatedTimeData.value,
+                    //     color: 'red',
+                    //     textLength: estimatedTimeData.value.length * NumberTextRatio * _fontSize
+                    // },
+                    // {
+                    //     word: estimatedTimeData.unit,
+                    //     color: 'black',
+                    //     textLength: estimatedTimeData.unit.length * _fontSize
+                    // }
                 ];
                 break;
             default:
@@ -455,7 +461,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
 
         //  绘制未定位状态         🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊🍊可约车状态
         drawUnLocation: function () {
-            console.log('drawUnLocation调用');
+            // console.log('drawUnLocation调用');
             (function () {
                 //  任何图都基于无可用车辆
                 drawClear();
@@ -467,7 +473,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             //  绘制全部站点
             drawStations();
             this.drawUnLocation.called = true;
-            console.log('drawUnLocation完成');
+            // console.log('drawUnLocation完成');
         },
 
         //  绘制用户开启定位状态
@@ -651,24 +657,23 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             CarPoint = calculatePoint(CarPoint);
             // console.log('汽车真实经纬度', CarPoint);
             this.drawNoCar();
-            //  绘制起点与终点，这来个点我控制，来一份起点和终点和路径的备份
-            var _StartPoint = JSON.parse(JSON.stringify(StartPoint));
-            var _EndPoint = JSON.parse(JSON.stringify(EndPoint));
-            var _RoadList = JSON.parse(JSON.stringify(RoadList));
+
+            console.log(toGoThroughList);
             //  获取行程的路径     以及无人车方向
-            // var pathOfTravelData = getPathOfTravel(CarPoint, drivingData.toGoThroughList, _RoadList);
+            /**
+             * carPoint:object     无人车的位置
+             * @expectList:array    要经过路径的list
+             * @roadList:array      路径的list
+             * */
+            var pathOfTravelData = getPathOfTravel(obtainCopy(CarPoint), obtainCopy(ridingList), obtainCopy(RoadList));
             // console.log('获取行程的路径     以及无人车方向', pathOfTravelData);
-            //  获取行程的路径
-            // var waitForRouteList = pathOfTravelData.list;
-            //  小车方向
-            // CarPoint.turn = pathOfTravelData.turn;
 
             //  画行驶路线
-            // drawCanvasRoad(waitForRouteList, planRoadData);
+            drawCanvasRoad(pathOfTravelData, planRoadData);
             //  起点终点
-            drawStation(_EndPoint, ImageStationEnd);
-            drawCanvasTips('终点', _EndPoint, tipData.height, tipData.fontSize, true);
-            drawStation(_StartPoint, ImageStationStart);
+            drawStation(obtainCopy(EndPoint), ImageStationEnd);
+            drawCanvasTips('终点', obtainCopy(EndPoint), tipData.height, tipData.fontSize, true);
+            drawStation(obtainCopy(StartPoint), ImageStationStart);
 
             //  小车
             //  todo
@@ -729,21 +734,6 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             });
             window.RoadList = calculateList(roadListData);
             // console.log(JSON.stringify(RoadList).substr(0, 50));
-        },
-
-        //  等待接驾数据  不用了
-        setWaitForRouteList: function (carPoint, waitForRouteList) {
-            window.WaitForRouteList = calculateList(JSON.parse(waitForRouteList));
-            var _carPoint = JSON.parse(carPoint);
-            window.CarPoint.longitude = _carPoint.longitude;
-            window.CarPoint.latitude = _carPoint.latitude;
-            CarPoint = calculatePoint(CarPoint);
-            //  获取行程的路径     以及无人车方向
-            var pathOfTravelData = getPathOfTravel(obtainCopy(CarPoint), obtainCopy(WaitForRouteList), obtainCopy(RoadList));
-            //  虚线的路径的点
-            window.PassingStationList = pathOfTravelData;
-            //  无人车的方向
-            // CarPoint.turn = pathOfTravelData.turn;
         },
 
         //  乘车中的预计路线

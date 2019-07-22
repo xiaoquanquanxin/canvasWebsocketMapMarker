@@ -131,6 +131,19 @@ function getStationList() {
         "station_time_to_next": 3,
         "station_type": 1,
         "update_time": 1529655509
+    }, {
+        "create_time": 1529655509,
+        "staion_both_sides": 1,
+        "station_community_id": 1,
+        "station_distance_to_next": 100,
+        "station_id": 8,
+        "station_lat": 23.2124800507,
+        "station_long": 113.5468309198,
+        "station_name": "站点F",
+        "station_status": 9,
+        "station_time_to_next": 3,
+        "station_type": 1,
+        "update_time": 1529655509
     }]
 }
 
@@ -142,7 +155,7 @@ function getRoadList() {
 //  获取四角数据
 function getCorner() {
     (function (arr) {
-        return
+        // return
         var lef = [];
         var rig = [];
         arr.forEach(function (value) {
@@ -157,10 +170,11 @@ function getCorner() {
         // console.log(top, bottom, left, right);
         setTimeout(function () {
             if (typeof H5CallNativieUtils === "undefined") {
-                taskList[4](11, 6);
-                taskList[5]();
-                taskList[7]();
+                taskList[4](11, 8);
+                // taskList[5]();
+                // taskList[7]();
                 taskList[8]();
+                taskList[9]();
                 // taskList[11]();
             }
 
@@ -207,7 +221,7 @@ function testUsingData() {
         w.pointData = {longitude: 113.5455005441, latitude: 23.2128941925, id: 5};
         //  虚线路径    正方向
         // w.toGoThroughList = [StationList[1], StationList[2], StationList[3]];
-        w.toGoThroughList = [11, 6];
+        w.toGoThroughList = [6, 8];
         //  虚线路径    反方向
         // var toGoThroughList = [StationList[0], StationList[1], StationList[2]];
         //  无人车在右下角

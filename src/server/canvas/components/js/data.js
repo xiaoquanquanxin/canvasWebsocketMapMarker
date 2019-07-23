@@ -11,7 +11,7 @@ ImageMap._src = './img/map6.png';
 // ImageMap._src = './img/map5.png';
 //  小车
 var ImageCar = new Image();
-ImageCar._src = './img/car.png';
+ImageCar._src = './img/car1.png';
 //  站点
 //  普通站点
 var ImageStationBasic = new Image();
@@ -40,7 +40,7 @@ var roadData = {
     // lineColor: 'red',
     lineWidth: 10,
     inflexionPointColor: 'yellow',
-    // inflexionPointColor: 'rgb(160,165,180)',
+    inflexionPointColor: 'rgb(160,165,180)',
     inflexionPointRadius: 5,
 };
 
@@ -48,8 +48,8 @@ var roadData = {
 var planRoadData = {
     lineColor: 'rgb(71,130,228)',
     lineWidth: 10,
-    inflexionPointColor: 'rgb(71,130,228)',
     inflexionPointColor: 'orange',
+    inflexionPointColor: 'rgb(71,130,228)',
     inflexionPointRadius: 5,
 };
 

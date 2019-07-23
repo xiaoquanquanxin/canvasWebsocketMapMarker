@@ -688,9 +688,9 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             //  order_1
             this.drawNoCar();
             //  order_test
-            drawCircle(CarPoint, 10, 'rgba(255,0,0,0.3)');
+            // drawCircle(CarPoint, 10, 'rgba(255,0,0,0.3)');
             //  order_4
-            drawCar(CarPoint);
+            // drawCar(CarPoint);
             //  画行驶路线   order_2
             drawCanvasRoad(obtainCopy(window.ridingActivityList), planRoadData);
 
@@ -700,7 +700,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             drawStation(obtainCopy(StartPoint), ImageStationStart);
 
             //  小车  order_4
-            // drawCar(CarPoint);
+            drawCar(CarPoint);
             drawCanvasTips(drivingData, CarPoint, tipData.height, tipData.fontSize);
         },
 

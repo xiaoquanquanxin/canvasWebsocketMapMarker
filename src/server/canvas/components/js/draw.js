@@ -177,13 +177,13 @@ function drawCanvasRoad(roadList, configData, repeatConfigData) {
     //  绘制拐弯
     roadList.forEach(function (item) {
         //  绘制某个点
-        drawCircle(item, configData.inflexionPointRadius / imgRatio-1, configData.inflexionPointColor);
+        drawCircle(item, configData.inflexionPointRadius / imgRatio - 1, configData.inflexionPointColor);
     });
 
     //  绘制重复的拐点
     repeatList.forEach(function (item) {
         //  绘制某个点
-        drawCircle(item, repeatConfigData.inflexionPointRadius / imgRatio  , repeatConfigData.inflexionPointColor);
+        drawCircle(item, repeatConfigData.inflexionPointRadius / imgRatio, repeatConfigData.inflexionPointColor);
     });
 }
 
@@ -586,7 +586,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
 
             this.drawNoCar();
             //  画行驶路线
-            drawCanvasRoad(obtainCopy(window.ridingList), planRoadData);
+            drawCanvasRoad(obtainCopy(window.ridingList.list), planRoadData);
 
             drawStation(obtainCopy(StartPoint), ImageStationStart);
             drawCanvasTips(waitingData, obtainCopy(StartPoint), tipData.height, tipData.fontSize, true);
@@ -606,17 +606,20 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             catchData.type = 2;
             //  如果获取的是车辆的信息,什么都不做
             if (Number(type) === 2) {
-                delete catchData.startPointDistance;
-                delete catchData.startPointTime;
                 window.CarPoint.longitude = catchData.longitude;
                 window.CarPoint.latitude = catchData.latitude;
-                CarPoint = calculatePoint(CarPoint);
+                var _CarPoint = calculatePoint(CarPoint);
+                CarPoint.x = _CarPoint.x;
+                CarPoint.y = _CarPoint.y;
             } else {
-                delete catchData.longitude;
-                delete catchData.latitude;
+                window.CatchData = window.CatchData || {};
+                window.CatchData.startPointDistance = catchData.startPointDistance;
+                window.CatchData.startPointTime = catchData.startPointTime;
+                window.CatchData.type = catchData.type;
+
             }
             //  如果获取的是站点的距离
-            if (catchData.startPointDistance === undefined || CarPoint.x === undefined) {
+            if (window.CatchData.startPointDistance === undefined || CarPoint.x === undefined) {
                 return;
             }
 
@@ -625,9 +628,10 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             if (typeof window.ridingList === 'undefined' || window.ridingList === null) {
                 window.ridingList = this.setRidingList([StartPoint.station_id, EndPoint.station_id], false);
             }
+            console.log('drawCatchStarting真正 绘制了');
             this.drawNoCar();
             //  画行驶路线
-            drawCanvasRoad(obtainCopy(window.ridingList), planRoadData);
+            drawCanvasRoad(obtainCopy(window.ridingList.list), planRoadData);
 
 
             //  起点终点
@@ -637,7 +641,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
 
             //  小车
             drawCar(CarPoint);
-            drawCanvasTips(catchData, obtainCopy(CarPoint), tipData.height, tipData.fontSize);
+            drawCanvasTips(obtainCopy(window.CatchData), obtainCopy(CarPoint), tipData.height, tipData.fontSize);
         },
 
         //  等待乘车
@@ -655,7 +659,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             }
             this.drawNoCar();
             //  画行驶路线
-            drawCanvasRoad(obtainCopy(window.ridingList), planRoadData);
+            drawCanvasRoad(obtainCopy(window.ridingList.list), planRoadData);
             drawStation(obtainCopy(EndPoint), ImageStationEnd);
             drawCanvasTips('终点', obtainCopy(EndPoint), tipData.height, tipData.fontSize, true);
             drawStation(obtainCopy(StartPoint), ImageStationStart);

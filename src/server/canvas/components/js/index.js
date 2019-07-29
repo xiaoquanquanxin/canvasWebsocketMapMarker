@@ -100,30 +100,36 @@ var taskList = [
         //  等待排队
         var index = 0;
         var timer = setTimeout(fn, 333);
+
         function fn() {
             if (index === 3) {
                 clearTimeout(timer);
                 timer = null;
                 return
             }
-            index++;
-            timer = setTimeout(fn, 333);
             NativeUtilsCallH5.DriverLessCar.drawQueueUp(JSON.stringify({
                 remainingTime: '00:01:44',           //  剩余时间
                 numberOfPeople: Math.floor(Math.random() * 100),          //  排队人数
             }));
+            index++;
+            timer = setTimeout(fn, 333);
         }
     },
     function (z6) {
         //  等待接驾
-        NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
-            longitude: pointData.longitude,      //  无人车当前的纬度
-            latitude: pointData.latitude,        //  无人车当前的经度
-        }), 2);
+
+
         NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
             startPointDistance: Math.random() * 8,            //  剩余距离，米
             startPointTime: '00:99:02',         //  剩余时间
         }), 1);
+
+
+        NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
+            longitude: pointData.longitude,      //  无人车当前的纬度
+            latitude: pointData.latitude,        //  无人车当前的经度
+        }), 2);
+
         return
         setTimeout(function () {
             NativeUtilsCallH5.DriverLessCar.drawCatchStarting(JSON.stringify({
@@ -235,12 +241,12 @@ setTimeout(function () {
         taskList[4].apply(null, qidianzhongdian);
         //  从task 5 开始就要规划路径
         // taskList[5]();
-        // taskList[6]();
+        taskList[6]();
         // taskList[7]();
         if (typeof ridingActivityList !== "undefined") {
             throw new Error('我去治不了你了？？？？');
         }
-        taskList[8]();
+        // taskList[8]();
         // taskList[9]();
         // taskList[10]();
         // taskList[11]();

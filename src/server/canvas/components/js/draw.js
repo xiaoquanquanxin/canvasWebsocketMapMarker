@@ -146,17 +146,44 @@ function drawStations() {
  *  @roadList:array     要画的路线
  *  @configData:object  要画的路线的配置
  * */
-function drawCanvasRoad(roadList, configData) {
+function drawCanvasRoad(roadList, configData, repeatConfigData) {
+    //  加载重复的road_point
+    var repeatMap = {};
+    //  重复的list
+    var repeatList = [];
+    roadList.forEach(function (item) {
+        repeatMap[item._id] = repeatMap[item._id] || 0;
+        repeatMap[item._id] = repeatMap[item._id] + 1;
+        if (repeatMap[item._id] > 1) {
+            repeatList.push(item);
+        }
+    });
+    // console.log('重复的list的长度', repeatList.length);
+
     //  绘制路径
-    roadList.reduce(function (prev, current) {
+    roadList.length && roadList.reduce(function (prev, current) {
         drawLine(prev, current, configData.lineColor, configData.lineWidth / imgRatio);
+        return current;
+    });
+
+    //  绘制重复
+    repeatList.length && repeatList.reduce(function (prev, current) {
+        if (Math.abs(prev._id - current._id) <= 2) {
+            drawLine(prev, current, repeatConfigData.lineColor, configData.lineWidth / imgRatio);
+        }
         return current;
     });
 
     //  绘制拐弯
     roadList.forEach(function (item) {
         //  绘制某个点
-        drawCircle(item, configData.inflexionPointRadius / imgRatio, configData.inflexionPointColor);
+        drawCircle(item, configData.inflexionPointRadius / imgRatio-1, configData.inflexionPointColor);
+    });
+
+    //  绘制重复的拐点
+    repeatList.forEach(function (item) {
+        //  绘制某个点
+        drawCircle(item, repeatConfigData.inflexionPointRadius / imgRatio  , repeatConfigData.inflexionPointColor);
     });
 }
 
@@ -423,9 +450,9 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             if (StartPoint === null) {
                 return;
             }
-            this.drawUnLocation();
+            this.drawNoCar();
             drawStation(obtainCopy(StartPoint), ImageStationStart);
-            drawCanvasTips('起点', obtainCopy(StartPoint), tipData.height, tipData.fontSize, true);
+            // drawCanvasTips('起点', obtainCopy(StartPoint), tipData.height, tipData.fontSize, true);
             drawStation(obtainCopy(EndPoint), ImageStationEnd);
             drawCanvasTips('终点', obtainCopy(EndPoint), tipData.height, tipData.fontSize, true);
             resetData();
@@ -572,9 +599,9 @@ NativeUtilsCallH5.DriverLessCar = (function () {
          * @catchString:string  开始接驾的对象
          * */
         drawCatchStarting: function (catchString, type) {
-            console.log('drawCatchStarting调用');
-            console.log('从移动端获取的数据是');
-            console.log(catchString);
+            // console.log('drawCatchStarting调用');
+            // console.log('从移动端获取的数据是');
+            // console.log(catchString);
             var catchData = JSON.parse(catchString);
             catchData.type = 2;
             //  如果获取的是车辆的信息,什么都不做
@@ -618,8 +645,8 @@ NativeUtilsCallH5.DriverLessCar = (function () {
          * @carArrived:object   车辆已到达的倒计时对象
          * */
         drawCarArrived: function (carArrivedString) {
-            console.log('执行drawCarArrived，从移动端取到的数据是');
-            console.log(carArrivedString);
+            // console.log('执行drawCarArrived，从移动端取到的数据是');
+            // console.log(carArrivedString);
             var carArrivedData = JSON.parse(carArrivedString);
             carArrivedData.type = 3;
             //  乘车中的预计路线
@@ -659,40 +686,48 @@ NativeUtilsCallH5.DriverLessCar = (function () {
              * @expectList:array    要经过路径的list
              * @roadList:array      路径的list
              * */
-
             if (typeof window.ridingActivityList === 'undefined' || window.ridingActivityList === null) {
-                window.ridingActivityList = this.setRidingList([StartPoint.station_id, EndPoint.station_id], true);
+                // debugger
+                // window.ridingActivityList = this.setRidingList([StartPoint.station_id, EndPoint.station_id], false);
+                var activeInformation = this.setRidingList(obtainCopy(jingguo), false);
+                window.ridingActivityList = activeInformation.list;
+                CarPoint.turn = activeInformation.initTurn;
             }
+            // debugger
 
 
-            if (CarPoint.turn === true) {
-                var passIndex = getCanvasClosest(CarPoint, ridingActivityList);
-                window.ridingActivityList = ridingActivityList.slice(passIndex);
-                console.log('删除的index---------------:' + passIndex);
-            }
+            // if (CarPoint.turn === true) {
+            //  不应该判断这个车的方向去截取剩余路径
+            var passIndex = getCanvasClosest(CarPoint, ridingActivityList);
+            window.ridingActivityList = ridingActivityList.slice(passIndex);
+            // console.log('删除的index---------------:' + passIndex);
+            // }
 
 
+            //  判断当前车辆所属活动路径的方向
             if (ridingActivityList[1] === undefined || ridingActivityList[1]._id - ridingActivityList[0]._id > 0) {
                 CarPoint.turn = true;
-                console.log();
+                // console.log('无人车当前运行中的方向');
             } else {
                 CarPoint.turn = false;
             }
-            console.log('ridingActivityList     ', ridingActivityList);
-            console.log('CarPoint               ', CarPoint);
+            // console.log('ridingActivityList     ', ridingActivityList);
+            // console.log('CarPoint               ', CarPoint);
             if (ridingActivityList.length === 1) {
-                console.log('本次无人车运行以后再也画不出虚线了');
+                // console.log('本次无人车运行以后再也画不出虚线了');
             }
 
 
             //  order_1
             this.drawNoCar();
             //  order_test
-            // drawCircle(CarPoint, 10, 'rgba(255,0,0,0.3)');
-            //  order_4
-            // drawCar(CarPoint);
+            drawCircle(CarPoint, 10, 'rgba(255,0,0,0.3)');
+            // order_4
+            drawCar(CarPoint);
+
+
             //  画行驶路线   order_2
-            drawCanvasRoad(obtainCopy(window.ridingActivityList), planRoadData);
+            drawCanvasRoad(obtainCopy(ridingActivityList), planRoadData, repeatPlanRoadData);
 
             //  起点终点    order_3
             drawStation(obtainCopy(EndPoint), ImageStationEnd);
@@ -700,8 +735,8 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             drawStation(obtainCopy(StartPoint), ImageStationStart);
 
             //  小车  order_4
-            drawCar(CarPoint);
-            drawCanvasTips(drivingData, CarPoint, tipData.height, tipData.fontSize);
+            // drawCar(CarPoint);
+            drawCanvasTips(drivingData, obtainCopy(CarPoint), tipData.height, tipData.fontSize);
         },
 
         /**
@@ -747,11 +782,12 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             window.StationList = calculateList(stationListData);
             // console.log(JSON.stringify(StationList).substr(0, 50));
             //  路径数据    转换数据得完成对坐标系的建立之后才能执行
-            var roadListData = JSON.parse(roadListDataString).map(function (item) {
+            var roadListData = JSON.parse(roadListDataString).map(function (item, index) {
                 var arr = item.split(',');
                 return {
                     latitude: Number(arr[0]),
                     longitude: Number(arr[1]),
+                    _id: index + 1,
                 };
             });
             window.RoadList = calculateList(roadListData);
@@ -761,7 +797,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
         //  乘车中的预计路线
         setRidingList: function (ridingList, isRidingBoolean) {
             // console.log('执行setRidingList,这是我自己截的数据');
-            console.log('起点终点', ridingList);
+            console.log('经过的车站的车站id', ridingList);
             //  临时的list
             var list = ridingList.map(function (item) {
                 return StationList.find(function (t) {

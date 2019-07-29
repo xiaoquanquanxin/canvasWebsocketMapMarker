@@ -120,9 +120,9 @@ function getCanvasClosest(referenceSpot, pointList) {
  * */
 function getCarAngle(index, list) {
     if (CarPoint.turn) {
-        console.log('计算无人车角度时，给与的无人车方向 , -------------正向');
+        // console.log('计算无人车角度时，给与的无人车方向 , -------------正向');
     } else {
-        console.log('计算无人车角度时，给与的无人车方向 , -------------反向');
+        // console.log('计算无人车角度时，给与的无人车方向 , -------------反向');
     }
     var FirstIndex = Math.max(0, index - 3);
     var LastIndex = Math.min(FirstIndex + 5, list.length - 1);
@@ -234,60 +234,92 @@ function getPathOfTravel(carPoint, expectList, roadList) {
     if (carPoint !== null) {
         expectList.unshift(carPoint);
     }
-    roadList.forEach(function (item, index) {
-        item._id = index + 1;
-    });
     //  预计虚线路线在道路路线上对应的点位下标
-    var _dottedLineIndex = expectList.map(function (item) {
+    var passingStationList = expectList.map(function (item) {
         return getCanvasClosest(item, roadList);
     });
-    // console.log(_dottedLineIndex);
     //  至少有两个点
-    if (_dottedLineIndex.length <= 1) {
+    if (passingStationList.length <= 1) {
         throw new Error('不可能出现有少于两个点点情况,至少要用一个无人车的点，和一个站点【用户选择的上车站点】');
     }
-
-    // debugger
-    console.log('无人车 + stations 映射在roadList上的点', _dottedLineIndex);
+    console.log('经过的车站对应的roadList下表', passingStationList);
     //  对应道路的拐点  下标的最小值和最大值
-    var _listMinValue = Math.min.apply(null, _dottedLineIndex);
-    var _listMaxValue = Math.max.apply(null, _dottedLineIndex);
+    var _MinId = Math.min.apply(null, passingStationList);
+    var _MaxId = Math.max.apply(null, passingStationList);
+
     //  对应道路拐点下标
-    var _listMinInflexionIndex = _dottedLineIndex.findIndex(function (item) {
-        return item === _listMinValue;
+    var _MinValIndex = passingStationList.findIndex(function (item) {
+        return item === _MinId;
     });
-    var _listMaxInflexionIndex = _dottedLineIndex.findIndex(function (item) {
-        return item === _listMaxValue;
+    var _MaxValIndex = passingStationList.findIndex(function (item) {
+        return item === _MaxId;
     });
-    // console.log(_listMinValue, _listMaxValue);
-    // console.log(_listMinInflexionIndex, _listMaxInflexionIndex);
+
+    //  passingStationList的起点和终点
+    var _firstId = passingStationList[0];
+    var _lastId = passingStationList[passingStationList.length - 1];
 
 
-    // debugger;
-    //  取起点和终点
-    var firstValue = _dottedLineIndex[0];
-    var lastValue = _dottedLineIndex[_dottedLineIndex.length - 1];
+    //  分段
+    //  1.纯正向 ，234
+    //  2.折返一个终点，454321
+    //  3.折返一个起点，543212
+    //  4.折返2个，4543212
+    //  5.纯反向，54321
+    // console.log(_MinId, _MaxId);
+    // console.log(_MinValIndex, _MaxValIndex);
+    //  这样就绝对是纯正向了
+    if (_MinValIndex === 0) {
+        if (_MaxValIndex !== passingStationList.length - 1) {
+            throw new Error('出现了，不可能的情况,起点是');
+        }
+        console.log('情况1,纯正向');
+        var list = roadList.slice(_MinId, _MaxId);
+        var initTurn = true;
+    } else {
+        if (_MaxValIndex === 0) {
+            if (_MinValIndex === passingStationList.length - 1) {
+                //  5
+                console.log('情况5,纯反向');
+                initTurn = false;
+                var list1 = roadList.slice(_MinId, _MaxId + 1).reverse();
+                list = list1;
+            } else {
+                //  3
+                console.log('情况3,折返一个起点,起点是最小的，拐点是 _MinId');
+                var list1 = roadList.slice(_MinId, _firstId + 1).reverse();
+                var list2 = roadList.slice(_MinId, _lastId + 1);
+                list = list1.concat(list2);
+                console.log(list);
+                initTurn = false;
+            }
+        } else {
+            if (_MinValIndex === passingStationList.length - 1) {
+                //  2
+                console.log('情况2,折返一个终点');
+                var list1 = roadList.slice(_firstId, _MaxId + 1);
+                var list2 = roadList.slice(_lastId, _MaxId + 1).reverse();
+                list = list1.concat(list2);
+                initTurn = true;
+            } else {
+                //  4
+                console.log('情况4,折返2个');
+                var list1 = roadList.slice(_firstId, _MaxId + 1);
+                var list2 = roadList.slice(_MinId, _MaxId + 1).reverse();
+                var list3 = roadList.slice(_MinId, _lastId + 1);
+                list = list1.concat(list2).concat(list3);
+                initTurn = true;
+            }
+        }
+    }
 
-    // debugger
-    // if (_dottedLineIndex[1] - _dottedLineIndex[0] < 0) {
-    //     console.log('初始 反方向');
-    //     if (firstValue > lastValue) {
-    //         firstValue++;
-    //     } else {
-    //         lastValue++;
-    //     }
-    // } else {
-    //     firstValue++;
-    //     lastValue++;
-    // }
-    firstValue++;
-    lastValue++;
 
-    var roadListMinValue = Math.min.apply(null, _dottedLineIndex);
-    // debugger
-    var list = roadList.slice(roadListMinValue + 1, firstValue).reverse().concat(roadList.slice(roadListMinValue, lastValue));
-    // console.log(list);
-    return list;
+    return {
+        list: list,
+        initTurn: initTurn,
+        // inflexion1: _MaxId + 1,
+        // inflexion2: _MinId
+    }
 }
 
 //  获取

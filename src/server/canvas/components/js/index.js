@@ -144,24 +144,72 @@ var taskList = [
         NativeUtilsCallH5.DriverLessCar.drawCarArrived(JSON.stringify(CarArrivedData));
     },
     function (z8) {
-        //  乘车中
+
+        var roadList = getRoadList().map(function (item, index) {
+            var arr = item.split(',');
+            return {
+                longitude: arr[1],
+                latitude: arr[0],
+                _id: index + 1,
+            }
+        });
+        var firstIndex = getCanvasClosest(StationList.find(function (item) {
+            return item.station_id === jingguo[0];
+        }), RoadList);
+        var lastIndex = getCanvasClosest(StationList.find(function (item) {
+            return item.station_id === jingguo[jingguo.length - 1];
+        }), RoadList);
+        var maxIndex = getCanvasClosest(StationList.find(function (item) {
+            return item.station_id === Math.max.apply(null, jingguo);
+        }), RoadList);
+
+        var minIndex = getCanvasClosest(StationList.find(function (item) {
+            return item.station_id === Math.min.apply(null, jingguo);
+        }), RoadList);
+
+
+        //  1.纯正向 ，234
+        var list = roadList.slice(firstIndex, maxIndex + 1);
+        //  2.折返一个终点，454321
+        var list1 = roadList.slice(firstIndex, maxIndex + 1);
+        var list2 = roadList.slice(0, maxIndex).reverse();
+        var list = list1.concat(list2);
+        //   3.折返一个起点，543212
+        var list1 = roadList.slice(minIndex, maxIndex + 1).reverse();
+        var list2 = roadList.slice(minIndex, lastIndex + 1);
+        list = list1.concat(list2);
+
+        //  4.折返2个，4543212
+        var list1 = roadList.slice(firstIndex, maxIndex + 1);
+        var list2 = roadList.slice(0, maxIndex + 1).reverse();
+        var list3 = roadList.slice(0, lastIndex + 1);
+        list = list1.concat(list2).concat(list3);
+
+        //  5.纯反向，54321
+        // var list1 = roadList.slice(minIndex, maxIndex + 1).reverse();
+        // list = list1;
+
+
+        var delay = 500;
+        var timer = setTimeout(fn, delay / 3);
         var index = 0;
-        var timer = setTimeout(fn, 333);
 
         function fn() {
-            if (index === 6) {
+            if (index === list.length) {
                 clearTimeout(timer);
                 timer = null;
                 return
             }
-            index++;
-            timer = setTimeout(fn, 333);
+
+
             NativeUtilsCallH5.DriverLessCar.drawInTheBus(JSON.stringify({
                 fromTheEnd: Math.floor(Math.random() * 100),                 //  距离终点
                 estimatedTime: '00:00:13',                      //  预计时间
-                longitude: pointData.longitude + 0.00024 * index,
-                latitude: pointData.latitude - 0.00004 * index,
+                longitude: list[index].longitude,
+                latitude: list[index].latitude,
             }));
+            index++;
+            timer = setTimeout(fn, delay);
         }
     },
     function (z9) {
@@ -180,6 +228,26 @@ var taskList = [
         NativeUtilsCallH5.DriverLessCar.testCoordinatePrecision();
     }
 ];
+
+
+setTimeout(function () {
+    if (typeof H5CallNativieUtils === "undefined") {
+        taskList[4].apply(null, qidianzhongdian);
+        //  从task 5 开始就要规划路径
+        // taskList[5]();
+        // taskList[6]();
+        // taskList[7]();
+        if (typeof ridingActivityList !== "undefined") {
+            throw new Error('我去治不了你了？？？？');
+        }
+        taskList[8]();
+        // taskList[9]();
+        // taskList[10]();
+        // taskList[11]();
+    }
+
+}, 100);
+
 
 //  判断图片全部加载完了，或者有失败的也没有关系
 function imagesIsAllLoaded() {
@@ -235,3 +303,6 @@ function test_List(list) {
         test_point(item);
     });
 }
+
+
+//  橙色的保留

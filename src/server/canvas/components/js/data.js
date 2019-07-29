@@ -12,6 +12,7 @@ ImageMap._src = './img/map6.png';
 //  小车
 var ImageCar = new Image();
 ImageCar._src = './img/car1.png';
+ImageCar._src = './img/car.png';
 //  站点
 //  普通站点
 var ImageStationBasic = new Image();
@@ -48,7 +49,7 @@ var roadData = {
 var planRoadData = {
     lineColor: 'rgb(71,130,228)',
     lineWidth: 10,
-    inflexionPointColor: 'orange',
+    inflexionPointColor: 'red',
     inflexionPointColor: 'rgb(71,130,228)',
     inflexionPointRadius: 5,
 };
@@ -58,7 +59,7 @@ var repeatPlanRoadData = {
     lineColor: '#ffa838',
     lineWidth: 10,
     inflexionPointColor: '#ffa838',
-    inflexionPointColor: 'red',
+    // inflexionPointColor: 'red',
     inflexionPointRadius: 5,
 };
 
@@ -99,13 +100,13 @@ function resetData() {
 //  fixme   测试数据
 //  车站数据
 function getStationList() {
-    //  广州
+    //  station_id
     return [{
         "create_time": 1552027370,
         "staion_both_sides": 1,
         "station_community_id": 1,
         "station_distance_to_next": 100,
-        "station_id": 11,
+        "station_id": 1,
         "station_lat": 23.2129878673,
         "station_long": 113.5452645098,
         "station_name": "测试点4",
@@ -118,7 +119,7 @@ function getStationList() {
         "staion_both_sides": 1,
         "station_community_id": 1,
         "station_distance_to_next": 100,
-        "station_id": 6,
+        "station_id": 2,
         "station_lat": 23.2127709362,
         "station_long": 113.5458492313,
         "station_name": "站点F",
@@ -131,9 +132,22 @@ function getStationList() {
         "staion_both_sides": 1,
         "station_community_id": 1,
         "station_distance_to_next": 100,
-        "station_id": 8,
+        "station_id": 3,
         "station_lat": 23.2124800507,
         "station_long": 113.5468309198,
+        "station_name": "站点F",
+        "station_status": 9,
+        "station_time_to_next": 3,
+        "station_type": 1,
+        "update_time": 1529655509
+    }, {
+        "create_time": 1529655509,
+        "staion_both_sides": 1,
+        "station_community_id": 1,
+        "station_distance_to_next": 100,
+        "station_id": 4,
+        "station_lat": 23.2111636628,
+        "station_long": 113.5471205984,
         "station_name": "站点F",
         "station_status": 9,
         "station_time_to_next": 3,
@@ -163,20 +177,6 @@ function getCorner() {
         var left = Math.min.apply(null, rig);
         var right = Math.max.apply(null, rig);
         // console.log(top, bottom, left, right);
-        setTimeout(function () {
-            if (typeof H5CallNativieUtils === "undefined") {
-                taskList[4](6, 8);
-                //  从task 5 开始就要规划路径
-                // taskList[5]();
-                // taskList[6]();
-                // taskList[7]();
-                taskList[8]();
-                // taskList[9]();
-                // taskList[10]();
-                // taskList[11]();
-            }
-
-        }, 100)
     }(getRoadList()));
     return (function () {
         var Right = 113.54790;
@@ -216,17 +216,26 @@ function getCorner() {
 //  测试需要的数据
 function testUsingData() {
     return (function (w) {
-        w.pointData = {longitude: 113.5455005441, latitude: 23.2128941925, id: 5};
-        //  虚线路径    正方向
-        // w.toGoThroughList = [StationList[1], StationList[2], StationList[3]];
-        w.jingguo = [6, 8];
-        //  虚线路径    反方向
-        // var toGoThroughList = [StationList[0], StationList[1], StationList[2]];
-        //  无人车在右下角
-        // var pointData = {longitude: 23.20830, latitude: 113.551839};
-        //  虚线路径    正方向
-        // var toGoThroughList = [StationList[4]];
-        //  虚线路径    反方向
-        // var toGoThroughList = [StationList[3], StationList[2], StationList[1], StationList[0], StationList[1], StationList[2], StationList[3], StationList[4]];
+        // w.pointData = {longitude: 113.5455005441, latitude: 23.2128941925};
+        w.pointData = {longitude: 113.5468309198, latitude: 23.2124800507};
+
+        w.pointData = {longitude: 113.5474746500, latitude: 23.2120905590};
+        //
+        w.pointData = {longitude: 113.5474478279, latitude: 23.2119919533};
+        //  虚线路径
+        //  1.纯正向 ，234
+        w.jingguo = [2, 3, 4];
+        //   2.折返一个终点，454321
+        w.jingguo = [3, 4, 3, 2, 1];
+        //   3.折返一个起点，543212
+        w.jingguo = [4, 3, 2, 1, 2];
+        //   4.折返2个，4543212
+        w.jingguo = [3, 4, 3, 2, 1, 2];
+        //   5.纯反向，54321
+        // w.jingguo = [4, 3, 2, 1];
+
+        //  起点终点
+        w.qidianzhongdian = [jingguo[0], jingguo[jingguo.length - 1]];
     }(window));
 }
+

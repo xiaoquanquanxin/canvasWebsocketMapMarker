@@ -423,9 +423,9 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             if (StartPoint === null) {
                 return;
             }
-            this.drawUnLocation();
+            this.drawNoCar();
             drawStation(obtainCopy(StartPoint), ImageStationStart);
-            drawCanvasTips('起点', obtainCopy(StartPoint), tipData.height, tipData.fontSize, true);
+            // drawCanvasTips('起点', obtainCopy(StartPoint), tipData.height, tipData.fontSize, true);
             drawStation(obtainCopy(EndPoint), ImageStationEnd);
             drawCanvasTips('终点', obtainCopy(EndPoint), tipData.height, tipData.fontSize, true);
             resetData();

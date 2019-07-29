@@ -196,7 +196,7 @@ var taskList = [
         // list = list1;
 
 
-        var delay = 500;
+        var delay = 111;
         var timer = setTimeout(fn, delay / 3);
         var index = 0;
 
@@ -241,12 +241,12 @@ setTimeout(function () {
         taskList[4].apply(null, qidianzhongdian);
         //  从task 5 开始就要规划路径
         // taskList[5]();
-        taskList[6]();
+        // taskList[6]();
         // taskList[7]();
         if (typeof ridingActivityList !== "undefined") {
             throw new Error('我去治不了你了？？？？');
         }
-        // taskList[8]();
+        taskList[8]();
         // taskList[9]();
         // taskList[10]();
         // taskList[11]();
@@ -309,6 +309,3 @@ function test_List(list) {
         test_point(item);
     });
 }
-
-
-//  橙色的保留

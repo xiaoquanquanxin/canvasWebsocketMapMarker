@@ -146,44 +146,19 @@ function drawStations() {
  *  @roadList:array     要画的路线
  *  @configData:object  要画的路线的配置
  * */
-function drawCanvasRoad(roadList, configData, repeatConfigData) {
-    //  加载重复的road_point
-    var repeatMap = {};
-    //  重复的list
-    var repeatList = [];
-    roadList.forEach(function (item) {
-        repeatMap[item._id] = repeatMap[item._id] || 0;
-        repeatMap[item._id] = repeatMap[item._id] + 1;
-        if (repeatMap[item._id] > 1) {
-            repeatList.push(item);
-        }
-    });
-    // console.log('重复的list的长度', repeatList.length);
-
+function drawCanvasRoad(roadList, configData) {
     //  绘制路径
     roadList.length && roadList.reduce(function (prev, current) {
-        drawLine(prev, current, configData.lineColor, configData.lineWidth / imgRatio);
+        var _configData = (current.configData && prev.configData) || configData;
+        // console.log(prev);
+        drawLine(prev, current, _configData.lineColor, _configData.lineWidth / imgRatio);
         return current;
     });
-
-    //  绘制重复
-    repeatList.length && repeatList.reduce(function (prev, current) {
-        if (Math.abs(prev._id - current._id) <= 2) {
-            drawLine(prev, current, repeatConfigData.lineColor, configData.lineWidth / imgRatio);
-        }
-        return current;
-    });
-
     //  绘制拐弯
     roadList.forEach(function (item) {
+        var _configData = item.configData || configData;
         //  绘制某个点
-        drawCircle(item, configData.inflexionPointRadius / imgRatio - 1, configData.inflexionPointColor);
-    });
-
-    //  绘制重复的拐点
-    repeatList.forEach(function (item) {
-        //  绘制某个点
-        drawCircle(item, repeatConfigData.inflexionPointRadius / imgRatio, repeatConfigData.inflexionPointColor);
+        drawCircle(item, _configData.inflexionPointRadius / imgRatio - 1, _configData.inflexionPointColor);
     });
 }
 
@@ -725,13 +700,13 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             //  order_1
             this.drawNoCar();
             //  order_test
-            drawCircle(CarPoint, 10, 'rgba(255,0,0,0.3)');
+            // drawCircle(CarPoint, 10, 'rgba(255,0,0,0.3)');
             // order_4
             drawCar(CarPoint);
 
 
             //  画行驶路线   order_2
-            drawCanvasRoad(obtainCopy(ridingActivityList), planRoadData, repeatPlanRoadData);
+            drawCanvasRoad(obtainCopy(ridingActivityList), planRoadData);
 
             //  起点终点    order_3
             drawStation(obtainCopy(EndPoint), ImageStationEnd);
@@ -739,7 +714,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             drawStation(obtainCopy(StartPoint), ImageStationStart);
 
             //  小车  order_4
-            // drawCar(CarPoint);
+            drawCar(CarPoint);
             drawCanvasTips(drivingData, obtainCopy(CarPoint), tipData.height, tipData.fontSize);
         },
 

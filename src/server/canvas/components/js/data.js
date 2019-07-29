@@ -93,6 +93,8 @@ function resetData() {
         w.ridingList = null;
         //  乘车预计路线  动态点位
         w.ridingActivityList = null;
+        //  车辆调度的信息对象
+        w.CatchData = null;
     }(window));
 }
 

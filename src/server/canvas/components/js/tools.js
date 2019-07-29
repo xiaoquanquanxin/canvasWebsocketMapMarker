@@ -313,12 +313,21 @@ function getPathOfTravel(carPoint, expectList, roadList) {
         }
     }
 
-
+    //  对重复对部分就行配置configData
+    var repeatMap = {};
+    //  重复的list
+    var repeatList = [];
+    list.forEach(function (item) {
+        repeatMap[item._id] = repeatMap[item._id] || 0;
+        repeatMap[item._id] = repeatMap[item._id] + 1;
+        if (repeatMap[item._id] > 1) {
+            item.configData = repeatPlanRoadData;
+            repeatList.push(item);
+        }
+    });
     return {
         list: list,
         initTurn: initTurn,
-        // inflexion1: _MaxId + 1,
-        // inflexion2: _MinId
     }
 }
 

@@ -128,13 +128,19 @@ function getCarAngle(index, list) {
     var LastIndex = Math.min(FirstIndex + 5, list.length - 1);
     var FirstPoint = list[FirstIndex];
     var LastPoint = list[LastIndex];
-    var CarObject = getK_B(FirstPoint.x, FirstPoint.y, LastPoint.x, LastPoint.y);
-    // console.log(CarObject);
-    var Angle = Math.atan(CarObject.k) * 180 / Math.PI;
-    if (CarObject.k < 0) {
-        Angle = 180 + Angle
+    var obj = {
+        diffX: LastPoint.x - FirstPoint.x,
+        diffY: LastPoint.y - FirstPoint.y,
+    };
+    var Angle = Math.atan(obj.diffY / obj.diffX) * 180 / Math.PI;
+    //  y轴左侧
+    if (obj.diffX < 0 || obj.diffY < 0) {
+        Angle = Angle + 180;
     }
-    // console.log('Angle无人车角度', Angle);
+    //  反向走
+    if (CarPoint.turn === false) {
+        Angle = Angle + 180;
+    }
     return Angle;
 }
 

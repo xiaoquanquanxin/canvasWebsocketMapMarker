@@ -88,7 +88,8 @@ function resetData() {
         w.StartPoint = null;
         w.EndPoint = null;
         //  重置调用状态
-        NativeUtilsCallH5.DriverLessCar.drawUnLocation.called = false;
+        NativeUtilsCallH5.DriverLessCar.drawUnLocation.isCalled = false;
+        NativeUtilsCallH5.DriverLessCar.drawInTheBus.isCalled = false;
         //  乘车预计路线
         w.ridingList = null;
         //  乘车预计路线  动态点位

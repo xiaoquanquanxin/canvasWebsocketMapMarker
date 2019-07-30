@@ -652,6 +652,8 @@ NativeUtilsCallH5.DriverLessCar = (function () {
          *
          * */
         drawInTheBus: function (drivingString) {
+            //  order_1
+            this.drawNoCar();
             this.drawInTheBus.isCalled = true;
             // console.log('执行drawInTheBus,从移动端渠道的数据是');
             // console.log(drivingString);
@@ -704,8 +706,6 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             }
 
 
-            //  order_1
-            this.drawNoCar();
             //  order_test
             // drawCircle(CarPoint, 10, 'rgba(255,0,0,0.3)');
             // order_4
@@ -721,7 +721,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             drawStation(obtainCopy(StartPoint), ImageStationStart);
 
             //  小车  order_4
-            drawCar(CarPoint);
+            // drawCar(CarPoint);
             drawCanvasTips(drivingData, obtainCopy(CarPoint), tipData.height, tipData.fontSize);
         },
 
@@ -779,6 +779,26 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             window.RoadList = calculateList(roadListData);
             // console.log(JSON.stringify(RoadList).substr(0, 50));
         },
+
+        //  获取站点id
+        setStartAndEnd: function (startPointId, endPointId) {
+            if (startPointId === undefined || endPointId === undefined) {
+                throw new Error('上车站点和下车站点的id必传');
+            }
+            if (typeof window.StationList === "undefined") {
+                throw new Error('先有StationList才能通过id获取上车站点或下车站点');
+            }
+            window.StartPoint = window.StationList.find(function (item) {
+                return Number(item.station_id) === Number(startPointId);
+            });
+            window.EndPoint = window.StationList.find(function (item) {
+                return Number(item.station_id) === Number(endPointId);
+            });
+            if (!window.StartPoint || !window.EndPoint) {
+                throw new Error('没有这个上车/下车站点');
+            }
+        },
+
 
         //  乘车中的预计路线
         setRidingList: function (ridingList, isRidingBoolean) {

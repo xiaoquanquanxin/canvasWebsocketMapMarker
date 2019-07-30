@@ -274,7 +274,7 @@ function getPathOfTravel(carPoint, expectList, roadList) {
             throw new Error('出现了，不可能的情况,起点是');
         }
         console.log('情况1,纯正向');
-        var list = roadList.slice(_MinId, _MaxId);
+        var list = roadList.slice(_MinId, _MaxId + 1);
         var initTurn = true;
     } else {
         if (_MaxValIndex === 0) {

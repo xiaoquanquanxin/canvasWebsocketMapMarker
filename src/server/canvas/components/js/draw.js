@@ -184,18 +184,17 @@ function drawScreen(roadList, configData) {
 //  绘制小车
 function drawCar(point) {
     //  获取汽车应该在的点
-    var MinIndex = getCanvasClosest(point, RoadList);
-    // console.log(RoadList[MinIndex]);
-    var _CarPoint = obtainCopy(RoadList[MinIndex]);
+    var ClosestIndex = getCanvasClosest(point, RoadList);
+    // console.log(RoadList[ClosestIndex]);
+    var _CarPoint = obtainCopy(RoadList[ClosestIndex]);
     CarPoint.x = _CarPoint.x;
     CarPoint.y = _CarPoint.y;
     CarPoint.turn = point.turn || CarPoint.turn;
     //  找到可以用来求解的两个点    这两个点应该是前三和后三
-    var CarAngle = getCarAngle(MinIndex, RoadList);
-    CarAngle = CarAngle + 180 * (!CarPoint.turn);
-    var __point = obtainCopy(RoadList[MinIndex]);
+    var CarAngle = getCarAngle(ClosestIndex, RoadList);
+    // console.log(CarAngle);
+    var __point = obtainCopy(RoadList[ClosestIndex]);
     // console.log(__point, CarAngle);
-    // CarAngle = 180-64
     //  位移
     ctx.translate(__point.x, __point.y);
     //  旋转
@@ -709,7 +708,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             //  order_test
             // drawCircle(CarPoint, 10, 'rgba(255,0,0,0.3)');
             // order_4
-            drawCar(CarPoint);
+            // drawCar(CarPoint);
 
 
             //  画行驶路线   order_2
@@ -721,7 +720,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             drawStation(obtainCopy(StartPoint), ImageStationStart);
 
             //  小车  order_4
-            // drawCar(CarPoint);
+            drawCar(CarPoint);
             drawCanvasTips(drivingData, obtainCopy(CarPoint), tipData.height, tipData.fontSize);
         },
 

@@ -179,25 +179,25 @@ var taskList = [
         //  2.折返一个终点，454321
         var list1 = roadList.slice(firstIndex, maxIndex + 1);
         var list2 = roadList.slice(0, maxIndex).reverse();
-        var list = list1.concat(list2);
+        // var list = list1.concat(list2);
         //   3.折返一个起点，543212
         var list1 = roadList.slice(minIndex, maxIndex + 1).reverse();
         var list2 = roadList.slice(minIndex, lastIndex + 1);
-        list = list1.concat(list2);
+        // list = list1.concat(list2);
 
         //  4.折返2个，4543212
         var list1 = roadList.slice(firstIndex, maxIndex + 1);
         var list2 = roadList.slice(0, maxIndex + 1).reverse();
         var list3 = roadList.slice(0, lastIndex + 1);
-        list = list1.concat(list2).concat(list3);
+        // list = list1.concat(list2).concat(list3);
 
         //  5.纯反向，54321
         // var list1 = roadList.slice(minIndex, maxIndex + 1).reverse();
         // list = list1;
 
 
-        var delay = 111;
-        var timer = setTimeout(fn, delay / 3);
+        var delay = 122;
+        var timer = setTimeout(fn, delay / 113);
         var index = 0;
 
         function fn() {
@@ -232,6 +232,9 @@ var taskList = [
     function (z11) {
         //  测试
         NativeUtilsCallH5.DriverLessCar.testCoordinatePrecision();
+    },
+    function (startId, endId) {
+        NativeUtilsCallH5.DriverLessCar.setStartAndEnd(startId, endId);
     }
 ];
 
@@ -243,13 +246,14 @@ setTimeout(function () {
         // taskList[5]();
         // taskList[6]();
         // taskList[7]();
-        if (typeof ridingActivityList !== "undefined") {
-            throw new Error('我去治不了你了？？？？');
-        }
+        // if (typeof ridingActivityList !== "undefined") {
+        //     throw new Error('我去治不了你了？？？？');
+        // }
         taskList[8]();
         // taskList[9]();
         // taskList[10]();
         // taskList[11]();
+        // taskList[12].apply(null, qidianzhongdian);
     }
 
 }, 100);

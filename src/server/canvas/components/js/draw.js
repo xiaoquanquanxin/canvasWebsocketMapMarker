@@ -470,21 +470,23 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             }());
             //  绘制全部站点
             drawStations();
-            this.drawUnLocation.called = true;
+            this.drawUnLocation.isCalled = true;
             // console.log('drawUnLocation完成');
         },
 
         //  绘制用户开启定位状态
         /**
          * @userPoint:object    用户定位的经纬度
-         *
-         * @return:string   JSON串：："{"id":2,"x":577.2850539290472,"y":385.72152093401405}"
          * */
         drawLocation: function (userPointString) {
+            if (this.drawInTheBus.isCalled === true) {
+                console.log('drawInTheBus被调用，则drawLocation无效');
+                return;
+            }
             console.log('drawLocation调用');
             //  用户位置
             window.UserPoint = calculatePoint(JSON.parse(userPointString));
-            if (this.drawUnLocation.called !== true) {
+            if (this.drawUnLocation.isCalled !== true) {
                 //  先画未定位
                 this.drawUnLocation();
             }
@@ -650,6 +652,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
          *
          * */
         drawInTheBus: function (drivingString) {
+            this.drawInTheBus.isCalled = true;
             // console.log('执行drawInTheBus,从移动端渠道的数据是');
             // console.log(drivingString);
             var drivingData = JSON.parse(drivingString);
@@ -668,7 +671,11 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             if (typeof window.ridingActivityList === 'undefined' || window.ridingActivityList === null) {
                 // debugger
                 // window.ridingActivityList = this.setRidingList([StartPoint.station_id, EndPoint.station_id], false);
-                var activeInformation = this.setRidingList(obtainCopy(jingguo), false);
+                if (typeof H5CallNativieUtils === "undefined") {
+                    var activeInformation = this.setRidingList(obtainCopy(jingguo), false);
+                } else {
+                    var activeInformation = this.setRidingList(obtainCopy([StartPoint.station_id, EndPoint.station_id]), false);
+                }
                 window.ridingActivityList = activeInformation.list;
                 CarPoint.turn = activeInformation.initTurn;
             }

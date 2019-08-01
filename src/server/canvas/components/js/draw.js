@@ -669,18 +669,18 @@ NativeUtilsCallH5.DriverLessCar = (function () {
              * @expectList:array    要经过路径的list
              * @roadList:array      路径的list
              * */
+            var activeInformation;
             if (typeof window.ridingActivityList === 'undefined' || window.ridingActivityList === null) {
                 // debugger
                 // window.ridingActivityList = this.setRidingList([StartPoint.station_id, EndPoint.station_id], false);
                 if (typeof H5CallNativieUtils === "undefined") {
-                    var activeInformation = this.setRidingList(obtainCopy(jingguo), false);
+                    activeInformation = this.setRidingList(obtainCopy(jingguo), false);
                 } else {
-                    var activeInformation = this.setRidingList(obtainCopy([StartPoint.station_id, EndPoint.station_id]), false);
+                    activeInformation = this.setRidingList(obtainCopy([StartPoint.station_id, EndPoint.station_id]), false);
                 }
                 window.ridingActivityList = activeInformation.list;
                 CarPoint.turn = activeInformation.initTurn;
             }
-            // debugger
 
 
             // if (CarPoint.turn === true) {

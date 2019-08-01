@@ -179,13 +179,12 @@ var taskList = [
             return item.station_id === Math.min.apply(null, jingguo);
         }), RoadList);
 
-
         //  1.纯正向 ，234
         var list = roadList.slice(firstIndex, maxIndex + 1);
         //  2.折返一个终点，454321
         var list1 = roadList.slice(firstIndex, maxIndex + 1);
         var list2 = roadList.slice(0, maxIndex).reverse();
-        // var list = list1.concat(list2);
+        var list = list1.concat(list2);
         //   3.折返一个起点，543212
         var list1 = roadList.slice(minIndex, maxIndex + 1).reverse();
         var list2 = roadList.slice(minIndex, lastIndex + 1);

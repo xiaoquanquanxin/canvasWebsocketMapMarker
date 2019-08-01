@@ -57,8 +57,10 @@ var planRoadData = {
 //  重复路线配置
 var repeatPlanRoadData = {
     lineColor: '#ffa838',
+    lineColor: 'rgb(160,165,180)',
     lineWidth: 10,
     inflexionPointColor: '#ffa838',
+    inflexionPointColor: 'rgb(160,165,180)',
     // inflexionPointColor: 'red',
     inflexionPointRadius: 5,
 };
@@ -247,9 +249,10 @@ function testUsingData() {
         w.pointData = {longitude: 113.5474478279, latitude: 23.2119919533};
         //  虚线路径
         //  1.纯正向 ，234
-        w.jingguo = [1,2,3,4,5];
+        w.jingguo = [1, 2, 3, 4, 5];
+        // w.jingguo = [3, 2];
         //   2.折返一个终点，454321
-        // w.jingguo = [3, 4, 3, 2, 1];
+        w.jingguo = [3, 4, 3, 2, 1];
         //   3.折返一个起点，543212
         // w.jingguo = [4, 3, 2, 1, 2];
         //   4.折返2个，4543212

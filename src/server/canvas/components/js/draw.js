@@ -730,44 +730,21 @@ NativeUtilsCallH5.DriverLessCar = (function () {
         //  四角数据
         setCornerData: function (cornerData) {
             window.Corner = transformOriginData(JSON.parse(cornerData));
-            // console.log(Corner);
-            //  帮助完成坐标系的建立
-            //  点的简写
-            var bl = Corner.bottomLeft;
-            var br = Corner.bottomRight;
-            //  获得底边斜率k, 和b
-            //  获得y
-            window.bottomLineParams = getK_B(br.longitude, br.latitude, bl.longitude, bl.latitude);
-            // console.log('获得y', bottomLineParams.y);
-            var tl = Corner.topLeft;
-            //  获得左边斜率k,和b
-            //  获得x
-            window.leftLineParams = getK_B(tl.longitude, tl.latitude, bl.longitude, bl.latitude);
-            // console.log('获得x', leftLineParams.x);
-            //  根据左下角和右下角求底边在canvas坐标系下的长度
-            window.bottom_differ = br.longitude - bl.longitude;
-            // console.log(bottom_differ);
-            //  单位经纬度坐标系长度相当于n个像素的比例,是一个很大的数
-            window.getRatio = canvas.width / bottom_differ;
-            // window.left_differ = getDiffer(bl.longitude, bl.latitude, tl.longitude, tl.latitude);
-            window.left_differ = tl.latitude - bl.latitude;
-            // console.log(left_differ);
         },
         //  车站数据    转换数据得完成对坐标系的建立之后才能执行
-        setStationList: function (stationListDataString, roadListDataString) {
+        setStationList: function (stationListDataString, roadListDataString, imageMapSrc) {
             // console.log('从移动端获取的车站数据');
             // console.log(stationListDataString.substr(0, 50));
             // console.log('从移动端获取的路线数据');
             // console.log(roadListDataString.substr(0, 50));
-            var stationListData = JSON.parse(stationListDataString);
-            stationListData.forEach(function (item) {
+            window.StationList = JSON.parse(stationListDataString);
+            StationList.forEach(function (item) {
                 item.longitude = item.station_long;
                 item.latitude = item.station_lat;
             });
-            window.StationList = calculateList(stationListData);
             // console.log(JSON.stringify(StationList).substr(0, 50));
             //  路径数据    转换数据得完成对坐标系的建立之后才能执行
-            var roadListData = JSON.parse(roadListDataString).map(function (item, index) {
+            window.RoadList = JSON.parse(roadListDataString).map(function (item, index) {
                 var arr = item.split(',');
                 return {
                     latitude: Number(arr[0]),
@@ -775,7 +752,6 @@ NativeUtilsCallH5.DriverLessCar = (function () {
                     _id: index + 1,
                 };
             });
-            window.RoadList = calculateList(roadListData);
             // console.log(JSON.stringify(RoadList).substr(0, 50));
         },
 

@@ -1,5 +1,11 @@
-//  测试、本地
-var isTest = true;
+//  获取四个角落的经纬度  这个数据将来从移动端获取的时候，再做处理
+NativeUtilsCallH5.DriverLessCar.setCornerData(JSON.stringify(getCorner()));
+// console.log('h5自给的四个角的经纬度');
+// console.log(JSON.stringify(window.Corner).substr(0, 50));
+//  获取车站站点经纬度
+//  获取路线经纬度
+NativeUtilsCallH5.DriverLessCar.setStationList(JSON.stringify(getStationList()), JSON.stringify(getRoadList()));
+
 var canvas = document.getElementById('my-canvas');
 var ctx = canvas.getContext('2d');
 //  分辨率
@@ -265,11 +271,33 @@ function imagesIsAllLoaded() {
         return
     }
     console.log('图片全部加载完了,这个log永久保留');
-    //  获取四个角落的经纬度  这个数据将来从移动端获取的时候，再做处理
 
-    NativeUtilsCallH5.DriverLessCar.setCornerData(JSON.stringify(getCorner()));
-    // console.log('h5自给的四个角的经纬度');
-    // console.log(JSON.stringify(window.Corner).substr(0, 50));
+    // console.log(Corner);
+    //  帮助完成坐标系的建立
+    //  点的简写
+    var bl = Corner.bottomLeft;
+    var br = Corner.bottomRight;
+    //  获得底边斜率k, 和b
+    //  获得y
+    window.bottomLineParams = getK_B(br.longitude, br.latitude, bl.longitude, bl.latitude);
+    // console.log('获得y', bottomLineParams.y);
+    var tl = Corner.topLeft;
+    //  获得左边斜率k,和b
+    //  获得x
+    window.leftLineParams = getK_B(tl.longitude, tl.latitude, bl.longitude, bl.latitude);
+    // console.log('获得x', leftLineParams.x);
+    //  根据左下角和右下角求底边在canvas坐标系下的长度
+    window.bottom_differ = br.longitude - bl.longitude;
+    // console.log(bottom_differ);
+    //  单位经纬度坐标系长度相当于n个像素的比例,是一个很大的数
+    window.getRatio = canvas.width / bottom_differ;
+    // window.left_differ = getDiffer(bl.longitude, bl.latitude, tl.longitude, tl.latitude);
+    window.left_differ = tl.latitude - bl.latitude;
+    // console.log(left_differ);
+
+    window.StationList = calculateList(window.StationList);
+    window.RoadList = calculateList(window.RoadList);
+
 
     /**
      * 问移动端拿数据
@@ -283,9 +311,6 @@ function imagesIsAllLoaded() {
             throw new Error('H5CallNativieUtils.h5IsReady方法不存在');
         }
     } else {
-        //  获取车站站点经纬度
-        //  获取路线经纬度
-        NativeUtilsCallH5.DriverLessCar.setStationList(JSON.stringify(getStationList()), JSON.stringify(getRoadList()));
         //  载入测试数据
         testUsingData();
     }

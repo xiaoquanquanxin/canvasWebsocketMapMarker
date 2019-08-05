@@ -349,6 +349,11 @@ function drawCanvasTips(message, point, height, fontSize, hasTriangle) {
                     // }
                 ];
                 break;
+            case 5:
+                TextArr = [
+                    {word: '折返中', color: 'black', textLength: '折返中'.length * _fontSize},
+                ];
+                break;
             default:
                 return;
         }
@@ -365,7 +370,7 @@ function drawCanvasTips(message, point, height, fontSize, hasTriangle) {
     triangleObject.height = tipData.triangleHeight / imgRatio;
 
     //  如果是小车的tips,总是在上方
-    var tipsIsCarCondition = message.type === 2 || message.type === 3 || message.type === 4;
+    var tipsIsCarCondition = message.type === 2 || message.type === 3 || message.type === 4 || message.type === 5;
 
     // 限界，主要是考虑右侧
     if (point.x + _width + tipData.limitRightWidth / imgRatio + ImageStationBasic.width * 0.5 >= canvas.width || tipsIsCarCondition) {
@@ -721,6 +726,10 @@ NativeUtilsCallH5.DriverLessCar = (function () {
 
             //  小车  order_4
             drawCar(CarPoint);
+            if (ridingActivityList[0] && ridingActivityList[0].configData && ridingActivityList[0].configData.configType === 3) {
+                console.log('重复的,调度中');
+                drivingData.type = 5;
+            }
             drawCanvasTips(drivingData, obtainCopy(CarPoint), tipData.height, tipData.fontSize);
         },
 

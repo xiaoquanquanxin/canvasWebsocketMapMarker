@@ -194,15 +194,15 @@ var taskList = [
         var list1 = roadList.slice(firstIndex, maxIndex + 1);
         var list2 = roadList.slice(0, maxIndex + 1).reverse();
         var list3 = roadList.slice(0, lastIndex + 1);
-        // list = list1.concat(list2).concat(list3);
+        list = list1.concat(list2).concat(list3);
 
         //  5.纯反向，54321
         // var list1 = roadList.slice(minIndex, maxIndex + 1).reverse();
         // list = list1;
 
 
-        var delay = 122;
-        var timer = setTimeout(fn, delay / 113);
+        var delay = 555;
+        var timer = setTimeout(fn, delay / 12);
         var index = 0;
 
         function fn() {

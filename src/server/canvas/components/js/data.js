@@ -43,6 +43,7 @@ var roadData = {
     inflexionPointColor: 'yellow',
     inflexionPointColor: 'rgb(160,165,180)',
     inflexionPointRadius: 5,
+    configType: 1,
 };
 
 //  规划路线配置
@@ -52,17 +53,21 @@ var planRoadData = {
     inflexionPointColor: 'red',
     inflexionPointColor: 'rgb(71,130,228)',
     inflexionPointRadius: 5,
+    configType: 2,
 };
 
 //  重复路线配置
 var repeatPlanRoadData = {
     lineColor: '#ffa838',
     lineColor: 'rgb(160,165,180)',
+    lineColor: 'transparent',
     lineWidth: 10,
     inflexionPointColor: '#ffa838',
     inflexionPointColor: 'rgb(160,165,180)',
+    inflexionPointColor: 'transparent',
     // inflexionPointColor: 'red',
     inflexionPointRadius: 5,
+    configType: 3,
 };
 
 //  等待接驾路线配置        虚线
@@ -256,7 +261,7 @@ function testUsingData() {
         //   3.折返一个起点，543212
         // w.jingguo = [4, 3, 2, 1, 2];
         //   4.折返2个，4543212
-        // w.jingguo = [3, 4, 3, 2, 1, 2];
+        w.jingguo = [3, 4, 3, 2, 1, 2];
         //   5.纯反向，54321
         // w.jingguo = [4, 3, 2, 1];
 

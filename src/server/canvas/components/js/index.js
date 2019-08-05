@@ -1,11 +1,12 @@
-//  获取四个角落的经纬度  这个数据将来从移动端获取的时候，再做处理
-NativeUtilsCallH5.DriverLessCar.setCornerData(JSON.stringify(getCorner()));
-// console.log('h5自给的四个角的经纬度');
-// console.log(JSON.stringify(window.Corner).substr(0, 50));
-//  获取车站站点经纬度
-//  获取路线经纬度
-NativeUtilsCallH5.DriverLessCar.setStationList(JSON.stringify(getStationList()), JSON.stringify(getRoadList()));
-
+if (typeof H5CallNativieUtils === "undefined") {
+    //  获取四个角落的经纬度  这个数据将来从移动端获取的时候，再做处理
+    NativeUtilsCallH5.DriverLessCar.setCornerData(JSON.stringify(getCorner()));
+    // console.log('h5自给的四个角的经纬度');
+    // console.log(JSON.stringify(window.Corner).substr(0, 50));
+    //  获取车站站点经纬度
+    //  获取路线经纬度
+    NativeUtilsCallH5.DriverLessCar.setStationList(JSON.stringify(getStationList()), JSON.stringify(getRoadList()));
+}
 var canvas = document.getElementById('my-canvas');
 var ctx = canvas.getContext('2d');
 //  分辨率

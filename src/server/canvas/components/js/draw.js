@@ -512,9 +512,9 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             //  先画未定位
             this.drawUnLocation();
             //  绘制起点和终点
-            if (startPointId && Number(startPointId) !== -1) {
+            if (startPointId && String(startPointId) !== '-1') {
                 window.StartPoint = StationList.find(function (item) {
-                    return Number(item.station_id) === Number(startPointId);
+                    return String(item.station_id) === String(startPointId);
                 });
                 if (window.StartPoint === undefined) {
                     throw new Error('没有这个上车点位，startPointId是' + startPointId);
@@ -522,9 +522,9 @@ NativeUtilsCallH5.DriverLessCar = (function () {
                 drawStation(obtainCopy(StartPoint), ImageStationStart);
                 drawCanvasTips('在这里上车', obtainCopy(StartPoint), tipData.height, tipData.fontSize, true);
             }
-            if (endPointId && Number(endPointId) !== -1) {
+            if (endPointId && String(endPointId) !== '-1') {
                 window.EndPoint = StationList.find(function (item) {
-                    return Number(item.station_id) === Number(endPointId);
+                    return String(item.station_id) === String(endPointId);
                 });
                 if (window.EndPoint === undefined) {
                     throw new Error('没有这个下车点位，endPointId是 ' + endPointId);
@@ -773,10 +773,10 @@ NativeUtilsCallH5.DriverLessCar = (function () {
                 throw new Error('先有StationList才能通过id获取上车站点或下车站点');
             }
             window.StartPoint = window.StationList.find(function (item) {
-                return Number(item.station_id) === Number(startPointId);
+                return String(item.station_id) === String(startPointId);
             });
             window.EndPoint = window.StationList.find(function (item) {
-                return Number(item.station_id) === Number(endPointId);
+                return String(item.station_id) === String(endPointId);
             });
             if (!window.StartPoint || !window.EndPoint) {
                 throw new Error('没有这个上车/下车站点');
@@ -791,7 +791,7 @@ NativeUtilsCallH5.DriverLessCar = (function () {
             //  临时的list
             var list = ridingList.map(function (item) {
                 return StationList.find(function (t) {
-                    return Number(t.station_id) === Number(item);
+                    return String(t.station_id) === String(item);
                 })
             });
             if (list.length === 0) {
